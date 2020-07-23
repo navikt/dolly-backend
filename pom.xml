@@ -3,19 +3,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.4.RELEASE</version>
-	</parent>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.2.4.RELEASE</version>
+    </parent>
 
-	<groupId>no.nav.dolly-backend</groupId>
-	<artifactId>dolly-backend</artifactId>
-	<version>1.18.0-SNAPSHOT</version>
-	<packaging>pom</packaging>
+    <groupId>no.nav.dolly-backend</groupId>
+    <artifactId>dolly-backend</artifactId>
+    <version>1.18.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-	<name>dolly-backend</name>
-	<description>Applikasjon for oppretting av testpersoner</description>
+    <name>dolly-backend</name>
+    <description>Applikasjon for oppretting av testpersoner</description>
 
     <modules>
         <module>dolly-backend-app</module>
@@ -29,27 +29,22 @@
         <application.version>${project.version}</application.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
+        <java.version>1.11</java.version>
         <spring-cloud.version>2.2.0.RELEASE</spring-cloud.version>
-        <freg-security-oidc.version>3.5.0</freg-security-oidc.version>
-        <freg.property.version>1.2.0</freg.property.version>
-        <freg-spring-boot-starters.version>2.1.0</freg-spring-boot-starters.version>
+        <freg-security.version>2c24d35d</freg-security.version>
         <springfox.version>2.9.2</springfox.version>
-        <kodeverk.version>1.2</kodeverk.version>
-        <jdbc.ojdbc.version>18.3.0.0</jdbc.ojdbc.version>
-        <jdbc.ucp.version>12.2.0.1</jdbc.ucp.version>
-        <jdbc.ons.version>12.2.0.1</jdbc.ons.version>
+        <jdbc.ojdbc.version>19.7.0.0</jdbc.ojdbc.version>
+        <jdbc.ucp.version>19.3.0.0</jdbc.ucp.version>
+        <jdbc.ons.version>19.3.0.0</jdbc.ons.version>
         <orika.version>1.5.2</orika.version>
         <cxf.version>3.3.4</cxf.version>
-        <modig-security.version>3.0.6</modig-security.version>
+<!--        <modig-security.version>3.0.6</modig-security.version>-->
         <ehcache-core.version>2.6.11</ehcache-core.version>
         <commons-collections4.version>4.1</commons-collections4.version>
         <jettison.version>1.4.0</jettison.version>
         <spring-cloud-contract.version>2.2.0.RELEASE</spring-cloud-contract.version>
         <fasit-util.version>3.1.2</fasit-util.version>
         <wiremock.version>2.24.0</wiremock.version>
-        <freg-metrics.version>1.0.0</freg-metrics.version>
-        <freg-security-test-oidc-tools.version>3.2.0</freg-security-test-oidc-tools.version>
         <sonar.exclusions>**/dolly/domain/**, **/dolly/regression/**, **/dolly/exceptions/**,**/main/dolly-web/**,
             **/dolly/testdata/builder/**
         </sonar.exclusions>
@@ -58,8 +53,14 @@
         <logstash-logback-encoder.version>5.1</logstash-logback-encoder.version>
     </properties>
 
-    <dependencies>
+    <repositories>
+        <repository>
+            <id>github-package-registry-navikt</id>
+            <url>https://maven.pkg.github.com/navikt/maven-release</url>
+        </repository>
+    </repositories>
 
+    <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -106,19 +107,14 @@
             <dependency>
                 <groupId>no.nav.freg</groupId>
                 <artifactId>freg-security-oidc</artifactId>
-                <version>${freg-security-oidc.version}</version>
+                <version>${freg-security.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>no.nav.freg</groupId>
-                <artifactId>freg-spring-boot-starter-log-exceptions</artifactId>
-                <version>${freg-spring-boot-starters.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>no.nav.tjenester</groupId>
-                <artifactId>kodeverk-api-v1</artifactId>
-                <version>${kodeverk.version}</version>
+                <artifactId>freg-security-test-oidc-tools</artifactId>
+                <version>${freg-security.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <dependency>
@@ -134,28 +130,28 @@
             </dependency>
 
             <dependency>
-                <groupId>com.oracle.jdbc</groupId>
+                <groupId>com.oracle.database.jdbc</groupId>
                 <artifactId>ojdbc8</artifactId>
                 <version>${jdbc.ojdbc.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.oracle</groupId>
+                <groupId>com.oracle.ojdbc</groupId>
                 <artifactId>ucp</artifactId>
                 <version>${jdbc.ucp.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.oracle</groupId>
+                <groupId>com.oracle.ojdbc</groupId>
                 <artifactId>ons</artifactId>
                 <version>${jdbc.ons.version}</version>
             </dependency>
 
-			<dependency>
-				<groupId>ma.glasnost.orika</groupId>
-				<artifactId>orika-core</artifactId>
-				<version>${orika.version}</version>
-			</dependency>
+            <dependency>
+                <groupId>ma.glasnost.orika</groupId>
+                <artifactId>orika-core</artifactId>
+                <version>${orika.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.codehaus.jettison</groupId>
@@ -175,31 +171,27 @@
                 <version>${cxf.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>no.nav.modig</groupId>
-                <artifactId>modig-security-ws</artifactId>
-                <version>${modig-security.version}</version>
-            </dependency>
+<!--            TODO Brukes denne? Finnes ikke utenfor utv image-->
+<!--            <dependency>-->
+<!--                <groupId>no.nav.modig</groupId>-->
+<!--                <artifactId>modig-security-ws</artifactId>-->
+<!--                <version>${modig-security.version}</version>-->
+<!--            </dependency>-->
+        </dependencies>
 
-            <dependency>
-                <groupId>no.nav.freg</groupId>
-                <artifactId>metrics-spring</artifactId>
-                <version>${freg-metrics.version}</version>
-            </dependency>
+    </dependencyManagement>
 
-            <dependency>
-                <groupId>no.nav.freg</groupId>
-                <artifactId>metrics-annotations</artifactId>
-                <version>${freg-metrics.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>no.nav.freg</groupId>
-                <artifactId>freg-property-reader</artifactId>
-                <version>${freg.property.version}</version>
-            </dependency>
-		</dependencies>
-
-	</dependencyManagement>
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <source>${java.version}</source>
+                    <release>11</release>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

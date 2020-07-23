@@ -2,7 +2,7 @@ apiVersion: nais.io/v1alpha1
 kind: Application
 metadata:
   name: dolly-backend
-  namespace: u2
+  namespace: default
   labels:
     team: registre
 spec:
@@ -11,7 +11,7 @@ spec:
     max: 2
   port: 8080
   ingresses:
-    - https://dolly-backend-u2.nais.preprod.local
+    - https://dolly-backend.nais.preprod.local
   liveness:
     path: /internal/isAlive
     initialDelay: 20
@@ -32,12 +32,13 @@ spec:
     limits:
       cpu: 1500m
       memory: 2048Mi
+  image: {{ image }}
   vault:
     enabled: true
     paths:
-      - kvPath: /kv/preprod/fss/dolly-backend/u2
+      - kvPath: /kv/preprod/fss/dolly-backend/default
         mountPath: /var/run/secrets/nais.io/vault
-      - kvPath: /oracle/data/dev/creds/dolly_u2-user
-        mountPath: /var/run/secrets/nais.io/db
-      - kvPath: /oracle/data/dev/config/dolly_u2
+      - kvPath: /oracle/data/dev/config/dolly_q1
         mountPath: /var/run/secrets/nais.io/dbPath
+      - kvPath: /oracle/data/dev/creds/dolly_q1-user
+        mountPath: /var/run/secrets/nais.io/db
