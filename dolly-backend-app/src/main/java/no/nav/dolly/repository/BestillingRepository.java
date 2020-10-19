@@ -1,14 +1,14 @@
 package no.nav.dolly.repository;
 
-import java.util.List;
-import java.util.Optional;
+import no.nav.dolly.domain.jpa.Bestilling;
+import no.nav.dolly.domain.jpa.Testgruppe;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 
-import no.nav.dolly.domain.jpa.Bestilling;
-import no.nav.dolly.domain.jpa.Testgruppe;
+import java.util.List;
+import java.util.Optional;
 
 public interface BestillingRepository extends Repository<Bestilling, Long> {
 
@@ -26,4 +26,7 @@ public interface BestillingRepository extends Repository<Bestilling, Long> {
     @Modifying
     @Query(value = "delete from Bestilling b where b.id = :bestillingId and not exists (select bp from BestillingProgress bp where bp.bestillingId = :bestillingId)")
     int deleteBestillingWithNoChildren(@Param("bestillingId") Long bestillingId);
+
+    @Query(value = "select * from T_BESTILLING order by ID desc offset :offset rows fetch first 50 rows only", nativeQuery = true)
+    Optional<List<Bestilling>> findLatestByIndeks(@Param("offset") Integer offset);
 }
