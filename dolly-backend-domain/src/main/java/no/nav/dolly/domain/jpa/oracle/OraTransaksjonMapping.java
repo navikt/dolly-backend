@@ -1,4 +1,4 @@
-package no.nav.dolly.domain.jpa;
+package no.nav.dolly.domain.jpa.oracle;
 
 import static no.nav.dolly.domain.jpa.HibernateConstants.SEQUENCE_STYLE_GENERATOR;
 
@@ -23,13 +23,13 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "TRANSAKSJON_MAPPING")
-public class TransaksjonMapping {
+@Table(name = "T_TRANSAKSJON_MAPPING")
+public class OraTransaksjonMapping {
 
     @Id
-    @GeneratedValue(generator = "transaksjonMappingIdGenerator")
-    @GenericGenerator(name = "transaksjonMappingIdGenerator", strategy = SEQUENCE_STYLE_GENERATOR, parameters = {
-            @Parameter(name = "sequence_name", value = "TRANSAKSJON_MAPPING_SEQ"),
+    @GeneratedValue(generator = "oraTransaksjonMappingIdGenerator")
+    @GenericGenerator(name = "oraTransaksjonMappingIdGenerator", strategy = SEQUENCE_STYLE_GENERATOR, parameters = {
+            @Parameter(name = "sequence_name", value = "T_TRANSAKSJON_MAPPING_SEQ"),
             @Parameter(name = "initial_value", value = "1"),
             @Parameter(name = "increment_size", value = "1")
     })
@@ -50,6 +50,6 @@ public class TransaksjonMapping {
     @Column(name = "TRANSAKSJON_ID")
     private String transaksjonId;
 
-    @Column(name = "DATO_ENDRET")
+    @Column(name="DATO_ENDRET")
     private LocalDateTime datoEndret;
 }

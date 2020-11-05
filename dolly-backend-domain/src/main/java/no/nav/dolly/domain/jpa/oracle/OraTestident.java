@@ -1,4 +1,4 @@
-package no.nav.dolly.domain.jpa;
+package no.nav.dolly.domain.jpa.oracle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +23,8 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "TEST_IDENT")
-public class Testident {
+@Table(name = "T_TEST_IDENT")
+public class OraTestident {
 
     @Id
     private String ident;
@@ -37,13 +37,13 @@ public class Testident {
 
     @ManyToOne
     @JoinColumn(name = "TILHOERER_GRUPPE", nullable = false)
-    private Testgruppe testgruppe;
+    private OraTestgruppe testgruppe;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "IDENT", referencedColumnName = "ident", insertable = false, updatable = false)
-    private List<BestillingProgress> bestillingProgress;
+    private List<OraBestillingProgress> bestillingProgress;
 
-    public List<BestillingProgress> getBestillingProgress() {
+    public List<OraBestillingProgress> getBestillingProgress() {
         if (bestillingProgress == null) {
             bestillingProgress = new ArrayList<>();
         }

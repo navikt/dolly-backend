@@ -1,4 +1,4 @@
-package no.nav.dolly.domain.jpa;
+package no.nav.dolly.domain.jpa.oracle;
 
 import static java.util.Objects.isNull;
 import static no.nav.dolly.domain.jpa.HibernateConstants.SEQUENCE_STYLE_GENERATOR;
@@ -31,13 +31,13 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "BESTILLING")
-public class Bestilling {
+@Table(name = "T_BESTILLING")
+public class OraBestilling {
 
     @Id
-    @GeneratedValue(generator = "bestillingIdGenerator")
-    @GenericGenerator(name = "bestillingIdGenerator", strategy = SEQUENCE_STYLE_GENERATOR, parameters = {
-            @Parameter(name = "sequence_name", value = "BESTILLING_SEQ"),
+    @GeneratedValue(generator = "oraBestillingIdGenerator")
+    @GenericGenerator(name = "oraBestillingIdGenerator", strategy = SEQUENCE_STYLE_GENERATOR, parameters = {
+            @Parameter(name = "sequence_name", value = "T_BESTILLING_SEQ"),
             @Parameter(name = "initial_value", value = "1"),
             @Parameter(name = "increment_size", value = "1")
     })
@@ -45,7 +45,7 @@ public class Bestilling {
 
     @ManyToOne
     @JoinColumn(name = "GRUPPE_ID", nullable = false)
-    private Testgruppe gruppe;
+    private OraTestgruppe gruppe;
 
     @Column(name = "FERDIG", nullable = false)
     private boolean ferdig;
@@ -89,7 +89,7 @@ public class Bestilling {
 
     @ManyToOne
     @JoinColumn(name = "BRUKER_ID", nullable = false)
-    private Bruker bruker;
+    private OraBruker bruker;
 
     @Column(name = "TPS_IMPORT")
     private String tpsImport;
@@ -98,9 +98,9 @@ public class Bestilling {
     private String kildeMiljoe;
 
     @OneToMany(mappedBy = "bestillingId", fetch = FetchType.LAZY)
-    private List<BestillingProgress> progresser;
+    private List<OraBestillingProgress> progresser;
 
-    public List<BestillingProgress> getProgresser() {
+    public List<OraBestillingProgress> getProgresser() {
         if (isNull(progresser)) {
             progresser = new ArrayList<>();
         }

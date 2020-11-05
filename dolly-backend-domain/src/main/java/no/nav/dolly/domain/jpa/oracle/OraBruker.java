@@ -1,4 +1,4 @@
-package no.nav.dolly.domain.jpa;
+package no.nav.dolly.domain.jpa.oracle;
 
 import static java.util.Objects.isNull;
 import static no.nav.dolly.domain.jpa.HibernateConstants.SEQUENCE_STYLE_GENERATOR;
@@ -32,13 +32,13 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "BRUKER")
-public class Bruker {
+@Table(name = "T_BRUKER")
+public class OraBruker {
 
     @Id
-    @GeneratedValue(generator = "brukerIdGenerator")
-    @GenericGenerator(name = "brukerIdGenerator", strategy = SEQUENCE_STYLE_GENERATOR, parameters = {
-            @Parameter(name = "sequence_name", value = "BRUKER_SEQ"),
+    @GeneratedValue(generator = "oraBrukerIdGenerator")
+    @GenericGenerator(name = "oraBrukerIdGenerator", strategy = SEQUENCE_STYLE_GENERATOR, parameters = {
+            @Parameter(name = "sequence_name", value = "T_BRUKER_SEQ"),
             @Parameter(name = "initial_value", value = "1"),
             @Parameter(name = "increment_size", value = "1")
     })
@@ -61,25 +61,25 @@ public class Bruker {
 
     @ManyToOne
     @JoinColumn(name = "EID_AV_ID")
-    private Bruker eidAv;
+    private OraBruker eidAv;
 
     @OneToMany(mappedBy = "opprettetAv")
-    private Set<Testgruppe> testgrupper;
+    private Set<OraTestgruppe> testgrupper;
 
     @ManyToMany
-    @JoinTable(name = "BRUKER_FAVORITTER",
+    @JoinTable(name = "T_BRUKER_FAVORITTER",
             joinColumns = @JoinColumn(name = "bruker_id"),
             inverseJoinColumns = @JoinColumn(name = "gruppe_id"))
-    private Set<Testgruppe> favoritter;
+    private Set<OraTestgruppe> favoritter;
 
-    public Set<Testgruppe> getFavoritter() {
+    public Set<OraTestgruppe> getFavoritter() {
         if (isNull(favoritter)) {
             favoritter = new HashSet<>();
         }
         return favoritter;
     }
 
-    public Set<Testgruppe> getTestgrupper() {
+    public Set<OraTestgruppe> getTestgrupper() {
         if (isNull(testgrupper)) {
             testgrupper = new HashSet<>();
         }
@@ -91,10 +91,10 @@ public class Bruker {
         if (this == o)
             return true;
 
-        if (!(o instanceof Bruker))
+        if (!(o instanceof OraBruker))
             return false;
 
-        Bruker bruker = (Bruker) o;
+        OraBruker bruker = (OraBruker) o;
 
         return new EqualsBuilder()
                 .append(getId(), bruker.getId())

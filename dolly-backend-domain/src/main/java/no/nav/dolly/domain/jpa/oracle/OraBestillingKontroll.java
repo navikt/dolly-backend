@@ -1,4 +1,4 @@
-package no.nav.dolly.domain.jpa;
+package no.nav.dolly.domain.jpa.oracle;
 
 import static no.nav.dolly.domain.jpa.HibernateConstants.SEQUENCE_STYLE_GENERATOR;
 
@@ -23,13 +23,13 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "BESTILLING_KONTROLL")
-public class BestillingKontroll {
+@Table(name = "T_BESTILLING_KONTROLL")
+public class OraBestillingKontroll {
 
     @Id
-    @GeneratedValue(generator = "bestillingKontrollIdGenerator")
-    @GenericGenerator(name = "bestillingKontrollIdGenerator", strategy = SEQUENCE_STYLE_GENERATOR, parameters = {
-            @Parameter(name = "sequence_name", value = "BESTILLING_KONTROLL_SEQ"),
+    @GeneratedValue(generator = "oraBestillingKontrollIdGenerator")
+    @GenericGenerator(name = "oraBestillingKontrollIdGenerator", strategy = SEQUENCE_STYLE_GENERATOR, parameters = {
+            @Parameter(name = "sequence_name", value = "T_BESTILLING_KONTROLL_SEQ"),
             @Parameter(name = "initial_value", value = "1"),
             @Parameter(name = "increment_size", value = "1")
     })

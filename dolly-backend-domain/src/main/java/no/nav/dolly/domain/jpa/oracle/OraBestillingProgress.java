@@ -1,4 +1,4 @@
-package no.nav.dolly.domain.jpa;
+package no.nav.dolly.domain.jpa.oracle;
 
 import static no.nav.dolly.domain.jpa.HibernateConstants.SEQUENCE_STYLE_GENERATOR;
 
@@ -21,14 +21,14 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "BESTILLING_PROGRESS")
+@Table(name = "T_BESTILLING_PROGRESS")
 @Builder
-public class BestillingProgress {
+public class OraBestillingProgress {
 
     @Id
-    @GeneratedValue(generator = "bestillingProgressIdGenerator")
-    @GenericGenerator(name = "bestillingProgressIdGenerator", strategy = SEQUENCE_STYLE_GENERATOR, parameters = {
-            @Parameter(name = "sequence_name", value = "BESTILLING_PROGRESS_SEQ"),
+    @GeneratedValue(generator = "oraBestillingProgressIdGenerator")
+    @GenericGenerator(name = "oraBestillingProgressIdGenerator", strategy = SEQUENCE_STYLE_GENERATOR, parameters = {
+            @Parameter(name = "sequence_name", value = "T_BESTILLING_PROGRESS_SEQ"),
             @Parameter(name = "initial_value", value = "1"),
             @Parameter(name = "increment_size", value = "1")
     })
@@ -88,7 +88,7 @@ public class BestillingProgress {
 
     private String feil;
 
-    public BestillingProgress(Long bestillingId, String ident) {
+    public OraBestillingProgress(Long bestillingId, String ident) {
         this.ident = ident;
         this.bestillingId = bestillingId;
     }

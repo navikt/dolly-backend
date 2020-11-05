@@ -1,4 +1,4 @@
-package no.nav.dolly.domain.jpa;
+package no.nav.dolly.domain.jpa.oracle;
 
 import static java.util.Objects.isNull;
 import static no.nav.dolly.domain.jpa.HibernateConstants.SEQUENCE_STYLE_GENERATOR;
@@ -34,13 +34,13 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "GRUPPE")
-public class Testgruppe {
+@Table(name = "T_GRUPPE")
+public class OraTestgruppe {
 
     @Id
-    @GeneratedValue(generator = "gruppeIdGenerator")
-    @GenericGenerator(name = "gruppeIdGenerator", strategy = SEQUENCE_STYLE_GENERATOR, parameters = {
-            @Parameter(name = "sequence_name", value = "GRUPPE_SEQ"),
+    @GeneratedValue(generator = "oraGruppeIdGenerator")
+    @GenericGenerator(name = "oraGruppeIdGenerator", strategy = SEQUENCE_STYLE_GENERATOR, parameters = {
+            @Parameter(name = "sequence_name", value = "T_GRUPPE_SEQ"),
             @Parameter(name = "initial_value", value = "1"),
             @Parameter(name = "increment_size", value = "1")
     })
@@ -54,25 +54,25 @@ public class Testgruppe {
 
     @ManyToOne
     @JoinColumn(name = "OPPRETTET_AV", nullable = false)
-    private Bruker opprettetAv;
+    private OraBruker opprettetAv;
 
     @ManyToOne
     @JoinColumn(name = "SIST_ENDRET_AV", nullable = false)
-    private Bruker sistEndretAv;
+    private OraBruker sistEndretAv;
 
     @Column(name = "DATO_ENDRET", nullable = false)
     private LocalDate datoEndret;
 
     @OneToMany(mappedBy = "testgruppe", fetch = FetchType.LAZY)
     @Column(unique = true)
-    private Set<Testident> testidenter;
+    private Set<OraTestident> testidenter;
 
     @ManyToMany(mappedBy = "favoritter", fetch = FetchType.LAZY)
-    private Set<Bruker> favorisertAv;
+    private Set<OraBruker> favorisertAv;
 
     @OrderBy("id")
     @OneToMany(mappedBy = "gruppe", fetch = FetchType.LAZY)
-    private Set<Bestilling> bestillinger;
+    private Set<OraBestilling> bestillinger;
 
     @Column(name = "ER_LAAST")
     private Boolean erLaast;
@@ -80,14 +80,14 @@ public class Testgruppe {
     @Column(name = "LAAST_BESKRIVELSE")
     private String laastBeskrivelse;
 
-    public Set<Testident> getTestidenter() {
+    public Set<OraTestident> getTestidenter() {
         if (isNull(testidenter)) {
             testidenter = new HashSet<>();
         }
         return testidenter;
     }
 
-    public Set<Bruker> getFavorisertAv() {
+    public Set<OraBruker> getFavorisertAv() {
         if (isNull(favorisertAv)) {
             favorisertAv = new HashSet<>();
         }
@@ -99,10 +99,10 @@ public class Testgruppe {
         if (this == o)
             return true;
 
-        if (!(o instanceof Testgruppe))
+        if (!(o instanceof OraTestgruppe))
             return false;
 
-        Testgruppe that = (Testgruppe) o;
+        OraTestgruppe that = (OraTestgruppe) o;
 
         return new EqualsBuilder()
                 .append(getId(), that.getId())
