@@ -1,6 +1,6 @@
 package no.nav.dolly.domain.jpa.oracle;
 
-import static no.nav.dolly.domain.jpa.HibernateConstants.SEQUENCE_STYLE_GENERATOR;
+import static no.nav.dolly.domain.jpa.postgres.HibernateConstants.SEQUENCE_STYLE_GENERATOR;
 
 import java.time.LocalDateTime;
 import javax.persistence.Column;

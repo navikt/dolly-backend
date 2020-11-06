@@ -1,4 +1,4 @@
-package no.nav.dolly.domain.jpa;
+package no.nav.dolly.domain.jpa.postgres;
 
 import java.util.ArrayList;
 import java.util.List;

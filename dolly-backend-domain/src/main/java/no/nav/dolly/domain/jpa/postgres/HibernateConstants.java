@@ -1,4 +1,4 @@
-package no.nav.dolly.domain.jpa;
+package no.nav.dolly.domain.jpa.postgres;
 
 import lombok.experimental.UtilityClass;
 

@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages = { "no.nav.dolly.repository" }
+        basePackages = { "no.nav.dolly.repository.postgres" }
 )
 public class PostgreDatabaseConfiguration {
 
@@ -51,7 +51,7 @@ public class PostgreDatabaseConfiguration {
     ) {
         return builder
                 .dataSource(dataSource)
-                .packages("no.nav.dolly.domain.jpa")
+                .packages("no.nav.dolly.domain.jpa.postgres")
                 .persistenceUnit("Postgres")
                 .build();
     }

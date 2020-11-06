@@ -1,4 +1,4 @@
-package no.nav.dolly.repository;
+package no.nav.dolly.repository.postgres;
 
 import java.util.Collection;
 import java.util.List;
@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 
-import no.nav.dolly.domain.jpa.Bruker;
+import no.nav.dolly.domain.jpa.postgres.Bruker;
 
 public interface BrukerRepository extends Repository<Bruker, Long> {
 
