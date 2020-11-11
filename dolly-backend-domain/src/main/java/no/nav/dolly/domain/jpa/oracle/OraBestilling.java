@@ -122,7 +122,7 @@ public class OraBestilling {
 
     public List<OraTransaksjonMapping> getTransaksjonmapping() {
         if (isNull(transaksjonmapping)) {
-            transaksjonmapping = transaksjonmapping;
+            transaksjonmapping = new ArrayList<>();
         }
         return transaksjonmapping;
     }

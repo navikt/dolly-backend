@@ -26,7 +26,7 @@ public class MigrateDatabase {
         } else {
             log.info("Migrering av database starter");
 
-            migrationServices.forEach(migrationService -> migrationService.migrate());
+            migrationServices.forEach(MigrationService::migrate);
 
             log.info(("Migrering ferdig"));
         }
