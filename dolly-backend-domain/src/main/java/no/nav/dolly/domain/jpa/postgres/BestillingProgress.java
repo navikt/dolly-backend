@@ -34,6 +34,7 @@ public class BestillingProgress {
     })
     private Long id;
 
+    @Column(name = "BESTILLING_ID")
     private Long bestillingId;
 
     private String ident;

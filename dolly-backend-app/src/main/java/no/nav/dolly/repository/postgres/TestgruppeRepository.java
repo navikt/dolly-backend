@@ -11,6 +11,8 @@ public interface TestgruppeRepository extends Repository<Testgruppe, Long> {
 
     Optional<Testgruppe> findById(Long id);
 
+    List<Testgruppe> findAllByOrderById();
+
     List<Testgruppe> findAllById(Iterable<Long> ids);
 
     Testgruppe save(Testgruppe testgruppe);

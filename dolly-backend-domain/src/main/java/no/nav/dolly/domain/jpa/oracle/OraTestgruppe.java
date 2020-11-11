@@ -63,7 +63,7 @@ public class OraTestgruppe {
     @Column(name = "DATO_ENDRET", nullable = false)
     private LocalDate datoEndret;
 
-    @OneToMany(mappedBy = "testgruppe", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "testgruppe", fetch = FetchType.EAGER)
     @Column(unique = true)
     private Set<OraTestident> testidenter;
 
@@ -128,6 +128,17 @@ public class OraTestgruppe {
                 .append(getErLaast())
                 .append(getLaastBeskrivelse())
                 .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Testgruppe{" +
+                "navn='" + navn + '\'' +
+                ", hensikt='" + hensikt + '\'' +
+                ", datoEndret=" + datoEndret +
+                ", erLaast=" + erLaast +
+                ", laastBeskrivelse='" + laastBeskrivelse + '\'' +
+                '}';
     }
 }
 

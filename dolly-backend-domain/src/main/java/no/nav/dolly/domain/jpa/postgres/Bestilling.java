@@ -100,10 +100,23 @@ public class Bestilling {
     @OneToMany(mappedBy = "bestillingId", fetch = FetchType.LAZY)
     private List<BestillingProgress> progresser;
 
+    @OneToMany(mappedBy = "bestillingId", fetch = FetchType.LAZY)
+    private List<BestillingKontroll> kontroller;
+
+    @OneToMany(mappedBy = "bestillingId", fetch = FetchType.LAZY)
+    private List<TransaksjonMapping> transaksjonmapping;
+
     public List<BestillingProgress> getProgresser() {
         if (isNull(progresser)) {
             progresser = new ArrayList<>();
         }
         return progresser;
+    }
+
+    public List<BestillingKontroll> getKontroller() {
+        if (isNull(kontroller)) {
+            kontroller = new ArrayList<>();
+        }
+        return kontroller;
     }
 }

@@ -34,6 +34,7 @@ import no.nav.dolly.domain.resultset.RsDollyBestillingLeggTilPaaGruppe;
 import no.nav.dolly.domain.resultset.RsDollyBestillingRequest;
 import no.nav.dolly.domain.resultset.RsDollyImportFraTpsRequest;
 import no.nav.dolly.domain.resultset.entity.bestilling.RsBestillingStatus;
+import no.nav.dolly.domain.resultset.entity.testgruppe.RsLockTestgruppe;
 import no.nav.dolly.domain.resultset.entity.testgruppe.RsOpprettEndreTestgruppe;
 import no.nav.dolly.domain.resultset.entity.testgruppe.RsTestgruppe;
 import no.nav.dolly.domain.resultset.entity.testgruppe.RsTestgruppeMedBestillingId;
@@ -68,9 +69,8 @@ public class TestgruppeController {
     @PutMapping(value = "/{gruppeId}/laas")
     @Operation(description = "Oppdater testgruppe Laas")
     public RsTestgruppe oppdaterTestgruppeLaas(@PathVariable("gruppeId") Long gruppeId,
-            Boolean erLaast,
-            String laastBeskrivelse) {
-        Testgruppe gruppe = testgruppeService.oppdaterTestgruppeMedLaas(gruppeId, erLaast, laastBeskrivelse);
+            @RequestBody RsLockTestgruppe lockTestgruppe) {
+        Testgruppe gruppe = testgruppeService.oppdaterTestgruppeMedLaas(gruppeId, lockTestgruppe);
         return mapperFacade.map(gruppe, RsTestgruppe.class);
     }
 

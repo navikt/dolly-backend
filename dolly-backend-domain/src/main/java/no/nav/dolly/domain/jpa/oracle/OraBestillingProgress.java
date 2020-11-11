@@ -34,6 +34,7 @@ public class OraBestillingProgress {
     })
     private Long id;
 
+    @Column(name = "BESTILLING_ID")
     private Long bestillingId;
 
     private String ident;
@@ -87,10 +88,4 @@ public class OraBestillingProgress {
     private String tpsImportStatus;
 
     private String feil;
-
-    public OraBestillingProgress(Long bestillingId, String ident) {
-        this.ident = ident;
-        this.bestillingId = bestillingId;
-    }
-
 }

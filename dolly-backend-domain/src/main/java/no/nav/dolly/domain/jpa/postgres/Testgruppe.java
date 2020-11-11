@@ -129,5 +129,16 @@ public class Testgruppe {
                 .append(getLaastBeskrivelse())
                 .toHashCode();
     }
+
+    @Override
+    public String toString() {
+        return "Testgruppe{" +
+                "navn='" + navn + '\'' +
+                ", hensikt='" + hensikt + '\'' +
+                ", datoEndret=" + datoEndret +
+                ", erLaast=" + erLaast +
+                ", laastBeskrivelse='" + laastBeskrivelse + '\'' +
+                '}';
+    }
 }
 

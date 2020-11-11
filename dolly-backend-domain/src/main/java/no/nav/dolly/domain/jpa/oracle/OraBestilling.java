@@ -100,10 +100,30 @@ public class OraBestilling {
     @OneToMany(mappedBy = "bestillingId", fetch = FetchType.LAZY)
     private List<OraBestillingProgress> progresser;
 
+    @OneToMany(mappedBy = "bestillingId", fetch = FetchType.LAZY)
+    private List<OraBestillingKontroll> kontroller;
+
+    @OneToMany(mappedBy = "bestillingId", fetch = FetchType.LAZY)
+    private List<OraTransaksjonMapping> transaksjonmapping;
+
     public List<OraBestillingProgress> getProgresser() {
         if (isNull(progresser)) {
             progresser = new ArrayList<>();
         }
         return progresser;
+    }
+
+    public List<OraBestillingKontroll> getKontroller() {
+        if (isNull(kontroller)) {
+            kontroller = new ArrayList<>();
+        }
+        return kontroller;
+    }
+
+    public List<OraTransaksjonMapping> getTransaksjonmapping() {
+        if (isNull(transaksjonmapping)) {
+            transaksjonmapping = transaksjonmapping;
+        }
+        return transaksjonmapping;
     }
 }
