@@ -10,9 +10,9 @@ public class ApplicationStarter extends SpringBootServletInitializer {
 
         Map<String, Object> properties = PropertyReader.builder()
                 .readSecret("spring.cloud.vault.token", "/var/run/secrets/nais.io/vault/vault_token")
-                .readSecret("ORACLE_DATASOURCE_USERNAME", "/var/run/secrets/nais.io/db/username")
-                .readSecret("ORACLE_DATASOURCE_PASSWORD", "/var/run/secrets/nais.io/db/password")
-                .readSecret("ORACLE_DATASOURCE_URL", "/var/run/secrets/nais.io/dbPath/jdbc_url")
+                .readSecret("oracle.datasource.username", "/var/run/secrets/nais.io/db/username")
+                .readSecret("oracle.datasource.password", "/var/run/secrets/nais.io/db/password")
+                .readSecret("dolly.datasource.jdbc_url", "/var/run/secrets/nais.io/dbPath/jdbc_url")
                 .build();
 
         new SpringApplicationBuilder()
