@@ -1,7 +1,7 @@
 package no.nav.dolly.dbmigrate;
 
 import java.util.List;
-import javax.annotation.PostConstruct;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -12,14 +12,13 @@ import no.nav.dolly.repository.postgres.BrukerRepository;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class MigrateDatabase {
+public class MigrateDatabase implements InitializingBean {
 
     private final List<MigrationService> migrationServices;
     private final BrukerRepository brukerRepository;
 
-    @PostConstruct
-    public void init() {
-
+    @Override
+    public void afterPropertiesSet() {
         if (!brukerRepository.findAllByOrderById().isEmpty()) {
             log.info("Database er migrert");
 

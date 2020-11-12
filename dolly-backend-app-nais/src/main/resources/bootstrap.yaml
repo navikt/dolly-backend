@@ -1,16 +1,28 @@
-spring.cloud.vault:
-  enabled: true
-  host: vault.adeo.no
-  port: 443
-  connection-timeout: 15000
-  read-timeout: 30000
-  application-name: preprod/fss/dolly-backend
+spring:
+  flyway:
+    enabled: true # Disabled by default as you should probably think twice before running Flyway-migrations
+    locations: classpath:db/migration/postgres
+    baseline-on-migrate: true
+  datasource:
+    url: jdbc:postgresql://${postgresql.database.host}:${postgresql.database.port}/${postgresql.database.name}
+    hikari:
+      maximum-pool-size: 3
+      minimum-idle: 1
 
-  authentication: TOKEN
+  cloud:
+    vault:
+      enabled: true
+      host: vault.adeo.no
+      port: 443
+      connection-timeout: 15000
+      read-timeout: 30000
+      application-name: preprod/fss/dolly-backend
 
-  generic:
-    enabled: false
-  database:
-    enabled: true
-    role: brreg-stub-admin
-    backend: postgresql/preprod-fss
+      authentication: TOKEN
+
+      generic:
+        enabled: false
+      database:
+        enabled: true
+        role: ${postgresql.database.name}-admin
+        backend: postgresql/preprod-fss

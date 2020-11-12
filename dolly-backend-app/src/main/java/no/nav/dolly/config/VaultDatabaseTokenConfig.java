@@ -1,4 +1,4 @@
-package no.nav.dolly.local;
+package no.nav.dolly.config;
 
 import static java.lang.String.format;
 
@@ -7,8 +7,6 @@ import org.springframework.boot.autoconfigure.flyway.FlywayConfigurationCustomiz
 import org.springframework.cloud.vault.config.databases.VaultDatabaseProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.vault.annotation.VaultPropertySource;
 import org.springframework.vault.core.lease.SecretLeaseContainer;
 import org.springframework.vault.core.lease.domain.RequestedSecret;
 import org.springframework.vault.core.lease.event.SecretLeaseCreatedEvent;
@@ -19,15 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
-@Profile("local")
 @RequiredArgsConstructor
-@VaultPropertySource(value = "kv/preprod/fss/dolly-backend/local", ignoreSecretNotFound = false)
-@VaultPropertySource(value = "serviceuser/dev/srvfregdolly", propertyNamePrefix = "jira.", ignoreSecretNotFound = false)
-@VaultPropertySource(value = "serviceuser/test/srvdolly-backend", propertyNamePrefix = "credentials.test.", ignoreSecretNotFound = false)
-@VaultPropertySource(value = "serviceuser/dev/srvdolly-preprod-env", propertyNamePrefix = "credentials.preprod.", ignoreSecretNotFound = false)
-@VaultPropertySource(value = "oracle/dev/creds/dolly_t1-user", propertyNamePrefix = "oracle.datasource.", ignoreSecretNotFound = false)
-@VaultPropertySource(value = "oracle/dev/config/dolly_t1", propertyNamePrefix = "dolly.datasource.", ignoreSecretNotFound = false)
-class VaultConfig implements InitializingBean {
+class VaultDatabaseTokenConfig implements InitializingBean {
 
     private final SecretLeaseContainer container;
     private final HikariDataSource hikariDataSource;
