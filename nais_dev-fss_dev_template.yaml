@@ -42,13 +42,6 @@ spec:
     limits:
       cpu: 1500m
       memory: 2048Mi
-  env:
-    - name: POSTGRESQL_DATABASE_HOST
-      value: b27dbvl023.preprod.local
-    - name: POSTGRESQL_DATABASE_PORT
-      value: 5432
-    - name: POSTGRESQL_DATABASE_NAME
-      value: dolly-dev
   vault:
     enabled: true
     paths:
