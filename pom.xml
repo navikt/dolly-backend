@@ -46,6 +46,7 @@
     </modules>
 
     <properties>
+        <start-class>no.nav.dolly.ApplicationStarter</start-class>
         <application.name>dolly-backend</application.name>
         <application.version>${project.version}</application.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
