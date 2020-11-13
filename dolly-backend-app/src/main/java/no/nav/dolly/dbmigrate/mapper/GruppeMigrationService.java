@@ -43,7 +43,7 @@ public class GruppeMigrationService implements MigrationService {
             testgruppe.getTestidenter().forEach(testIdent ->
                     identRepository.save(mapTestident(testIdent, gruppe)));
         });
-        log.info("Migerert gruppe og testIdent");
+        log.info("Migrert gruppe og testIdent");
     }
 
     private static Testgruppe mapTestgruppe(OraTestgruppe testgruppe, Map<String, Bruker> brukere) {

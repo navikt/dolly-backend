@@ -1,5 +1,7 @@
 package no.nav.dolly.dbmigrate.mapper;
 
+import static org.apache.logging.log4j.util.Strings.isNotBlank;
+
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.core.annotation.Order;
@@ -63,7 +65,7 @@ public class BestillingMigrationService implements MigrationService {
                     transaksjonMappingRepository.save(mapTransaksjon(transaksjon, bestResultat.getId())));
         });
 
-        log.info("Migerert bestilling, bestillingProgress, bestillingKontroll og transaksjonMapping del I");
+        log.info("Migrert bestilling, bestillingProgress, bestillingKontroll og transaksjonMapping del I");
     }
 
     private static Bestilling mapBestilling(OraBestilling bestilling, Map<String, Bruker> brukere, Map<String, Testgruppe> grupper) {
@@ -93,9 +95,9 @@ public class BestillingMigrationService implements MigrationService {
 
         return BestillingProgress.builder()
                 .bestillingId(bestillingId)
-                .tpsfSuccessEnv(progress.getTpsfSuccessEnv())
+                .tpsfSuccessEnv(removeNullChar(progress.getTpsfSuccessEnv()))
                 .sigrunstubStatus(progress.getSigrunstubStatus())
-                .feil(progress.getFeil())
+                .feil(removeNullChar(progress.getFeil()))
                 .ident(progress.getIdent())
                 .krrstubStatus(progress.getKrrstubStatus())
                 .aaregStatus(progress.getAaregStatus())
@@ -132,5 +134,10 @@ public class BestillingMigrationService implements MigrationService {
                 .system(transMap.getSystem())
                 .transaksjonId(transMap.getTransaksjonId())
                 .build();
+    }
+
+    private static String removeNullChar(String value) {
+
+        return isNotBlank(value) ? value.replace("\u0000", "") : null;
     }
 }

@@ -47,7 +47,7 @@ public class BrukerMigrationService implements MigrationService {
                 brukerRepository.save(brukerMedRelasjon);
             }
         });
-        log.info("Migerert bruker med relasjoner");
+        log.info("Migrert bruker med relasjoner");
     }
 
     private static Bruker mapBruker(OraBruker bruker) {
