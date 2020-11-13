@@ -35,7 +35,7 @@ spec:
   prometheus:
     enabled: true
     path: /internal/metrics
-  resource
+  resources:
     requests:
       cpu: 1000m
       memory: 1024Mi
