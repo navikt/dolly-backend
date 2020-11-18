@@ -5,7 +5,6 @@ import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.domain.jpa.BestillingProgress;
 import no.nav.dolly.domain.jpa.TransaksjonMapping;
 import no.nav.dolly.domain.resultset.SystemTyper;
-import no.nav.dolly.repository.BestillingProgressRepository;
 import no.nav.dolly.repository.TransaksjonMappingRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -52,6 +51,14 @@ public class TransaksjonMappingService {
     public boolean existAlready(SystemTyper system, String ident, String miljoe) {
 
         return transaksjonMappingRepository.findAllBySystemAndIdent(system.name(), ident)
+                .orElse(emptyList())
+                .stream()
+                .anyMatch(mapping -> miljoe.equals(mapping.getMiljoe()));
+    }
+
+    public boolean existAlreadyOrg(SystemTyper system, String organisasjon, String miljoe) {
+
+        return transaksjonMappingRepository.findAllBySystemAndOrgnr(system.name(), organisasjon)
                 .orElse(emptyList())
                 .stream()
                 .anyMatch(mapping -> miljoe.equals(mapping.getMiljoe()));
