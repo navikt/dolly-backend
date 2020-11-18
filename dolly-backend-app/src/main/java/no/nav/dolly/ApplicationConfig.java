@@ -2,10 +2,6 @@ package no.nav.dolly;
 
 import lombok.RequiredArgsConstructor;
 import no.nav.dolly.config.ForkJoinWorkerThreadFactory;
-import no.nav.dolly.config.RemoteApplicationsProperties;
-import no.nav.dolly.config.filters.AddAuthorizationToRouteFilter;
-import no.nav.dolly.security.TokenService;
-import no.nav.dolly.security.domain.AccessScopes;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -13,7 +9,6 @@ import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,16 +17,12 @@ import org.springframework.web.client.RestTemplate;
 import java.net.ProxySelector;
 import java.util.concurrent.ForkJoinPool;
 
-@EnableZuulProxy
 @SpringBootApplication
 @RequiredArgsConstructor
 public class ApplicationConfig {
 
     private static final int TIMEOUT = 300_000;
     private static final int THREADS_COUNT = 10;
-
-    private final RemoteApplicationsProperties properties;
-    private final TokenService tokenService;
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
@@ -60,20 +51,8 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public AddAuthorizationToRouteFilter helsepersonellApiAddAuthorizationToRouteFilter() {
-        return createFilterFrom("testnorge-helsepersonell-api");
-    }
-
-    @Bean
     public ForkJoinPool dollyForkJoinPool() {
 
         return new ForkJoinPool(THREADS_COUNT, new ForkJoinWorkerThreadFactory(), null, true);
-    }
-
-    private AddAuthorizationToRouteFilter createFilterFrom(String route) {
-        return new AddAuthorizationToRouteFilter(
-                () -> tokenService.getAccessToken(new AccessScopes(properties.get(route))).getTokenValue(),
-                route
-        );
     }
 }

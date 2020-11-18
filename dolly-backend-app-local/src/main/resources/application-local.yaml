@@ -1,6 +1,6 @@
+CLIENT_ID: dummy
+CLIENT_SECRET: dummy
 
-azure.app.client.id: dummy
-azure.app.client.secret: dummy
 providers:
   tpsf:
     url: https://tps-forvalteren-u2.nais.preprod.local

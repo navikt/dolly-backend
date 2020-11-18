@@ -20,7 +20,7 @@ import java.net.URI;
 
 @Slf4j
 @Service
-class OnBehalfOfGenerateAccessTokenService {
+public class OnBehalfOfGenerateAccessTokenService {
     private final WebClient webClient;
     private final AuthenticationTokenResolver tokenResolver;
     private final ClientCredential clientCredential;
