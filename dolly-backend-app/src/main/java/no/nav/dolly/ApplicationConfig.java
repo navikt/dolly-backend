@@ -1,6 +1,5 @@
 package no.nav.dolly;
 
-import lombok.RequiredArgsConstructor;
 import no.nav.dolly.config.ForkJoinWorkerThreadFactory;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
@@ -18,7 +17,6 @@ import java.net.ProxySelector;
 import java.util.concurrent.ForkJoinPool;
 
 @SpringBootApplication
-@RequiredArgsConstructor
 public class ApplicationConfig {
 
     private static final int TIMEOUT = 300_000;

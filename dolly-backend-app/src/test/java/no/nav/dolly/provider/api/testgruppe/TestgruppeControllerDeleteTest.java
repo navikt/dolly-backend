@@ -9,17 +9,23 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import no.nav.dolly.domain.jpa.postgres.Testgruppe;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 
 @DisplayName("DELETE /api/v1/gruppe")
 @EnableAutoConfiguration(exclude = { SecurityAutoConfiguration.class,
         OAuth2ResourceServerAutoConfiguration.class,
+        OAuth2ClientAutoConfiguration.class,
         ManagementWebSecurityAutoConfiguration.class })
+@AutoConfigureMockMvc(addFilters = false)
 public class TestgruppeControllerDeleteTest extends TestgruppeTestBase {
 
     @Test
