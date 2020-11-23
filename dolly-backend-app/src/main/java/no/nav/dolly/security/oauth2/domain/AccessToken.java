@@ -1,4 +1,4 @@
-package no.nav.dolly.security.domain;
+package no.nav.dolly.security.oauth2.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

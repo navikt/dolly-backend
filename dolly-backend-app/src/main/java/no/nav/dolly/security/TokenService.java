@@ -1,8 +1,9 @@
 package no.nav.dolly.security;
 
 import lombok.RequiredArgsConstructor;
-import no.nav.dolly.security.domain.AccessScopes;
-import no.nav.dolly.security.domain.AccessToken;
+import no.nav.dolly.security.oauth2.domain.AccessScopes;
+import no.nav.dolly.security.oauth2.domain.AccessToken;
+import no.nav.dolly.security.oauth2.service.OnBehalfOfGenerateAccessTokenService;
 import org.springframework.stereotype.Service;
 
 @Service

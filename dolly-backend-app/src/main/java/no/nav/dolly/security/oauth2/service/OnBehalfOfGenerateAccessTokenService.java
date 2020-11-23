@@ -1,10 +1,10 @@
-package no.nav.dolly.security;
+package no.nav.dolly.security.oauth2.service;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dolly.security.domain.AccessScopes;
-import no.nav.dolly.security.domain.AccessToken;
-import no.nav.dolly.security.domain.ClientCredential;
 import no.nav.dolly.security.domain.DollyBackendClientCredential;
+import no.nav.dolly.security.oauth2.domain.AccessScopes;
+import no.nav.dolly.security.oauth2.domain.AccessToken;
+import no.nav.dolly.security.oauth2.domain.ClientCredential;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

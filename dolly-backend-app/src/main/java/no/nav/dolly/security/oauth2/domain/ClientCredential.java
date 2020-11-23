@@ -1,9 +1,9 @@
-package no.nav.dolly.security.domain;
+package no.nav.dolly.security.oauth2.domain;
 
 import lombok.Data;
 
 @Data
-public abstract class ClientCredential {
+public class ClientCredential {
     final String clientId;
     final String clientSecret;
 

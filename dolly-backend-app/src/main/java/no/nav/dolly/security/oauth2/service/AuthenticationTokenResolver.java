@@ -1,4 +1,4 @@
-package no.nav.dolly.security;
+package no.nav.dolly.security.oauth2.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-class AuthenticationTokenResolver {
+public class AuthenticationTokenResolver {
 
     private final OAuth2AuthorizedClientService clientService;
 

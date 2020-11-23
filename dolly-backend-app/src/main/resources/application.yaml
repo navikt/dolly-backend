@@ -33,27 +33,7 @@ spring:
     allow-bean-definition-overriding: true
   datasource:
     driver-class-name: oracle.jdbc.OracleDriver
-  security:
-    oauth2:
-      client:
-        registration:
-          aad:
-            client-id: ${CLIENT_ID}
-            client-secret: ${CLIENT_SECRET}
-            authorization-grant-type: authorization_code
-            redirect-uri: '{baseUrl}/login/oauth2/code/{registrationId}'
-            scope: openid, ${CLIENT_ID}/.default
-        provider:
-          aad:
-            authorization-uri: ${AAD_ISSUER_URI}/oauth2/v2.0/authorize
-            token-uri: ${AAD_ISSUER_URI}/oauth2/v2.0/token
-            jwk-set-uri: ${AAD_ISSUER_URI}/discovery/v2.0/keys
 
-      resourceserver:
-        jwt:
-          issuer-uri: https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/v2.0
-          #The client_id of this application
-          accepted-audience: ${CLIENT_ID}, api://${CLIENT_ID}
 
 management:
   endpoints:

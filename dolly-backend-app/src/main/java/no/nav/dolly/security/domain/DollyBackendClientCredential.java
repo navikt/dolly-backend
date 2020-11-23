@@ -1,5 +1,6 @@
 package no.nav.dolly.security.domain;
 
+import no.nav.dolly.security.oauth2.domain.ClientCredential;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
