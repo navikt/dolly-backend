@@ -16,6 +16,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.apache.http.entity.ContentType;
@@ -147,7 +148,7 @@ public class TestgruppeServiceTest {
 
         when(brukerService.fetchBruker(any())).thenReturn(bruker);
 
-        Set<Testgruppe> grupper = testgruppeService.fetchTestgrupperByBrukerId(BRUKERID);
+        List<Testgruppe> grupper = testgruppeService.fetchTestgrupperByBrukerId(BRUKERID);
 
         assertThat(grupper, hasItem(hasProperty("id", equalTo(1L))));
         assertThat(grupper, hasItem(hasProperty("id", equalTo(2L))));

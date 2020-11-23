@@ -6,6 +6,7 @@ import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -70,7 +71,7 @@ public class TestgruppeService {
         throw new NotFoundException("Finner ikke grupper basert på IDer : " + grupperIDer);
     }
 
-    public Set<Testgruppe> fetchTestgrupperByBrukerId(String brukerId) {
+    public List<Testgruppe> fetchTestgrupperByBrukerId(String brukerId) {
         Bruker bruker = brukerService.fetchBruker(brukerId);
         List<Bruker> eidAvBruker = brukerService.fetchEidAv(bruker);
         eidAvBruker.add(bruker);
@@ -79,7 +80,7 @@ public class TestgruppeService {
         Set<Testgruppe> favoritter = eidAvBruker.stream().map(Bruker::getFavoritter).flatMap(Collection::stream).collect(Collectors.toSet());
         testgrupper.addAll(favoritter);
 
-        return testgrupper;
+        return new ArrayList(testgrupper);
     }
 
     public Testgruppe saveGruppeTilDB(Testgruppe testgruppe) {
@@ -126,7 +127,7 @@ public class TestgruppeService {
         return saveGruppeTilDB(testgruppe);
     }
 
-    public Set<Testgruppe> getTestgruppeByBrukerId(String brukerId) {
+    public List<Testgruppe> getTestgruppeByBrukerId(String brukerId) {
 
         return isBlank(brukerId) ? testgruppeRepository.findAllByOrderByNavn() : fetchTestgrupperByBrukerId(brukerId);
     }

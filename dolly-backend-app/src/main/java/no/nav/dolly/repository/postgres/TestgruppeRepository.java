@@ -2,7 +2,6 @@ package no.nav.dolly.repository.postgres;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -19,7 +18,7 @@ public interface TestgruppeRepository extends PagingAndSortingRepository<Testgru
 
     Testgruppe save(Testgruppe testgruppe);
 
-    Set<Testgruppe> findAllByOrderByNavn();
+    List<Testgruppe> findAllByOrderByNavn();
 
     Page<Testgruppe> findAllByOrderByNavn(Pageable pageable);
 
