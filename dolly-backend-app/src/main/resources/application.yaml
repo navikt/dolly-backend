@@ -35,6 +35,10 @@ spring:
     driver-class-name: oracle.jdbc.OracleDriver
 
 
+oracle:
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+
 management:
   endpoints:
     enabled-by-default: true

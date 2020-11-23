@@ -11,6 +11,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 
+import no.nav.dolly.domain.jpa.postgres.Testgruppe;
+import no.nav.dolly.domain.resultset.entity.testgruppe.RsOpprettEndreTestgruppe;
 import java.util.LinkedHashMap;
 
 import static org.hamcrest.CoreMatchers.is;
