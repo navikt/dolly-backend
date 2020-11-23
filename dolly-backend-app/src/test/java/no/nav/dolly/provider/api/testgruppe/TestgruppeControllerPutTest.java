@@ -1,6 +1,6 @@
 package no.nav.dolly.provider.api.testgruppe;
 
-import no.nav.dolly.domain.jpa.Testgruppe;
+import no.nav.dolly.domain.jpa.postgres.Testgruppe;
 import no.nav.dolly.domain.resultset.entity.testgruppe.RsOpprettEndreTestgruppe;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -11,8 +11,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 
-import no.nav.dolly.domain.jpa.postgres.Testgruppe;
-import no.nav.dolly.domain.resultset.entity.testgruppe.RsOpprettEndreTestgruppe;
 import java.util.LinkedHashMap;
 
 import static org.hamcrest.CoreMatchers.is;
