@@ -6,7 +6,6 @@ import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -80,7 +79,7 @@ public class TestgruppeService {
         Set<Testgruppe> favoritter = eidAvBruker.stream().map(Bruker::getFavoritter).flatMap(Collection::stream).collect(Collectors.toSet());
         testgrupper.addAll(favoritter);
 
-        return new ArrayList(testgrupper);
+        return testgrupper.stream().collect(Collectors.toList());
     }
 
     public Testgruppe saveGruppeTilDB(Testgruppe testgruppe) {
