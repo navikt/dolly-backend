@@ -12,6 +12,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.NonTransientDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,8 @@ import no.nav.dolly.repository.postgres.TestgruppeRepository;
 @Service
 @RequiredArgsConstructor
 public class TestgruppeService {
+
+    private static final int PAGE_SIZE = 10;
 
     private final TestgruppeRepository testgruppeRepository;
     private final BrukerService brukerService;
@@ -51,6 +55,11 @@ public class TestgruppeService {
     public Testgruppe fetchTestgruppeById(Long gruppeId) {
         return testgruppeRepository.findById(gruppeId).orElseThrow(() ->
                 new NotFoundException(format("Gruppe med id %s ble ikke funnet.", gruppeId)));
+    }
+
+    public Page<Testgruppe> getAllTestgrupper(Integer pageNo) {
+
+        return testgruppeRepository.findAllByOrderByNavn(PageRequest.of(pageNo, PAGE_SIZE));
     }
 
     public List<Testgruppe> fetchGrupperByIdsIn(Collection<Long> grupperIDer) {
@@ -85,7 +94,9 @@ public class TestgruppeService {
 
     public List<Testgruppe> saveGrupper(Collection<Testgruppe> testgrupper) {
         try {
-            return testgruppeRepository.saveAll(testgrupper);
+            return testgrupper.stream()
+                    .map(gruppe -> testgruppeRepository.save(gruppe))
+                    .collect(Collectors.toList());
         } catch (DataIntegrityViolationException e) {
             throw new ConstraintViolationException("En Testgruppe DB constraint er brutt! Kan ikke lagre testgruppe. Error: " + e.getMessage(), e);
         } catch (NonTransientDataAccessException e) {

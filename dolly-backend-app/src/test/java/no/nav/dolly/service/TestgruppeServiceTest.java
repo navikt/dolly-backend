@@ -185,13 +185,13 @@ public class TestgruppeServiceTest {
 
     @Test(expected = ConstraintViolationException.class)
     public void saveGrupper_kasterExceptionHvisDBConstraintErBrutt() {
-        when(testgruppeRepository.saveAll(any())).thenThrow(DataIntegrityViolationException.class);
+        when(testgruppeRepository.save(any(Testgruppe.class))).thenThrow(DataIntegrityViolationException.class);
         testgruppeService.saveGrupper(new HashSet<>(singletonList(new Testgruppe())));
     }
 
     @Test(expected = DollyFunctionalException.class)
     public void saveGrupper_kasterDollyExceptionHvisDBConstraintErBrutt() {
-        when(testgruppeRepository.saveAll(any())).thenThrow(nonTransientDataAccessException);
+        when(testgruppeRepository.save(any(Testgruppe.class))).thenThrow(nonTransientDataAccessException);
         testgruppeService.saveGrupper(new HashSet<>(singletonList(new Testgruppe())));
     }
 

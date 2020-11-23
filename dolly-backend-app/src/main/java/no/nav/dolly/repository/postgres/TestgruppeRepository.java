@@ -3,11 +3,13 @@ package no.nav.dolly.repository.postgres;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import org.springframework.data.repository.Repository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import no.nav.dolly.domain.jpa.postgres.Testgruppe;
 
-public interface TestgruppeRepository extends Repository<Testgruppe, Long> {
+public interface TestgruppeRepository extends PagingAndSortingRepository<Testgruppe, Long> {
 
     Optional<Testgruppe> findById(Long id);
 
@@ -17,9 +19,9 @@ public interface TestgruppeRepository extends Repository<Testgruppe, Long> {
 
     Testgruppe save(Testgruppe testgruppe);
 
-    List<Testgruppe> saveAll(Iterable<Testgruppe> testgrupper);
-
     Set<Testgruppe> findAllByOrderByNavn();
+
+    Page<Testgruppe> findAllByOrderByNavn(Pageable pageable);
 
     int deleteTestgruppeById(Long id);
 }
