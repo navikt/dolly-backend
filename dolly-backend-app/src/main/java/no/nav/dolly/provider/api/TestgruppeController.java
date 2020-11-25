@@ -3,9 +3,10 @@ package no.nav.dolly.provider.api;
 import static no.nav.dolly.config.CachingConfig.CACHE_BESTILLING;
 import static no.nav.dolly.config.CachingConfig.CACHE_GRUPPE;
 
-import java.util.Set;
+import java.util.List;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,6 +39,7 @@ import no.nav.dolly.domain.resultset.entity.testgruppe.RsLockTestgruppe;
 import no.nav.dolly.domain.resultset.entity.testgruppe.RsOpprettEndreTestgruppe;
 import no.nav.dolly.domain.resultset.entity.testgruppe.RsTestgruppe;
 import no.nav.dolly.domain.resultset.entity.testgruppe.RsTestgruppeMedBestillingId;
+import no.nav.dolly.domain.resultset.entity.testgruppe.RsTestgruppePage;
 import no.nav.dolly.service.BestillingService;
 import no.nav.dolly.service.TestgruppeService;
 
@@ -94,9 +96,24 @@ public class TestgruppeController {
     @Cacheable(CACHE_GRUPPE)
     @GetMapping
     @Operation(description = "Hent testgrupper")
-    public Set<RsTestgruppe> getTestgrupper(
+    public List<RsTestgruppe> getTestgrupper(
             @RequestParam(name = "brukerId", required = false) String brukerId) {
-        return mapperFacade.mapAsSet(testgruppeService.getTestgruppeByBrukerId(brukerId), RsTestgruppe.class);
+        return mapperFacade.mapAsList(testgruppeService.getTestgruppeByBrukerId(brukerId), RsTestgruppe.class);
+    }
+
+    @Cacheable(CACHE_GRUPPE)
+    @GetMapping("/page/{pageNo}")
+    @Operation(description = "Hent testgrupper")
+    public RsTestgruppePage getTestgrupper(@PathVariable(value = "pageNo") Integer pageNo) {
+
+        Page<Testgruppe> page = testgruppeService.getAllTestgrupper(pageNo);
+        return RsTestgruppePage.builder()
+                .pageNo(page.getNumber())
+                .antallPages(page.getTotalPages())
+                .pageSize(page.getPageable().getPageSize())
+                .antallGrupper(page.getTotalElements())
+                .contents(mapperFacade.mapAsList(page.getContent(), RsTestgruppe.class))
+                .build();
     }
 
     @CacheEvict(value = CACHE_GRUPPE, allEntries = true)
