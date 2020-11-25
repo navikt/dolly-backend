@@ -8,6 +8,8 @@ AAD_ISSUER_URI: https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535
 CLIENT_ID: ${azure.app.client.id}
 CLIENT_SECRET: ${azure.app.client.secret}
 
+HELSEPERSONELL_CLIENT_ID: af686685-d25a-462a-a0ea-e2a348c457d3
+
 #### APP DB ####
 ? app.datasource.onsHosts
 
@@ -22,7 +24,7 @@ dolly:
     v1:
       name: Dolly V2.0
       description: Dolly er verktøyet som kloner GDPR testdata til ønsket miljø. </br>
-               Opprett fiktive testpersoner med arbeidsforhold, inntekter, sykemelding og annet i hht testbehov.
+        Opprett fiktive testpersoner med arbeidsforhold, inntekter, sykemelding og annet i hht testbehov.
       version: Versjon 1
       header:
         nav-consumer-id: Navn på applikasjon som gjør kallet
