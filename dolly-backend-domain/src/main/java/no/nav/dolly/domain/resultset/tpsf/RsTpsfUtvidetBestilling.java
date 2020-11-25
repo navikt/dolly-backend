@@ -1,15 +1,16 @@
 package no.nav.dolly.domain.resultset.tpsf;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import no.nav.dolly.domain.resultset.pdlforvalter.fullmakt.RsFullmaktRequest;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -38,4 +39,6 @@ public class RsTpsfUtvidetBestilling extends RsTpsfBasisMedSivilstandBestilling 
     private List<RsIdenthistorikk> identHistorikk;
 
     private RsVergemaalRequest vergemaal;
+
+    private RsFullmaktRequest fullmakt;
 }

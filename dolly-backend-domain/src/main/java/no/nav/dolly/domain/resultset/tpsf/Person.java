@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import no.nav.dolly.domain.resultset.fullmakt.RsFullmakt;
+import no.nav.dolly.domain.resultset.pdlforvalter.fullmakt.RsFullmakt;
 import no.nav.dolly.domain.resultset.tpsf.adresse.BoAdresse;
 import no.nav.dolly.domain.resultset.tpsf.adresse.IdentHistorikk;
 import no.nav.dolly.domain.resultset.tpsf.adresse.MidlertidigAdresse;
