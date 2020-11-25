@@ -39,7 +39,7 @@ class TestgruppeControllerPutTest extends TestgruppeTestBase {
 
     @Test
     @DisplayName("Returnerer HTTP 200 med feilmelding Not Found i body når Testgruppe ikke finnes")
-    void shouldReturnNotFoundWhenTestgruppeDontExist() {
+    void shouldFail404WhenTestgruppeDontExist() {
 
         RsOpprettEndreTestgruppe rsOpprettEndreTestgruppe = RsOpprettEndreTestgruppe.builder()
                 .navn("mingruppe")
