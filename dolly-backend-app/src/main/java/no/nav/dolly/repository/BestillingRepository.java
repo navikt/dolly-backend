@@ -11,7 +11,8 @@ import no.nav.dolly.domain.jpa.Bestilling;
 
 public interface BestillingRepository extends Repository<Bestilling, Long> {
 
-    Optional<Bestilling> findById(Long id);
+    @Query("from Bestilling b where b.id = :id")
+    Optional<Bestilling> findById(@Param("id") Long id);
 
     Bestilling save(Bestilling bestilling);
 

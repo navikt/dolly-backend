@@ -22,6 +22,21 @@ import static no.nav.dolly.domain.resultset.SystemTyper.INNTKMELD;
 import static no.nav.dolly.domain.resultset.SystemTyper.SYKEMELDING;
 import static org.apache.http.util.TextUtils.isBlank;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
+
+import lombok.RequiredArgsConstructor;
+import ma.glasnost.orika.MapperFacade;
+import no.nav.dolly.domain.jpa.BestillingProgress;
+import no.nav.dolly.domain.jpa.TransaksjonMapping;
+import no.nav.dolly.domain.resultset.SystemTyper;
+import no.nav.dolly.repository.TransaksjonMappingRepository;
+
 @Service
 @RequiredArgsConstructor
 public class TransaksjonMappingService {

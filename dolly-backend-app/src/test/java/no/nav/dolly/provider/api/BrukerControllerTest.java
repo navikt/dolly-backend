@@ -23,7 +23,6 @@ import no.nav.dolly.domain.jpa.Bruker;
 import no.nav.dolly.domain.resultset.entity.bruker.RsBruker;
 import no.nav.dolly.domain.resultset.entity.bruker.RsBrukerAndGruppeId;
 import no.nav.dolly.domain.resultset.entity.bruker.RsBrukerUpdateFavoritterReq;
-import no.nav.dolly.security.sts.OidcTokenAuthentication;
 import no.nav.dolly.service.BrukerService;
 
 @RunWith(MockitoJUnitRunner.class)

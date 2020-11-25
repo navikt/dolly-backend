@@ -7,8 +7,6 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
-
-import no.nav.dolly.service.BestillingProgressService;
 import org.springframework.cache.CacheManager;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -26,7 +24,7 @@ import no.nav.dolly.domain.resultset.tpsf.Person;
 import no.nav.dolly.domain.resultset.tpsf.TpsPerson;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
 import no.nav.dolly.metrics.CounterCustomRegistry;
-import no.nav.dolly.repository.BestillingProgressRepository;
+import no.nav.dolly.service.BestillingProgressService;
 import no.nav.dolly.service.BestillingService;
 import no.nav.dolly.service.IdentService;
 import no.nav.dolly.service.TpsfPersonCache;

@@ -34,13 +34,13 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "T_GRUPPE")
+@Table(name = "GRUPPE")
 public class Testgruppe {
 
     @Id
     @GeneratedValue(generator = "gruppeIdGenerator")
     @GenericGenerator(name = "gruppeIdGenerator", strategy = SEQUENCE_STYLE_GENERATOR, parameters = {
-            @Parameter(name = "sequence_name", value = "T_GRUPPE_SEQ"),
+            @Parameter(name = "sequence_name", value = "GRUPPE_SEQ"),
             @Parameter(name = "initial_value", value = "1"),
             @Parameter(name = "increment_size", value = "1")
     })
@@ -128,6 +128,17 @@ public class Testgruppe {
                 .append(getErLaast())
                 .append(getLaastBeskrivelse())
                 .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Testgruppe{" +
+                "navn='" + navn + '\'' +
+                ", hensikt='" + hensikt + '\'' +
+                ", datoEndret=" + datoEndret +
+                ", erLaast=" + erLaast +
+                ", laastBeskrivelse='" + laastBeskrivelse + '\'' +
+                '}';
     }
 }
 

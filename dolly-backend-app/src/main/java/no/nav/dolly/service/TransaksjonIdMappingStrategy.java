@@ -1,7 +1,6 @@
 package no.nav.dolly.service;
 
 import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
