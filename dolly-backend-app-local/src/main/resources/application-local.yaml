@@ -1,5 +1,5 @@
 CLIENT_ID: f0174d28-cb33-44f9-a7b5-09e52582e601
-CLIENT_SECRET: temp
+CLIENT_SECRET: ${azure.app.client.secret}
 AAD_ISSUER_URI: https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b
 
 spring:
