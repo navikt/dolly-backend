@@ -1,4 +1,4 @@
-package no.nav.dolly.domain.resultset.tpsf;
+package no.nav.dolly.domain.resultset.fullmakt;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

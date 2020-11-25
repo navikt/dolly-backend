@@ -270,12 +270,12 @@ public class PdlForvalterConsumer {
                 vergemaal, ident, "vergemaal");
     }
 
-    @Timed(name = "providers", tags = { "operation", "pdl_vergemaal" })
+    @Timed(name = "providers", tags = {"operation", "pdl_fullmakt"})
     public ResponseEntity<JsonNode> postFullmakt(PdlFullmakt fullmakt, String ident) {
 
         return postRequest(
                 providersProps.getPdlForvalter().getUrl() + PDL_BESTILLING_FULLMAKT_URL,
-                fullmakt, ident, "vergemaal");
+                fullmakt, ident, "fullmakt");
     }
 
     private ResponseEntity<JsonNode> postRequest(String url, Object body, String ident, String beskrivelse) {

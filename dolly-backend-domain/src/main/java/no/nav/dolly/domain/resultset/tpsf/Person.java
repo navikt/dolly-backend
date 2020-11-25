@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import no.nav.dolly.domain.resultset.fullmakt.RsFullmakt;
 import no.nav.dolly.domain.resultset.tpsf.adresse.BoAdresse;
 import no.nav.dolly.domain.resultset.tpsf.adresse.IdentHistorikk;
 import no.nav.dolly.domain.resultset.tpsf.adresse.MidlertidigAdresse;
@@ -64,7 +65,7 @@ public class Person {
     private LocalDateTime egenAnsattDatoFom;
     private LocalDateTime egenAnsattDatoTom;
     private List<RsVergemaal> vergemaal;
-    private RsFullmakt fullmakt;
+    private List<RsFullmakt> fullmakt;
 
     public List<MidlertidigAdresse> getMidlertidigAdresse() {
         if (isNull(midlertidigAdresse)) {

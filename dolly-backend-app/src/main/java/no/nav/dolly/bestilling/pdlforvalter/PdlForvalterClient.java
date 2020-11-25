@@ -1,20 +1,5 @@
 package no.nav.dolly.bestilling.pdlforvalter;
 
-import static java.util.Objects.nonNull;
-import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
-import static no.nav.dolly.domain.CommonKeysAndUtils.containsSynthEnv;
-import static no.nav.dolly.domain.CommonKeysAndUtils.getSynthEnv;
-import static no.nav.dolly.errorhandling.ErrorStatusDecoder.encodeStatus;
-import static no.nav.dolly.util.NullcheckUtil.nullcheckSetDefaultValue;
-
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
@@ -26,6 +11,7 @@ import no.nav.dolly.bestilling.pdlforvalter.domain.PdlFamilierelasjon;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlFoedsel;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlFolkeregisterpersonstatus;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlForeldreansvar;
+import no.nav.dolly.bestilling.pdlforvalter.domain.PdlFullmaktHistorikk;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlInnflyttingHistorikk;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlKjoenn;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlKontaktadresseHistorikk;
@@ -52,6 +38,21 @@ import no.nav.dolly.domain.resultset.tpsf.TpsPerson;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
 import no.nav.dolly.exceptions.DollyFunctionalException;
 import no.nav.dolly.service.TpsfPersonCache;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+import static java.util.Objects.nonNull;
+import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
+import static no.nav.dolly.domain.CommonKeysAndUtils.containsSynthEnv;
+import static no.nav.dolly.domain.CommonKeysAndUtils.getSynthEnv;
+import static no.nav.dolly.errorhandling.ErrorStatusDecoder.encodeStatus;
+import static no.nav.dolly.util.NullcheckUtil.nullcheckSetDefaultValue;
 
 @Slf4j
 @Order(1)
@@ -173,6 +174,7 @@ public class PdlForvalterClient implements ClientRegister {
                 sendDoedsfall(person);
                 sendOpphold(bestilling, person);
                 sendVergemaal(person);
+                sendFullmakt(person);
             });
             status.append("&OK");
 
@@ -314,19 +316,24 @@ public class PdlForvalterClient implements ClientRegister {
     private void sendInnflytting(Person person) {
 
         mapperFacade.map(person, PdlInnflyttingHistorikk.class).getInnflyttinger().forEach(innflytting ->
-            pdlForvalterConsumer.postInnflytting(innflytting, person.getIdent()));
+                pdlForvalterConsumer.postInnflytting(innflytting, person.getIdent()));
     }
 
     private void sendUtflytting(Person person) {
 
         mapperFacade.map(person, PdlUtflyttingHistorikk.class).getUtflyttinger().forEach(utflytting ->
-            pdlForvalterConsumer.postUtflytting(utflytting, person.getIdent()));
+                pdlForvalterConsumer.postUtflytting(utflytting, person.getIdent()));
     }
 
     private void sendVergemaal(Person person) {
 
         mapperFacade.map(person, PdlVergemaalHistorikk.class).getVergemaaler()
                 .forEach(vergemaal -> pdlForvalterConsumer.postVergemaal(vergemaal, person.getIdent()));
+    }
+
+    private void sendFullmakt(Person person) {
+        mapperFacade.map(person, PdlFullmaktHistorikk.class).getFullmakter()
+                .forEach(fullmakt -> pdlForvalterConsumer.postFullmakt(fullmakt, person.getIdent()));
     }
 
     private void sendUtenlandsid(Pdldata pdldata, String ident, StringBuilder status) {
@@ -404,7 +411,7 @@ public class PdlForvalterClient implements ClientRegister {
     }
 
     private static boolean isKjonnUkjent(Relasjon relasjon, Iterator<RsPartnerRequest> partnere,
-            Iterator<RsBarnRequest> barn) {
+                                         Iterator<RsBarnRequest> barn) {
 
         return relasjon.isPartner() && partnere.next().isKjonnUkjent() ||
                 relasjon.isBarn() && barn.next().isKjonnUkjent();
