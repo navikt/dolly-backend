@@ -7,10 +7,8 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

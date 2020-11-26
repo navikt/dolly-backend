@@ -1,104 +1,114 @@
------------------
--- T A B L E S --
------------------
-CREATE TABLE T_TEST_IDENT (
-  IDENT            VARCHAR(11) PRIMARY KEY,
-  TILHOERER_GRUPPE NUMBER(9) NOT NULL
+-------------------------------
+-- C R E A T E   T A B L E S --
+-------------------------------
+
+create table bruker
+(
+    id         integer primary key,
+    bruker_id  varchar(50) unique,
+    brukernavn varchar(100),
+    epost      varchar(100),
+    nav_ident  varchar(10),
+    eid_av_id  integer references bruker (id),
+    migrert    boolean
 );
 
-CREATE TABLE T_GRUPPE (
-  ID             NUMBER(9) PRIMARY KEY,
-  NAVN           VARCHAR2(50) NOT NULL,
-  HENSIKT        VARCHAR2(200) NOT NULL,
-  OPPRETTET_AV   VARCHAR2(10) NOT NULL,
-  DATO_ENDRET    DATE    NOT NULL,
-  SIST_ENDRET_AV VARCHAR2(10) NOT NULL,
-  TILHOERER_TEAM NUMBER(9)    NOT NULL
+create table gruppe
+(
+    id                integer primary key,
+    navn              varchar(50) not null,
+    hensikt           varchar(200) not null ,
+    er_laast boolean,
+    laast_beskrivelse varchar(1000),
+    opprettet_av      integer not null references bruker (id),
+    dato_endret       timestamp not null,
+    sist_endret_av    integer not null references bruker (id)
 );
 
-CREATE TABLE T_TEAM (
-  ID             NUMBER(9) PRIMARY KEY,
-  NAVN           VARCHAR2(50) NOT NULL UNIQUE,
-  BESKRIVELSE    VARCHAR2(200),
-  DATO_OPPRETTET DATE    NOT NULL,
-  EIER           VARCHAR2(10) NOT NULL
+create table bruker_favoritter
+(
+    bruker_id integer not null references bruker (id),
+    gruppe_id integer not null references gruppe (id)
 );
 
-CREATE TABLE T_BRUKER (
-  NAV_IDENT       VARCHAR2(10) PRIMARY KEY
+create table bestilling
+(
+    id                  integer primary key,
+    sist_oppdatert      timestamp not null,
+    gruppe_id           integer not null REFERENCES gruppe (id),
+    antall_identer      smallint not null,
+    bruker_id           integer REFERENCES bruker (id),
+    miljoer             varchar(200) not null,
+    tpsf_kriterier      varchar(4000),
+    best_kriterier      text,
+    ident               varchar(11),
+    mal_bestilling_navn varchar(100),
+    openam_sent         varchar(1500),
+    opprettet_fra_id    integer,
+    opprett_fra_identer varchar(4000),
+    kilde_miljoe        varchar(10),
+    tps_import          text,
+    feil                varchar(1000),
+    ferdig              boolean not null,
+    stoppet             boolean not null
 );
 
-CREATE TABLE T_TEAM_MEDLEMMER (
-  TEAM_ID   NUMBER(9) NOT NULL,
-  BRUKER_ID VARCHAR2(10) NOT NULL
+create table bestilling_kontroll
+(
+    id            integer primary key,
+    bestilling_id integer not null references bestilling (id),
+    stoppet       boolean not null
 );
 
-CREATE TABLE T_BRUKER_FAVORITTER (
-  GRUPPE_ID   NUMBER(9) NOT NULL,
-  BRUKER_ID VARCHAR2(10) NOT NULL
+create table bestilling_progress
+(
+    id                        integer primary key,
+    bestilling_id             integer not null references bestilling (id),
+    ident                     varchar(11),
+    aareg_status              varchar(4000),
+    arenaforvalter_status     varchar(4000),
+    bregstub_status           varchar(500),
+    dokarkiv_status           varchar(500),
+    feil                      varchar(4000),
+    inntektsmelding_status    varchar(2000),
+    inntektsstub_status       varchar(1000),
+    instdata_status           varchar(4000),
+    krrstub_status            varchar(4000),
+    pdlforvalter_status       varchar(1000),
+    pensjonforvalter_status   varchar(4000),
+    sigrunstub_status         varchar(4000),
+    skjermingsregister_status varchar(500),
+    sykemelding_status        varchar(500),
+    tpsf_success_environments varchar(4000),
+    tps_import_status         varchar(500),
+    udistub_status            varchar(500)
 );
 
-CREATE TABLE T_BESTILLING_PROGRESS (
-  ID                NUMBER(9) PRIMARY KEY,
-  BESTILLING_ID     NUMBER(9) NOT NULL,
-  IDENT             NUMBER(11) NOT NULL,
-  TPSF_SUCCESS_ENVIRONMENTS VARCHAR2(200),
-  SIGRUN_SUCCESS_ENVIRONMENTS VARCHAR2(200),
-  AAREG_SUCCESS_ENVIRONMENTS VARCHAR2(200),
-  FEIL             VARCHAR(999)
+create table test_ident
+(
+    ident            varchar(11) primary key,
+    tilhoerer_gruppe integer not null references gruppe (id),
+    ibruk            boolean,
+    beskrivelse      varchar(1000)
 );
 
-CREATE TABLE T_BESTILLING (
-  ID NUMBER(9) PRIMARY KEY,
-  GRUPPE_ID NUMBER(9) NOT NULL,
-  MILJOER VARCHAR2(200) NOT NULL,
-  ANTALL_IDENTER NUMBER(5)  NOT NULL,
-  SIST_OPPDATERT TIMESTAMP NOT NULL,
-  FERDIG CHAR(1) NOT NULL
+create table transaksjon_mapping
+(
+    id             integer primary key,
+    bestilling_id  integer references bestilling (id),
+    transaksjon_id varchar(300) not null,
+    ident          varchar(11) not null,
+    system         varchar(20) not null,
+    miljoe         varchar(10),
+    dato_endret    timestamp not null
 );
 
----------------------------------------------------
--- F O R E I G N   K E Y   C O N S T R A I N T S --
----------------------------------------------------
-ALTER TABLE T_BESTILLING_PROGRESS
-  ADD CONSTRAINT PROGRESS_BESTILLING_FK FOREIGN KEY (BESTILLING_ID) REFERENCES T_BESTILLING (ID);
-
-ALTER TABLE T_TEST_IDENT
-  ADD CONSTRAINT TESTPERSON_GRUPPE_FK FOREIGN KEY (TILHOERER_GRUPPE) REFERENCES T_GRUPPE (ID);
-
-ALTER TABLE T_GRUPPE
-  ADD CONSTRAINT GRUPPE_TEAM_FK FOREIGN KEY (TILHOERER_TEAM) REFERENCES T_TEAM (ID);
-
-ALTER TABLE T_GRUPPE
-  ADD CONSTRAINT GRUPPE_ENDRET_AV_FK FOREIGN KEY (SIST_ENDRET_AV) REFERENCES T_BRUKER (NAV_IDENT);
-
-ALTER TABLE T_GRUPPE
-  ADD CONSTRAINT GRUPPE_OPPRETTET_AV_FK FOREIGN KEY (OPPRETTET_AV) REFERENCES T_BRUKER (NAV_IDENT);
-
-ALTER TABLE T_TEAM
-  ADD CONSTRAINT TEAMETS_EIER_FK FOREIGN KEY (EIER) REFERENCES T_BRUKER (NAV_IDENT);
-
-ALTER TABLE T_TEAM_MEDLEMMER
-  ADD CONSTRAINT TEAM_MANYTOMANY_FK FOREIGN KEY (TEAM_ID) REFERENCES T_TEAM (ID);
-
-ALTER TABLE T_TEAM_MEDLEMMER
-  ADD CONSTRAINT MEDLEMMER_MANYTOMANY_FK FOREIGN KEY (BRUKER_ID) REFERENCES T_BRUKER (NAV_IDENT);
-
-ALTER TABLE T_BRUKER_FAVORITTER
-  ADD CONSTRAINT BRUKER_MANYTOMANY_FK FOREIGN KEY (BRUKER_ID) REFERENCES T_BRUKER (NAV_IDENT);
-
-ALTER TABLE T_BRUKER_FAVORITTER
-  ADD CONSTRAINT FAVORITTER_GRUPPER_FK FOREIGN KEY (GRUPPE_ID) REFERENCES T_GRUPPE (ID);
-
----------------------------------------------
--- ADDITIONAL CONSTRAINTS FOR DATA QUALITY --
----------------------------------------------
-
------------------------
--- S E Q U E N C E S --
------------------------
-CREATE SEQUENCE T_GRUPPE_SEQ START WITH 1;
-CREATE SEQUENCE T_TEAM_SEQ START WITH 1;
-CREATE SEQUENCE T_BESTILLING_SEQ START WITH 1;
-CREATE SEQUENCE T_BESTILLING_PROGRESS_SEQ START WITH 1;
-
+-------------------------------------
+-- C R E A T E   S E Q U E N C E S --
+-------------------------------------
+create sequence bestilling_kontroll_seq;
+create sequence bestilling_progress_seq;
+create sequence bestilling_seq;
+create sequence bruker_seq;
+create sequence gruppe_seq;
+create sequence transaksjon_mapping_seq;

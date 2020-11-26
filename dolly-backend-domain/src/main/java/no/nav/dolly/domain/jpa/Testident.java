@@ -23,7 +23,7 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "T_TEST_IDENT")
+@Table(name = "TEST_IDENT")
 public class Testident {
 
     @Id

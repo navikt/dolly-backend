@@ -5,8 +5,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
@@ -17,8 +15,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import no.nav.dolly.domain.jpa.Testgruppe;
-import no.nav.dolly.domain.jpa.Testident;
-import no.nav.dolly.domain.resultset.entity.testgruppe.RsTestgruppeMedBestillingId;
 
 @DisplayName("DELETE /api/v1/gruppe")
 @EnableAutoConfiguration(exclude = { SecurityAutoConfiguration.class,

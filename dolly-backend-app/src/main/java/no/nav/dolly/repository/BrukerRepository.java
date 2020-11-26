@@ -1,14 +1,14 @@
 package no.nav.dolly.repository;
 
-import no.nav.dolly.domain.jpa.Bruker;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import no.nav.dolly.domain.jpa.Bruker;
 
 public interface BrukerRepository extends Repository<Bruker, Long> {
 
@@ -27,7 +27,7 @@ public interface BrukerRepository extends Repository<Bruker, Long> {
     int deleteNavIdentToBruker(@Param("bruker") Bruker bruker);
 
     @Modifying
-    @Query(value = "update Bruker set migrert = 1 where brukerId = :brukerId")
+    @Query(value = "update Bruker set migrert = true where brukerId = :brukerId")
     int saveBrukerIdMigrert(@Param(value = "brukerId") String brukerId);
 
     @Modifying
@@ -39,7 +39,7 @@ public interface BrukerRepository extends Repository<Bruker, Long> {
     Optional<Bruker> findBrukerByNavIdent(String navIdent);
 
     @Modifying
-    @Query(value = "delete from T_BRUKER_FAVORITTER where gruppe_id = :groupId", nativeQuery = true)
+    @Query(value = "delete from BRUKER_FAVORITTER where gruppe_id = :groupId", nativeQuery = true)
     int deleteBrukerFavoritterByGroupId(@Param("groupId") Long groupId);
 
     @Query(value = "from Bruker b where b.eidAv = :bruker")
