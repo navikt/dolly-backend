@@ -35,7 +35,7 @@ public class PdlFullmaktMappingStrategy implements MappingStrategy {
 
                             Map<String, String> temaKodeverk = kodeverkConsumer.getKodeverkByName(TEMA_KODEVERK);
                             PdlFullmakt pdlFullmakt = PdlFullmakt.builder()
-                                    .fullmektig(fullmakt.getFullmektig())
+                                    .fullmektig(fullmakt.getFullmektig().getIdent())
                                     .kilde(CONSUMER)
                                     .omraader(fullmakt.getOmraader().stream().map(temaKodeverk::get).collect(Collectors.toList()))
                                     .gyldigFom(fullmakt.getGyldigFom())
