@@ -1,14 +1,10 @@
 package no.nav.dolly.provider.api.testgruppe;
 
-import static org.hamcrest.CoreMatchers.both;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasProperty;
-
-import java.util.LinkedHashMap;
-import java.util.List;
+import no.nav.dolly.domain.jpa.Bruker;
+import no.nav.dolly.domain.jpa.Testgruppe;
+import no.nav.dolly.domain.jpa.Testident;
+import no.nav.dolly.domain.resultset.entity.testgruppe.RsTestgruppe;
+import no.nav.dolly.domain.resultset.entity.testgruppe.RsTestgruppeMedBestillingId;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,24 +14,26 @@ import org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAu
 import org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import no.nav.dolly.domain.jpa.Bruker;
-import no.nav.dolly.domain.jpa.Testgruppe;
-import no.nav.dolly.domain.jpa.Testident;
-import no.nav.dolly.domain.resultset.entity.testgruppe.RsTestgruppe;
-import no.nav.dolly.domain.resultset.entity.testgruppe.RsTestgruppeMedBestillingId;
+import java.util.LinkedHashMap;
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.both;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasProperty;
 
 @DisplayName("GET /api/v1/gruppe")
-@EnableAutoConfiguration(exclude = { SecurityAutoConfiguration.class,
+@EnableAutoConfiguration(exclude = {SecurityAutoConfiguration.class,
         OAuth2ResourceServerAutoConfiguration.class,
         OAuth2ClientAutoConfiguration.class,
-        ManagementWebSecurityAutoConfiguration.class })
+        ManagementWebSecurityAutoConfiguration.class})
 @AutoConfigureMockMvc(addFilters = false)
 class TestgruppeControllerGetTest extends TestgruppeTestBase {
 
