@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
-import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -61,13 +60,13 @@ class OnBehalfOfGenerateAccessTokenService {
         if (accessScopes.getScopes().isEmpty()) {
             throw new RuntimeException("Kan ikke opprette accessToken uten clients");
         }
-        OAuth2AccessToken accessToken = tokenResolver.getToken();
+        String accessToken = tokenResolver.getToken();
 
         var body = BodyInserters
                 .fromFormData("scope", String.join(" ", accessScopes.getScopes()))
                 .with("client_id", clientCredential.getClientId())
                 .with("client_secret", clientCredential.getClientSecret())
-                .with("assertion", accessToken.getTokenValue())
+                .with("assertion", accessToken)
                 .with("requested_token_use", "on_behalf_of")
                 .with("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer");
 
