@@ -19,10 +19,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @DisplayName("DELETE /api/v1/gruppe")
-@EnableAutoConfiguration(exclude = {SecurityAutoConfiguration.class,
+@EnableAutoConfiguration(exclude = { SecurityAutoConfiguration.class,
         OAuth2ResourceServerAutoConfiguration.class,
         OAuth2ClientAutoConfiguration.class,
-        ManagementWebSecurityAutoConfiguration.class})
+        ManagementWebSecurityAutoConfiguration.class })
 @AutoConfigureMockMvc(addFilters = false)
 public class TestgruppeControllerDeleteTest extends TestgruppeTestBase {
 
