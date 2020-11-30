@@ -26,7 +26,7 @@ public class HelsepersonellConsumer {
     private final TokenService accessTokenService;
     private final WebClient webclient = WebClient.builder().build();
 
-    @Value("${HELSEPERSONELL_CLIENT_ID")
+    @Value("${HELSEPERSONELL_CLIENT_ID}")
     private String helsepersonellClientId;
 
     @Timed(name = "providers", tags = {"operation", "leger-hent"})
