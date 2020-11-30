@@ -16,6 +16,7 @@ import reactor.netty.http.client.HttpClient;
 import reactor.netty.tcp.ProxyProvider;
 
 import java.net.URI;
+import java.security.AccessControlException;
 
 
 @Slf4j
@@ -58,7 +59,7 @@ class OnBehalfOfGenerateAccessTokenService {
 
     public AccessToken generateToken(AccessScopes accessScopes) {
         if (accessScopes.getScopes().isEmpty()) {
-            throw new RuntimeException("Kan ikke opprette accessToken uten clients");
+            throw new AccessControlException("Kan ikke opprette accessToken uten clients");
         }
         String accessToken = tokenResolver.getToken();
 

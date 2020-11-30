@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class AccessScopes {
-    final private List<String> scopes;
+    private final List<String> scopes;
 
     public AccessScopes(List<String> scopes) {
         this.scopes = scopes;

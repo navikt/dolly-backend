@@ -12,7 +12,7 @@ import java.util.Optional;
 class AuthenticationTokenResolver {
 
 
-    private JwtAuthenticationToken JwtAuthenticationToken() {
+    private JwtAuthenticationToken jwtAuthenticationToken() {
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
                 .filter(o -> o instanceof JwtAuthenticationToken)
                 .map(JwtAuthenticationToken.class::cast)
@@ -20,6 +20,6 @@ class AuthenticationTokenResolver {
     }
 
     public String getToken() {
-        return JwtAuthenticationToken().getToken().getTokenValue();
+        return jwtAuthenticationToken().getToken().getTokenValue();
     }
 }
