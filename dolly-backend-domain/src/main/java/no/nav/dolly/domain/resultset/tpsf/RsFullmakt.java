@@ -1,10 +1,9 @@
-package no.nav.dolly.domain.resultset.pdlforvalter.fullmakt;
+package no.nav.dolly.domain.resultset.tpsf;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import no.nav.dolly.domain.resultset.tpsf.RsSimplePerson;
 
 import java.time.LocalDate;
 import java.util.List;

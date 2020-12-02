@@ -1,4 +1,4 @@
-package no.nav.dolly.domain.resultset.pdlforvalter.fullmakt;
+package no.nav.dolly.domain.resultset.tpsf;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 public class RsFullmaktRequest {
 
-    private String fullmektig;
+    private String identType;
+    private Boolean harMellomnavn;
     private LocalDate gyldigFom;
     private LocalDate gyldigTom;
     private String kilde;

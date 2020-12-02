@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import no.nav.dolly.domain.resultset.pdlforvalter.fullmakt.RsFullmakt;
 import no.nav.dolly.domain.resultset.tpsf.adresse.BoAdresse;
 import no.nav.dolly.domain.resultset.tpsf.adresse.IdentHistorikk;
 import no.nav.dolly.domain.resultset.tpsf.adresse.MidlertidigAdresse;
@@ -133,6 +132,13 @@ public class Person {
         return vergemaal;
     }
 
+    public List<RsFullmakt> getFullmakt() {
+        if (isNull(fullmakt)) {
+            fullmakt = new ArrayList<>();
+        }
+        return fullmakt;
+    }
+
     @JsonIgnore
     public boolean isSivilstandGift() {
 
@@ -141,13 +147,13 @@ public class Person {
 
         } else {
             switch (getSivilstand()) {
-            case GIFT:
-            case REPA:
-            case SEPR:
-            case SEPA:
-                return true;
-            default:
-                return false;
+                case GIFT:
+                case REPA:
+                case SEPR:
+                case SEPA:
+                    return true;
+                default:
+                    return false;
             }
         }
     }
