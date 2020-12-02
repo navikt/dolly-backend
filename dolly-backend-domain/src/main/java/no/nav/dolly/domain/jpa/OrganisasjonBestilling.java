@@ -31,7 +31,7 @@ import static no.nav.dolly.domain.jpa.HibernateConstants.SEQUENCE_STYLE_GENERATO
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "T_ORGANISASJON_BESTILLING")
+@Table(name = "ORGANISASJON_BESTILLING")
 public class OrganisasjonBestilling {
 
     @Id
@@ -43,25 +43,18 @@ public class OrganisasjonBestilling {
     })
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "ORGANISASJON_GRUPPE_ID", nullable = false)
-    private Testgruppe gruppe;
-
-    @Column(name = "FERDIG", nullable = false)
-    private boolean ferdig;
-
     @Column(name = "MILJOER", nullable = false)
     private String miljoer;
 
-    @Column(name = "ANTALL_ORGANISASJONER", nullable = false)
-    private Integer antallOrganisasjoner;
+    @Column(name = "ANTALL", nullable = false)
+    private Integer antall;
 
     @Column(name = "SIST_OPPDATERT", nullable = false)
     @UpdateTimestamp
     private LocalDateTime sistOppdatert;
 
-    @Column(name = "STOPPET")
-    private boolean stoppet;
+    @Column(name = "FERDIG")
+    private Boolean antall;
 
     @Column(name = "FEIL")
     private String feil;
@@ -72,21 +65,9 @@ public class OrganisasjonBestilling {
     @Column(name = "BEST_KRITERIER")
     private String bestKriterier;
 
-    @Column(name = "ORGANISASJON")
-    private String organisasjon;
-
-    @Column(name = "PARENT_ID")
-    private String parentId;
-
-    @Column(name = "ENHETSTYPE")
-    private String enhetsType;
-
     @ManyToOne
     @JoinColumn(name = "BRUKER_ID", nullable = false)
     private Bruker bruker;
-
-    @Column(name = "KILDE_MILJOE")
-    private String kildeMiljoe;
 
     @OneToMany(mappedBy = "bestillingId", fetch = FetchType.LAZY)
     private List<OrganisasjonBestillingProgress> progresser;

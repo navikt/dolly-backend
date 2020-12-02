@@ -21,14 +21,14 @@ import static no.nav.dolly.domain.jpa.HibernateConstants.SEQUENCE_STYLE_GENERATO
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "T_ORGANISASJON_BESTILLING_PROGRESS")
+@Table(name = "ORGANISASJON_BESTILLING_PROGRESS")
 @Builder
 public class OrganisasjonBestillingProgress {
 
     @Id
     @GeneratedValue(generator = "bestillingProgressIdGenerator")
     @GenericGenerator(name = "bestillingProgressIdGenerator", strategy = SEQUENCE_STYLE_GENERATOR, parameters = {
-            @Parameter(name = "sequence_name", value = "T_BESTILLING_PROGRESS_SEQ"),
+            @Parameter(name = "sequence_name", value = "ORGANISASJON_BESTILLING_PROGRESS_SEQ"),
             @Parameter(name = "initial_value", value = "1"),
             @Parameter(name = "increment_size", value = "1")
     })
@@ -38,10 +38,8 @@ public class OrganisasjonBestillingProgress {
 
     private String organisasjon;
 
-    @Column(name = "ORGANISASJONFORVALTER_STATUS")
+    @Column(name = "ORG_FORVALTER_STATUS")
     private String organisasjonsforvalterStatus;
-
-    private String feil;
 
     public OrganisasjonBestillingProgress(Long bestillingId, String organisasjon) {
         this.organisasjon = organisasjon;

@@ -35,6 +35,7 @@ public class OrganisasjonController {
     @ResponseStatus(HttpStatus.OK)
     public RsBestillingStatus opprettOrganisasjon(@PathVariable String organisasjon, @RequestBody RsDollyUpdateRequest request) {
 
+        return null; //TODO: Implementere
     }
 
 }
