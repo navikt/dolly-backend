@@ -53,9 +53,6 @@ public class OrganisasjonBestilling {
     @UpdateTimestamp
     private LocalDateTime sistOppdatert;
 
-    @Column(name = "FERDIG")
-    private Boolean antall;
-
     @Column(name = "FEIL")
     private String feil;
 

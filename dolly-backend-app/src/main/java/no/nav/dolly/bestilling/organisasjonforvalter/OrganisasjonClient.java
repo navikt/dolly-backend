@@ -6,8 +6,8 @@ import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.bestilling.OrganisasjonRegister;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonRequest;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonResponse;
-import no.nav.dolly.domain.jpa.OrganisasjonBestilling;
 import no.nav.dolly.domain.jpa.OrganisasjonBestillingProgress;
+import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class OrganisasjonClient implements OrganisasjonRegister {
     private final MapperFacade mapperFacade;
 
     @Override
-    public void gjenopprett(OrganisasjonBestilling bestilling, OrganisasjonBestillingProgress progress, boolean isOpprettEndre) {
+    public void gjenopprett(RsOrganisasjonBestilling bestilling, OrganisasjonBestillingProgress progress, boolean isOpprettEndre) {
 
         if (nonNull(bestilling.getOrganisasjon())) {
 

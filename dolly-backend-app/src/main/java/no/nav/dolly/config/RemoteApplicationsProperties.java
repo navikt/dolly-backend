@@ -14,11 +14,11 @@ public class RemoteApplicationsProperties {
         return applications;
     }
 
-    public void setApplications(Map<String, String> applications) {
-        this.applications = applications;
-    }
-
     public String get(String key) {
         return applications.get(key);
+    }
+
+    public void setApplications(Map<String, String> applications) {
+        this.applications = applications;
     }
 }
