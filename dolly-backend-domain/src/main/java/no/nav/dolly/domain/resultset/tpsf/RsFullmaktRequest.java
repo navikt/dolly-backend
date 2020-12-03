@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -16,8 +16,8 @@ public class RsFullmaktRequest {
 
     private String identType;
     private Boolean harMellomnavn;
-    private LocalDate gyldigFom;
-    private LocalDate gyldigTom;
+    private LocalDateTime gyldigFom;
+    private LocalDateTime gyldigTom;
     private String kilde;
     private List<String> omraader;
 }

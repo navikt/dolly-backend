@@ -338,6 +338,7 @@ public class PdlForvalterClient implements ClientRegister {
     }
 
     private void sendFullmakt(Person person) {
+
         mapperFacade.map(person, PdlFullmaktHistorikk.class).getFullmakter()
                 .forEach(fullmakt -> pdlForvalterConsumer.postFullmakt(fullmakt, person.getIdent()));
     }

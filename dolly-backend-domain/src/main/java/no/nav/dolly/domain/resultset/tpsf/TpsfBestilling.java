@@ -113,5 +113,5 @@ public class TpsfBestilling {
 
     private RsVergemaalRequest vergemaal;
 
-    private RsFullmaktRequest fullmaktRequest;
+    private RsFullmaktRequest fullmakt;
 }
