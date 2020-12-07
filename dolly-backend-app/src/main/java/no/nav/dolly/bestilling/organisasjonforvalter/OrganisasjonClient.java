@@ -12,7 +12,6 @@ import no.nav.dolly.errorhandling.ErrorStatusDecoder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Objects.nonNull;
@@ -30,12 +29,12 @@ public class OrganisasjonClient implements OrganisasjonRegister {
     @Override
     public void gjenopprett(RsOrganisasjonBestilling bestilling, OrganisasjonBestillingProgress progress, boolean isOpprettEndre) {
 
-        if (nonNull(bestilling.getOrganisasjon())) {
+        if (nonNull(bestilling.getRsOrganisasjon())) {
 
             StringBuilder status = new StringBuilder();
-            OrganisasjonRequest organisasjonRequest = mapperFacade.map(bestilling.getOrganisasjon(), OrganisasjonRequest.class);
+            OrganisasjonRequest organisasjonRequest = mapperFacade.map(bestilling.getRsOrganisasjon(), OrganisasjonRequest.class);
 
-            Arrays.stream(bestilling.getMiljoer().split(",")).forEach(environment -> {
+            bestilling.getEnvironments().forEach(environment -> {
 
                 try {
                     ResponseEntity<OrganisasjonResponse> response = organisasjonConsumer.postOrganisasjon(organisasjonRequest);
@@ -52,7 +51,7 @@ public class OrganisasjonClient implements OrganisasjonRegister {
                             .append(':')
                             .append(errorStatusDecoder.decodeRuntimeException(e));
 
-                    log.error("Feilet å legge inn organisasjon: {} til miljø: {}",
+                    log.error("Feilet med å legge til organisasjon: {} i miljø: {}",
                             organisasjonRequest.getHovedOrganisasjon().getOrganisasjonsnavn(), environment, e);
                 }
             });
@@ -61,7 +60,7 @@ public class OrganisasjonClient implements OrganisasjonRegister {
     }
 
     @Override
-    public void release(List<String> identer) {
+    public void release(List<String> orgnummer) {
 
     }
 }

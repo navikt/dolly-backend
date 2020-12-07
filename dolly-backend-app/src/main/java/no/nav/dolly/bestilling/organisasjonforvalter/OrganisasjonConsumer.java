@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonRequest;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonResponse;
-import no.nav.dolly.config.RemoteApplicationsProperties;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.properties.ProvidersProps;
 import no.nav.dolly.security.AccessScopes;
 import no.nav.dolly.security.AccessToken;
 import no.nav.dolly.security.TokenService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -30,19 +30,21 @@ public class OrganisasjonConsumer {
 
     private static final String ORGANISASJON_FORVALTER_URL = "/api/organisasjon/";
 
-    private final RemoteApplicationsProperties properties;
     private final WebClient webClient;
     private final ProvidersProps providersProps;
     private final TokenService tokenService;
 
-    @Timed(name = "providers", tags = {"operation", "organisasjon-opprett"})
+    @Value("${ORGANISASJON_FORVALTER_CLIENT_ID}")
+    private String organisasjonerClientId;
+
+    @Timed(name = "providers", tags = { "operation", "organisasjon-opprett" })
     public ResponseEntity<OrganisasjonResponse> postOrganisasjon(OrganisasjonRequest organisasjonRequest) {
 
         String callId = getNavCallId();
         log.info("Organisasjon oppretting sendt, callId: {}, consumerId: {}", callId, CONSUMER);
 
         AccessToken accessToken = tokenService.getAccessToken(
-                new AccessScopes(properties.get("testnorge-organisasjon-forvalter")) //TODO: RIKTIG?
+                new AccessScopes("api://" + organisasjonerClientId + "/.default")
         );
 
         return webClient

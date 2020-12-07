@@ -5,11 +5,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dolly.domain.jpa.Bestilling;
 import no.nav.dolly.domain.jpa.OrganisasjonBestilling;
-import no.nav.dolly.domain.jpa.Testident;
-import no.nav.dolly.domain.resultset.BestilteKriterier;
-import no.nav.dolly.domain.resultset.RsDollyUpdateRequest;
+import no.nav.dolly.domain.jpa.OrganisasjonBestillingProgress;
 import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
 import no.nav.dolly.exceptions.ConstraintViolationException;
 import no.nav.dolly.exceptions.NotFoundException;
@@ -19,13 +16,16 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.time.LocalDateTime.now;
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toSet;
 import static no.nav.dolly.util.CurrentAuthentication.getUserId;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Slf4j
 @Service
@@ -35,6 +35,7 @@ public class OrganisasjonBestillingService {
 
     private final OrganisasjonBestillingRepository bestillingRepository;
     private final OrganisasjonBestillingProgressRepository bestillingProgressRepository;
+    private final BrukerService brukerService;
     private final ObjectMapper objectMapper;
 
     public OrganisasjonBestilling fetchBestillingById(Long bestillingId) {
@@ -52,40 +53,26 @@ public class OrganisasjonBestillingService {
     }
 
     @Transactional
-    public Bestilling saveBestilling(RsDollyUpdateRequest request, String ident) {
-
-        Testident testident = identRepository.findByIdent(ident);
-        if (isNull(testident) || isBlank(testident.getIdent())) {
-            throw new NotFoundException(format("Testindent %s ble ikke funnet", ident));
-        }
-        fixAaregAbstractClassProblem(request.getAareg());
-        fixPdlAbstractClassProblem(request.getPdlforvalter());
-        return saveBestillingToDB(
-                Bestilling.builder()
-                        .gruppe(testident.getTestgruppe())
-                        .ident(ident)
-                        .antallIdenter(1)
-                        .sistOppdatert(now())
-                        .miljoer(join(",", request.getEnvironments()))
-                        .tpsfKriterier(toJson(request.getTpsf()))
-                        .bestKriterier(getBestKriterier(request))
-                        .malBestillingNavn(request.getMalBestillingNavn())
-                        .bruker(brukerService.fetchOrCreateBruker(getUserId()))
-                        .build());
-    }
-
-    @Transactional
-    public Bestilling saveBestilling(RsOrganisasjonBestilling request, Integer antall) {
+    public OrganisasjonBestilling saveBestilling(RsOrganisasjonBestilling request, Integer antall) {
         return saveBestillingToDB(
                 OrganisasjonBestilling.builder()
                         .antall(antall)
                         .sistOppdatert(now())
                         .miljoer(join(",", request.getEnvironments()))
-                        .bestKriterier(getBestKriterier(request))
-                        .opprettFraIdenter(nonNull(opprettFraIdenter) ? join(",", opprettFraIdenter) : null)
-                        .malBestillingNavn(request.getMalBestillingNavn())
+                        .bestKriterier(toJson(request.getRsOrganisasjon()))
                         .bruker(brukerService.fetchOrCreateBruker(getUserId()))
                         .build());
+    }
+
+
+    public void slettBestillingByBestillingId(Long bestillingId) {
+
+        List<OrganisasjonBestillingProgress> bestillingProgressList = bestillingProgressRepository.findByBestillingId(bestillingId).orElse(new ArrayList<>());
+        bestillingProgressRepository.deleteByBestillingId(bestillingId);
+
+        Set<Long> bestillingIds = bestillingProgressList.stream().map(OrganisasjonBestillingProgress::getBestillingId).collect(toSet());
+
+        bestillingIds.forEach(bestillingRepository::deleteBestillingWithNoChildren);
     }
 
     private String toJson(Object object) {
@@ -97,23 +84,5 @@ public class OrganisasjonBestillingService {
             log.info("Konvertering til Json feilet", e);
         }
         return null;
-    }
-
-    private String getBestKriterier(RsOrganisasjonBestilling request) {
-        return toJson(BestilteKriterier.builder()
-                .aareg(request.getAareg())
-                .krrstub(request.getKrrstub())
-                .udistub(request.getUdistub())
-                .sigrunstub(request.getSigrunstub())
-                .arenaforvalter(request.getArenaforvalter())
-                .pdlforvalter(request.getPdlforvalter())
-                .instdata(request.getInstdata())
-                .inntektstub(request.getInntektstub())
-                .pensjonforvalter(request.getPensjonforvalter())
-                .inntektsmelding(request.getInntektsmelding())
-                .brregstub(request.getBrregstub())
-                .dokarkiv(request.getDokarkiv())
-                .sykemelding(request.getSykemelding())
-                .build());
     }
 }

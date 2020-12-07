@@ -5,6 +5,8 @@ server.compression.mime-types: application/json,text/html,text/xml,text/plain,ap
 APP_NAME: dolly
 APP_VERSION: ${application.version}
 
+ORGANISASJON_FORVALTER_CLIENT_ID: #TODO: Fylle inn CLIENT ID for ORG FORVALTER
+
 #### APP DB ####
 ? app.datasource.onsHosts
 
