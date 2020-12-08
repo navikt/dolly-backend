@@ -3,13 +3,10 @@ package no.nav.dolly.provider.api;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import ma.glasnost.orika.MapperFacade;
-import no.nav.dolly.bestilling.service.DollyBestillingService;
-import no.nav.dolly.domain.resultset.RsDollyUpdateRequest;
-import no.nav.dolly.domain.resultset.entity.bestilling.RsBestillingStatus;
-import no.nav.dolly.service.BestillingService;
-import no.nav.dolly.service.IdentService;
-import no.nav.dolly.service.NavigasjonService;
-import no.nav.dolly.service.PersonService;
+import no.nav.dolly.domain.jpa.OrganisasjonBestilling;
+import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
+import no.nav.dolly.domain.resultset.entity.bestilling.RsOrganisasjonBestillingStatus;
+import no.nav.dolly.service.OrganisasjonBestillingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -20,22 +17,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "api/v1/ident")
+@RequestMapping(value = "api/v1/organisasjon")
 public class OrganisasjonController {
 
-    private final BestillingService bestillingService;
-    private final DollyBestillingService dollyBestillingService;
+    private final OrganisasjonBestillingService bestillingService;
     private final MapperFacade mapperFacade;
-    private final IdentService identService;
-    private final PersonService personService;
-    private final NavigasjonService navigasjonService;
 
-    @Operation(description = "Legge til egenskaper på person/endre person i TPS og øvrige systemer")
-    @PutMapping("/{ident}/leggtilpaaperson")
+    @Operation(description = "Legge til/Endre egenskaper på Organisasjon")
+    @PutMapping("/{organisasjon}/leggTilPaaOrganisasjon")
     @ResponseStatus(HttpStatus.OK)
-    public RsBestillingStatus opprettOrganisasjon(@PathVariable String organisasjon, @RequestBody RsDollyUpdateRequest request) {
+    public RsOrganisasjonBestillingStatus endreOrganisasjon(@PathVariable Integer organisasjon, @RequestBody RsOrganisasjonBestilling request) {
 
-        return null; //TODO: Implementere
+        OrganisasjonBestilling bestilling = bestillingService.saveBestilling(request, organisasjon);
+        return mapperFacade.map(bestilling, RsOrganisasjonBestillingStatus.class);
     }
 
 }

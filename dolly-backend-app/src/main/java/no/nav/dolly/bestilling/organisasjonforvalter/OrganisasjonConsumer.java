@@ -30,7 +30,7 @@ public class OrganisasjonConsumer {
 
     private static final String ORGANISASJON_FORVALTER_URL = "/api/organisasjon/";
 
-    private final WebClient webClient;
+    private final WebClient webClient = WebClient.builder().build();
     private final ProvidersProps providersProps;
     private final TokenService tokenService;
 
