@@ -14,8 +14,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static org.apache.logging.log4j.util.Strings.isBlank;
+import static org.apache.logging.log4j.util.Strings.isNotBlank;
 
 @Slf4j
 @Service
@@ -36,8 +37,7 @@ public class KrrstubClient implements ClientRegister {
                 DigitalKontaktdata digitalKontaktdata = mapperFacade.map(bestilling.getKrrstub(), DigitalKontaktdata.class);
                 digitalKontaktdata.setPersonident(tpsPerson.getHovedperson());
 
-                kobleSpraakTilMaalform(bestilling, digitalKontaktdata, "NB");
-                kobleSpraakTilMaalform(bestilling, digitalKontaktdata, "NN");
+                kobleMaalformTilSpraak(bestilling, digitalKontaktdata);
 
                 if (!isOpprettEndre) {
                     deleteIdent(tpsPerson.getHovedperson());
@@ -54,10 +54,10 @@ public class KrrstubClient implements ClientRegister {
         }
     }
 
-    private void kobleSpraakTilMaalform(RsDollyUtvidetBestilling bestilling, DigitalKontaktdata digitalKontaktdata, String maalform) {
-        if (maalform.equalsIgnoreCase(bestilling.getTpsf().getStatsborgerskap()) && isNull(digitalKontaktdata.getSpraak())) {
-            digitalKontaktdata.setSpraak(maalform);
-        }
+    private void kobleMaalformTilSpraak(RsDollyUtvidetBestilling bestilling, DigitalKontaktdata digitalKontaktdata) {
+        if (isNotBlank(bestilling.getTpsf().getSprakKode()) && isBlank(digitalKontaktdata.getSpraak()))
+            List.of("NO", "NN").forEach(spraakKode -> digitalKontaktdata.setSpraak(
+                    spraakKode.equalsIgnoreCase(bestilling.getTpsf().getSprakKode()) ? spraakKode : ""));
     }
 
     @Override

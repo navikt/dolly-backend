@@ -20,7 +20,7 @@ public class DigitalKontaktMappingStrategyTest {
 
     private static final String EPOST = "test@nav.no";
     private static final String MOBIL = "99990000";
-    private static final String SPRAAK = "NB";
+    private static final String SPRAAK = "NO";
     private static final boolean RESERVERT = true;
     private static final LocalDateTime GYLDIG_FRA = LocalDateTime.of(2018, 1, 1, 0, 0);
     private static final ZonedDateTime Z_GYLDIG_FRA = ZonedDateTime.of(GYLDIG_FRA, ZoneId.systemDefault());
