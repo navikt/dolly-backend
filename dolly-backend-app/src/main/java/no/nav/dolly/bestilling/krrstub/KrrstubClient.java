@@ -1,11 +1,5 @@
 package no.nav.dolly.bestilling.krrstub;
 
-import static java.util.Objects.nonNull;
-
-import java.util.List;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
@@ -15,6 +9,13 @@ import no.nav.dolly.domain.resultset.RsDollyUtvidetBestilling;
 import no.nav.dolly.domain.resultset.krrstub.DigitalKontaktdata;
 import no.nav.dolly.domain.resultset.tpsf.TpsPerson;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Slf4j
 @Service
@@ -26,7 +27,8 @@ public class KrrstubClient implements ClientRegister {
     private final MapperFacade mapperFacade;
     private final ErrorStatusDecoder errorStatusDecoder;
 
-    @Override public void gjenopprett(RsDollyUtvidetBestilling bestilling, TpsPerson tpsPerson, BestillingProgress progress, boolean isOpprettEndre) {
+    @Override
+    public void gjenopprett(RsDollyUtvidetBestilling bestilling, TpsPerson tpsPerson, BestillingProgress progress, boolean isOpprettEndre) {
 
         if (nonNull(bestilling.getKrrstub())) {
 
@@ -34,11 +36,14 @@ public class KrrstubClient implements ClientRegister {
                 DigitalKontaktdata digitalKontaktdata = mapperFacade.map(bestilling.getKrrstub(), DigitalKontaktdata.class);
                 digitalKontaktdata.setPersonident(tpsPerson.getHovedperson());
 
+                kobleSpraakTilMaalform(bestilling, digitalKontaktdata, "NB");
+                kobleSpraakTilMaalform(bestilling, digitalKontaktdata, "NN");
+
                 if (!isOpprettEndre) {
                     deleteIdent(tpsPerson.getHovedperson());
                 }
 
-                ResponseEntity krrstubResponse = krrstubConsumer.createDigitalKontaktdata(digitalKontaktdata);
+                ResponseEntity<Object> krrstubResponse = krrstubConsumer.createDigitalKontaktdata(digitalKontaktdata);
                 progress.setKrrstubStatus(krrstubResponseHandler.extractResponse(krrstubResponse));
 
             } catch (RuntimeException e) {
@@ -46,6 +51,12 @@ public class KrrstubClient implements ClientRegister {
                 progress.setKrrstubStatus(errorStatusDecoder.decodeRuntimeException(e));
                 log.error("Kall til KrrStub feilet: {}", e.getMessage(), e);
             }
+        }
+    }
+
+    private void kobleSpraakTilMaalform(RsDollyUtvidetBestilling bestilling, DigitalKontaktdata digitalKontaktdata, String maalform) {
+        if (maalform.equalsIgnoreCase(bestilling.getTpsf().getStatsborgerskap()) && isNull(digitalKontaktdata.getSpraak())) {
+            digitalKontaktdata.setSpraak(maalform);
         }
     }
 
