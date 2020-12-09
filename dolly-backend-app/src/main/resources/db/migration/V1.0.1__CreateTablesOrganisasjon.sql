@@ -13,7 +13,7 @@ create table organisasjon_bestilling
     opprettet_fra_id integer,
     best_kriterier   text,
     bruker_id        integer references bruker (id)
-)
+);
 
 create table organisasjon_bestilling_progress
 (
@@ -21,7 +21,7 @@ create table organisasjon_bestilling_progress
     bestilling_id        integer    not null references organisasjon_bestilling (id),
     organisasjonsnr      varchar(9) not null,
     org_forvalter_status varchar(2000)
-)
+);
 
 -----------------------
 -- S E Q U E N C E S --
