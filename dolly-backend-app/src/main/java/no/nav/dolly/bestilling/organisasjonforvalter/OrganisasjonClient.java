@@ -29,10 +29,10 @@ public class OrganisasjonClient implements OrganisasjonRegister {
     @Override
     public void gjenopprett(RsOrganisasjonBestilling bestilling, OrganisasjonBestillingProgress progress, boolean isOpprettEndre) {
 
-        if (nonNull(bestilling.getRsOrganisasjon())) {
+        if (nonNull(bestilling.getRsOrganisasjoner())) {
 
             StringBuilder status = new StringBuilder();
-            OrganisasjonRequest organisasjonRequest = mapperFacade.map(bestilling.getRsOrganisasjon(), OrganisasjonRequest.class);
+            OrganisasjonRequest organisasjonRequest = mapperFacade.map(bestilling.getRsOrganisasjoner(), OrganisasjonRequest.class);
 
             bestilling.getEnvironments().forEach(environment -> {
 

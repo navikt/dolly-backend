@@ -53,13 +53,13 @@ public class OrganisasjonBestillingService {
     }
 
     @Transactional
-    public OrganisasjonBestilling saveBestilling(RsOrganisasjonBestilling request, Integer antall) {
+    public OrganisasjonBestilling saveBestilling(RsOrganisasjonBestilling request) {
         return saveBestillingToDB(
                 OrganisasjonBestilling.builder()
-                        .antall(antall)
+                        .antall(request.getRsOrganisasjoner().getOrganisasjoner().size())
                         .sistOppdatert(now())
                         .miljoer(join(",", request.getEnvironments()))
-                        .bestKriterier(toJson(request.getRsOrganisasjon()))
+                        .bestKriterier(toJson(request.getRsOrganisasjoner()))
                         .bruker(brukerService.fetchOrCreateBruker(getUserId()))
                         .build());
     }

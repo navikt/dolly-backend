@@ -9,9 +9,7 @@ import no.nav.dolly.domain.resultset.entity.bestilling.RsOrganisasjonBestillingS
 import no.nav.dolly.service.OrganisasjonBestillingService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -33,19 +31,9 @@ public class OrganisasjonController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/bestilling")
     @Operation(description = "Opprett organisasjon")
-    public RsOrganisasjonBestillingStatus opprettIdentBestilling(@RequestBody RsOrganisasjonBestilling request) {
-        OrganisasjonBestilling bestilling = bestillingService.saveBestilling(request, request.getAntall());
+    public RsOrganisasjonBestillingStatus opprettOrganisasjonBestilling(@RequestBody RsOrganisasjonBestilling request) {
+        OrganisasjonBestilling bestilling = bestillingService.saveBestilling(request);
 
         return mapperFacade.map(bestilling, RsOrganisasjonBestillingStatus.class);
     }
-
-    @Operation(description = "Legge til/Endre egenskaper på Organisasjon")
-    @PutMapping("/{organisasjon}/leggTilPaaOrganisasjon")
-    @ResponseStatus(HttpStatus.OK)
-    public RsOrganisasjonBestillingStatus endreOrganisasjon(@PathVariable Integer organisasjon, @RequestBody RsOrganisasjonBestilling request) {
-
-        OrganisasjonBestilling bestilling = bestillingService.saveBestilling(request, organisasjon);
-        return mapperFacade.map(bestilling, RsOrganisasjonBestillingStatus.class);
-    }
-
 }

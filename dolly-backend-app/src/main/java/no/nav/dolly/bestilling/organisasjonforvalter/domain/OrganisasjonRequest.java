@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import no.nav.dolly.domain.resultset.organisasjon.RsOrganisasjon;
+import no.nav.dolly.domain.resultset.organisasjon.RsOrganisasjoner;
 
 import java.util.List;
 
@@ -18,8 +18,8 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrganisasjonRequest {
 
-    private List<RsOrganisasjon.Organisasjon> organisasjoner;
-    private RsOrganisasjon.Organisasjon hovedOrganisasjon;
+    private List<RsOrganisasjoner.Organisasjon> organisasjoner;
+    private RsOrganisasjoner.Organisasjon hovedOrganisasjon;
 
     @Getter
     @Setter
@@ -31,6 +31,6 @@ public class OrganisasjonRequest {
 
         private String organisasjonsnavn;
         private String epost;
-        private RsOrganisasjon.Orgtype orgtype;
+        private RsOrganisasjoner.Orgtype orgtype;
     }
 }

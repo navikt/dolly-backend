@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class RsOrganisasjon {
+public class RsOrganisasjoner {
 
     private List<Organisasjon> organisasjoner;
     private Organisasjon hovedOrganisasjon;
