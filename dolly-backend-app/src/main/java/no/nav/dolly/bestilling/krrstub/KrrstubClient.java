@@ -31,7 +31,7 @@ public class KrrstubClient implements ClientRegister {
     @Override
     public void gjenopprett(RsDollyUtvidetBestilling bestilling, TpsPerson tpsPerson, BestillingProgress progress, boolean isOpprettEndre) {
 
-        if (nonNull(bestilling.getKrrstub())) {
+        if (nonNull(bestilling.getKrrstub()) || nonNull(bestilling.getTpsf().getSprakKode())) {
 
             try {
                 DigitalKontaktdata digitalKontaktdata = mapperFacade.map(bestilling.getKrrstub(), DigitalKontaktdata.class);
@@ -56,7 +56,7 @@ public class KrrstubClient implements ClientRegister {
 
     private void kobleMaalformTilSpraak(RsDollyUtvidetBestilling bestilling, DigitalKontaktdata digitalKontaktdata) {
         if (nonNull(bestilling.getTpsf()) && isNotBlank(bestilling.getTpsf().getSprakKode()) && isBlank(digitalKontaktdata.getSpraak()))
-            List.of("NO", "NN").forEach(spraakKode -> digitalKontaktdata.setSpraak(
+            List.of("NB", "NN", "EN", "SE").forEach(spraakKode -> digitalKontaktdata.setSpraak(
                     spraakKode.equalsIgnoreCase(bestilling.getTpsf().getSprakKode()) ? spraakKode : ""));
     }
 
