@@ -22,5 +22,7 @@ public class RsOrganisasjonBestilling {
     @Schema(description = "Liste av miljøer bestillingen skal deployes til")
     private List<String> environments;
 
+    private Integer antall;
+
     private RsOrganisasjon rsOrganisasjon;
 }
