@@ -31,7 +31,7 @@ public class KrrstubClient implements ClientRegister {
     @Override
     public void gjenopprett(RsDollyUtvidetBestilling bestilling, TpsPerson tpsPerson, BestillingProgress progress, boolean isOpprettEndre) {
 
-        if (nonNull(bestilling.getKrrstub()) || (nonNull(bestilling.getTpsf()) && nonNull(bestilling.getTpsf().getSprakKode()))) {
+        if (nonNull(bestilling.getKrrstub()) || (nonNull(bestilling.getTpsf()) && isNotBlank(bestilling.getTpsf().getSprakKode()))) {
 
             try {
                 DigitalKontaktdata digitalKontaktdata = mapperFacade.map(bestilling.getKrrstub(), DigitalKontaktdata.class);
