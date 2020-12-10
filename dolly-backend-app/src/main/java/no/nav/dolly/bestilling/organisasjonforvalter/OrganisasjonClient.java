@@ -97,6 +97,11 @@ public class OrganisasjonClient implements OrganisasjonRegister {
     }
 
     @Override
+    public void gjenoprett(OrganisasjonBestillingProgress progress) {
+
+    }
+
+    @Override
     public void release(List<String> orgnummer) {
 
     }

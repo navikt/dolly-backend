@@ -9,7 +9,7 @@ public interface OrganisasjonRegister {
 
     void opprett(RsOrganisasjonBestilling bestilling, OrganisasjonBestillingProgress progress);
 
-//    void gjenoprett (); TODO: Gjenopprett bestilling
+    void gjenoprett(OrganisasjonBestillingProgress progress);
 
     void release(List<String> organisasjoner);
 }
