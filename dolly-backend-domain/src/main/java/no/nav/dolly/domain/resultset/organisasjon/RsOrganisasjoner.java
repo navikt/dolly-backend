@@ -7,7 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.Objects.isNull;
 
 @Getter
 @Setter
@@ -17,12 +20,11 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RsOrganisasjoner {
 
-    private List<Organisasjon> organisasjoner;
-    private Organisasjon hovedOrganisasjon;
-
-    public enum Orgtype {
-        BEDR
+    public List<Organisasjon> getOrganisasjoner() {
+        return isNull(organisasjoner) ? new ArrayList<>() : organisasjoner;
     }
+
+    private List<Organisasjon> organisasjoner;
 
     @Getter
     @Setter
@@ -32,8 +34,25 @@ public class RsOrganisasjoner {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class Organisasjon {
 
-        private String organisasjonsnavn;
+        private String organisasjonsform;
+        private String naeringskode;
+        private String formaal;
+        private String telefon;
         private String epost;
-        private Orgtype orgtype;
+        private String nettside;
+        private ForretningsAdresse forretningsAdresse;
+        private List<Organisasjon> underenheter;
+    }
+
+    public static class ForretningsAdresse {
+        private String adresseType;
+        private String adresseLinje1;
+        private String adresseLinje2;
+        private String adresseLinje3;
+        private String adresseLinje4;
+        private String adresseLinje5;
+        private String postnr;
+        private String kommunenr;
+        private String landkode;
     }
 }

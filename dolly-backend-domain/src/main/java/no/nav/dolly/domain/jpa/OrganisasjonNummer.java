@@ -12,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
 import static no.nav.dolly.domain.jpa.HibernateConstants.SEQUENCE_STYLE_GENERATOR;
@@ -19,28 +20,25 @@ import static no.nav.dolly.domain.jpa.HibernateConstants.SEQUENCE_STYLE_GENERATO
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "organisasjon_bestilling_progress")
-@Builder
-public class OrganisasjonBestillingProgress {
+@Table(name = "organisasjon_nummer")
+public class OrganisasjonNummer {
 
     @Id
-    @GeneratedValue(generator = "bestillingProgressIdGenerator")
-    @GenericGenerator(name = "bestillingProgressIdGenerator", strategy = SEQUENCE_STYLE_GENERATOR, parameters = {
-            @Parameter(name = "sequence_name", value = "ORGANISASJON_BESTILLING_PROGRESS_SEQ"),
+    @GeneratedValue(generator = "organisasjonIdGenerator")
+    @GenericGenerator(name = "organisasjonIdGenerator", strategy = SEQUENCE_STYLE_GENERATOR, parameters = {
+            @Parameter(name = "sequence_name", value = "ORGANISASJON_NUMMER_SEQ"),
             @Parameter(name = "initial_value", value = "1"),
             @Parameter(name = "increment_size", value = "1")
     })
     private Long id;
 
-    @Column(name = "bestilling_id")
-    private Long bestillingId;
-
     @Column(name = "organisasjonsnr")
-    private String organisasjonsnummer;
+    private String organisasjonsnr;
 
-    @Column(name = "org_forvalter_status")
-    private String organisasjonsforvalterStatus;
+    @JoinColumn(name = "bestilling_id")
+    private Long bestillingId;
 
 }

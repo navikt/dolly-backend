@@ -23,8 +23,16 @@ create table organisasjon_bestilling_progress
     org_forvalter_status varchar(2000)
 );
 
+create table organisasjon_nummer
+(
+    id              integer primary key,
+    organisasjonsnr varchar(9) not null,
+    bestilling_id   integer    not null references organisasjon_bestilling (id)
+);
+
 -----------------------
 -- S E Q U E N C E S --
 -----------------------
 create sequence organisasjon_bestilling_seq;
 create sequence organisasjon_bestilling_progress_seq;
+create sequence organisasjon_nummer_seq;

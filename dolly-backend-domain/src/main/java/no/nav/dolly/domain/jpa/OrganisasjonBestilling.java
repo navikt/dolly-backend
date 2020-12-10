@@ -31,39 +31,39 @@ import static no.nav.dolly.domain.jpa.HibernateConstants.SEQUENCE_STYLE_GENERATO
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "ORGANISASJON_BESTILLING")
+@Table(name = "organisasjon_bestilling")
 public class OrganisasjonBestilling {
 
     @Id
     @GeneratedValue(generator = "bestillingIdGenerator")
     @GenericGenerator(name = "bestillingIdGenerator", strategy = SEQUENCE_STYLE_GENERATOR, parameters = {
-            @Parameter(name = "sequence_name", value = "T_BESTILLING_SEQ"),
+            @Parameter(name = "sequence_name", value = "ORGANISASJON_BESTILLING_SEQ"),
             @Parameter(name = "initial_value", value = "1"),
             @Parameter(name = "increment_size", value = "1")
     })
     private Long id;
 
-    @Column(name = "MILJOER", nullable = false)
+    @Column(name = "miljoer", nullable = false)
     private String miljoer;
 
-    @Column(name = "ANTALL", nullable = false)
+    @Column(name = "antall", nullable = false)
     private Integer antall;
 
-    @Column(name = "SIST_OPPDATERT", nullable = false)
+    @Column(name = "sist_oppdatert", nullable = false)
     @UpdateTimestamp
     private LocalDateTime sistOppdatert;
 
-    @Column(name = "FEIL")
+    @Column(name = "feil")
     private String feil;
 
-    @Column(name = "OPPRETTET_FRA_ID")
+    @Column(name = "opprettet_fra_id")
     private Long opprettetFraId;
 
-    @Column(name = "BEST_KRITERIER")
+    @Column(name = "best_kriterier")
     private String bestKriterier;
 
     @ManyToOne
-    @JoinColumn(name = "BRUKER_ID", nullable = false)
+    @JoinColumn(name = "bruker_id", nullable = false)
     private Bruker bruker;
 
     @OneToMany(mappedBy = "bestillingId", fetch = FetchType.LAZY)
