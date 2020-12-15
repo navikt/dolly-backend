@@ -4,8 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonBestillingRequest;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonBestillingResponse;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonDeployResponse;
 import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
-import no.nav.dolly.domain.resultset.organisasjon.RsOrganisasjoner;
+import no.nav.dolly.domain.resultset.organisasjon.RsSyntetiskeOrganisasjoner;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
 import no.nav.dolly.service.OrganisasjonNummerService;
 import no.nav.dolly.service.OrganisasjonProgressService;
@@ -69,11 +70,11 @@ public class OrganisasjonClientTest {
                 .formaal("Testing")
                 .build();
 
-        OrganisasjonRequest.Organisasjon requestOrganisasjon2 = OrganisasjonRequest.Organisasjon.builder()
+        OrganisasjonBestillingRequest.SyntetiskOrganisasjon requestOrganisasjon2 = OrganisasjonBestillingRequest.SyntetiskOrganisasjon.builder()
                 .formaal("Testing")
                 .build();
 
-        OrganisasjonRequest.Organisasjon underOrganisasjon = OrganisasjonRequest.Organisasjon.builder()
+        OrganisasjonBestillingRequest.SyntetiskOrganisasjon underOrganisasjon = OrganisasjonBestillingRequest.SyntetiskOrganisasjon.builder()
                 .formaal("underenhet")
                 .build();
 
@@ -86,11 +87,14 @@ public class OrganisasjonClientTest {
 
         bestilling = RsOrganisasjonBestilling.builder()
                 .environments(List.of("q1"))
-                .rsOrganisasjoner(new RsOrganisasjoner())
+                .rsSyntetiskeOrganisasjoner(new RsSyntetiskeOrganisasjoner())
                 .build();
 
-        when(mapperFacade.map(any(RsOrganisasjoner.class), eq(OrganisasjonRequest.class))).thenReturn(request);
+        when(mapperFacade.map(any(RsSyntetiskeOrganisasjoner.class), eq(OrganisasjonBestillingRequest.class))).thenReturn(request);
         when(organisasjonConsumer.postOrganisasjon(any())).thenReturn(new ResponseEntity<>(response, HttpStatus.CREATED));
+        when(organisasjonConsumer.deployOrganisasjon(any())).thenReturn(new ResponseEntity<>(OrganisasjonDeployResponse.builder()
+                .orgStatus(Collections.singletonList(OrganisasjonDeployResponse.OrgStatus.builder().envStatus(Collections.singletonList(OrganisasjonDeployResponse.EnvStatus.builder().environment("q1").status("OK").build())).build()))
+                .build(), HttpStatus.OK));
     }
 
     @Test

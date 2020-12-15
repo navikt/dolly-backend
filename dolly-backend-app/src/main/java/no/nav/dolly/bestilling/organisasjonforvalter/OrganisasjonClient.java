@@ -31,7 +31,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @RequiredArgsConstructor
 public class OrganisasjonClient implements OrganisasjonRegister {
 
-    private static int ID_GENERATOR_START = -1;
     private final OrganisasjonConsumer organisasjonConsumer;
     private final OrganisasjonNummerService organisasjonNummerService;
     private final OrganisasjonProgressService organisasjonProgressService;
@@ -44,11 +43,7 @@ public class OrganisasjonClient implements OrganisasjonRegister {
         OrganisasjonBestillingProgress progress = new OrganisasjonBestillingProgress();
         OrganisasjonBestillingRequest organisasjonBestillingRequest = mapperFacade.map(bestilling.getRsSyntetiskeOrganisasjoner(), OrganisasjonBestillingRequest.class);
         StringBuilder status = new StringBuilder();
-        OrganisasjonRequest organisasjonRequest = mapperFacade.map(bestilling.getRsOrganisasjoner(), OrganisasjonRequest.class);
-
-        if (nonNull(organisasjonRequest.getOrganisasjoner())) {
-            generateIdForOrganisasjoner(organisasjonRequest.getOrganisasjoner(), Integer.toString(ID_GENERATOR_START));
-        }
+        List<String> orgnumre = new ArrayList<>();
 
         bestilling.getEnvironments().forEach(environment -> organisasjonBestillingRequest.getOrganisasjoner().forEach(organisasjon -> {
 
@@ -80,15 +75,25 @@ public class OrganisasjonClient implements OrganisasjonRegister {
         progress.setOrganisasjonsforvalterStatus(status.toString());
     }
 
-    private static void generateIdForOrganisasjoner(List<OrganisasjonRequest.Organisasjon> organisasjoner, String parentId) {
+    private void deployOrganisasjoner(List<String> orgnumre, List<String> environments, StringBuilder status) {
 
-        for (OrganisasjonRequest.Organisasjon organisasjon : organisasjoner) {
-            ID_GENERATOR_START++;
-            organisasjon.setId(Integer.toString(ID_GENERATOR_START));
-            organisasjon.setParentId(parentId.equals("-1") ? null : parentId);
-            if (nonNull(organisasjon.getUnderenheter()) && !organisasjon.getUnderenheter().isEmpty()) {
-                generateIdForOrganisasjoner(organisasjon.getUnderenheter(), organisasjon.getId());
-            }
+        if (isNull(orgnumre) || orgnumre.isEmpty() || isNull(environments) || environments.isEmpty()) {
+            throw new DollyFunctionalException("Ugyldig deployment, liste med miljø eller orgnumre eksisterer ikke");
+        }
+        ResponseEntity<OrganisasjonDeployResponse> deployResponse = organisasjonConsumer.deployOrganisasjon(new OrganisasjonDeployRequest(orgnumre, environments));
+
+        if (deployResponse.hasBody()) {
+            deployResponse.getBody().getOrgStatus().forEach(orgStatus -> {
+                status.append(orgStatus.getOrgnummer());
+                status.append(" - ");
+                orgStatus.getEnvStatus().forEach(envStatus -> {
+                    status.append(envStatus.getEnvironment());
+                    status.append(":");
+                    status.append(envStatus.getStatus());
+                });
+            });
+        } else {
+            status.append("FEIL - Mottok ikke status fra Org-Forvalter deploy");
         }
     }
 

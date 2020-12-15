@@ -18,13 +18,13 @@ import static java.util.Objects.isNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class RsOrganisasjoner {
+public class RsSyntetiskeOrganisasjoner {
 
-    public List<Organisasjon> getOrganisasjoner() {
+    private List<SyntetiskOrganisasjon> organisasjoner;
+
+    public List<SyntetiskOrganisasjon> getOrganisasjoner() {
         return isNull(organisasjoner) ? new ArrayList<>() : organisasjoner;
     }
-
-    private List<Organisasjon> organisasjoner;
 
     @Getter
     @Setter
@@ -32,19 +32,36 @@ public class RsOrganisasjoner {
     @NoArgsConstructor
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    public static class Organisasjon {
+    public static class SyntetiskOrganisasjon {
 
+        private String enhetstype;
         private String organisasjonsform;
         private String naeringskode;
         private String formaal;
         private String telefon;
         private String epost;
         private String nettside;
-        private ForretningsAdresse forretningsAdresse;
-        private List<Organisasjon> underenheter;
+
+        private List<Adresse> adresser;
+
+        public List<Adresse> getAdresser() {
+            return isNull(adresser) ? new ArrayList<>() : adresser;
+        }
+
+        private List<SyntetiskOrganisasjon> underenheter;
+
+        public List<SyntetiskOrganisasjon> getUnderenheter() {
+            return isNull(underenheter) ? new ArrayList<>() : underenheter;
+        }
     }
 
-    public static class ForretningsAdresse {
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    public static class Adresse {
         private String adresseType;
         private List<String> adresseLinjer;
 

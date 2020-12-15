@@ -20,11 +20,11 @@ import static java.util.Objects.isNull;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrganisasjonBestillingRequest {
 
-    public List<Organisasjon> getOrganisasjoner() {
+    private List<SyntetiskOrganisasjon> organisasjoner;
+
+    public List<SyntetiskOrganisasjon> getOrganisasjoner() {
         return isNull(organisasjoner) ? new ArrayList<>() : organisasjoner;
     }
-
-    private List<Organisasjon> organisasjoner;
 
     @Getter
     @Setter
@@ -32,29 +32,47 @@ public class OrganisasjonBestillingRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    public static class Organisasjon {
+    public static class SyntetiskOrganisasjon {
 
-        private String id;
-        private String parentId;
+        private String enhetstype;
         private String organisasjonsform;
         private String naeringskode;
         private String formaal;
         private String telefon;
         private String epost;
         private String nettside;
-        private ForretningsAdresse forretningsAdresse;
-        private List<Organisasjon> underenheter;
+
+        private List<Adresse> adresser;
+
+        public List<Adresse> getAdresser() {
+            return isNull(adresser) ? new ArrayList<>() : adresser;
+        }
+
+        private List<SyntetiskOrganisasjon> underenheter;
+
+        public List<SyntetiskOrganisasjon> getUnderenheter() {
+            return isNull(underenheter) ? new ArrayList<>() : underenheter;
+        }
     }
 
-    public static class ForretningsAdresse {
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    public static class Adresse {
         private String adresseType;
-        private String adresseLinje1;
-        private String adresseLinje2;
-        private String adresseLinje3;
-        private String adresseLinje4;
-        private String adresseLinje5;
+        private List<String> adresseLinjer;
+
+        public List<String> getAdresseLinjer() {
+            return isNull(adresseLinjer) ? new ArrayList<>() : adresseLinjer;
+        }
+
         private String postnr;
         private String kommunenr;
         private String landkode;
+        private String gatekode;
+        private String boenhet;
     }
 }

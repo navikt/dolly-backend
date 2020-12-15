@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import no.nav.dolly.domain.resultset.organisasjon.RsOrganisasjoner;
+import no.nav.dolly.domain.resultset.organisasjon.RsSyntetiskeOrganisasjoner;
 
 import java.util.List;
 
@@ -22,5 +22,5 @@ public class RsOrganisasjonBestilling {
     @Schema(description = "Liste av miljøer bestillingen skal deployes til")
     private List<String> environments;
 
-    private RsOrganisasjoner rsOrganisasjoner;
+    private RsSyntetiskeOrganisasjoner rsSyntetiskeOrganisasjoner;
 }
