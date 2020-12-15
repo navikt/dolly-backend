@@ -18,7 +18,7 @@ import static java.util.Objects.isNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OrganisasjonRequest {
+public class OrganisasjonBestillingRequest {
 
     public List<Organisasjon> getOrganisasjoner() {
         return isNull(organisasjoner) ? new ArrayList<>() : organisasjoner;

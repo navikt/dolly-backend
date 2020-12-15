@@ -4,20 +4,25 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.bestilling.OrganisasjonRegister;
-import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonRequest;
-import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonResponse;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonBestillingRequest;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonBestillingResponse;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonDeployRequest;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonDeployResponse;
 import no.nav.dolly.domain.jpa.OrganisasjonBestillingProgress;
 import no.nav.dolly.domain.jpa.OrganisasjonNummer;
 import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
+import no.nav.dolly.exceptions.DollyFunctionalException;
 import no.nav.dolly.service.OrganisasjonNummerService;
 import no.nav.dolly.service.OrganisasjonProgressService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -34,8 +39,10 @@ public class OrganisasjonClient implements OrganisasjonRegister {
     private final MapperFacade mapperFacade;
 
     @Override
-    public void opprett(RsOrganisasjonBestilling bestilling, OrganisasjonBestillingProgress progress) {
+    public void opprett(RsOrganisasjonBestilling bestilling, Long bestillingId) {
 
+        OrganisasjonBestillingProgress progress = new OrganisasjonBestillingProgress();
+        OrganisasjonBestillingRequest organisasjonBestillingRequest = mapperFacade.map(bestilling.getRsSyntetiskeOrganisasjoner(), OrganisasjonBestillingRequest.class);
         StringBuilder status = new StringBuilder();
         OrganisasjonRequest organisasjonRequest = mapperFacade.map(bestilling.getRsOrganisasjoner(), OrganisasjonRequest.class);
 
@@ -43,44 +50,33 @@ public class OrganisasjonClient implements OrganisasjonRegister {
             generateIdForOrganisasjoner(organisasjonRequest.getOrganisasjoner(), Integer.toString(ID_GENERATOR_START));
         }
 
-        bestilling.getEnvironments().forEach(environment -> {
-            StringBuilder envStatus = new StringBuilder();
-            organisasjonRequest.getOrganisasjoner().forEach(organisasjon -> {
+        bestilling.getEnvironments().forEach(environment -> organisasjonBestillingRequest.getOrganisasjoner().forEach(organisasjon -> {
 
-                try {
-                    ResponseEntity<OrganisasjonResponse> response = organisasjonConsumer.postOrganisasjon(organisasjonRequest);
-                    if (response.hasBody()) {
-                        envStatus.append(isNotBlank(envStatus) ? ',' : "")
-                                .append("OK");
+            try {
+                ResponseEntity<OrganisasjonBestillingResponse> response = organisasjonConsumer.postOrganisasjon(organisasjonBestillingRequest);
+                if (response.hasBody()) {
 
-                        organisasjonNummerService.save(OrganisasjonNummer.builder()
-                                .bestillingId(progress.getBestillingId())
-                                .organisasjonsnr(Objects.requireNonNull(response.getBody()).getOrganisasjonsNummer())
-                                .build());
+                    String orgnummer = Objects.requireNonNull(response.getBody()).getOrganisasjonsNummer();
+                    organisasjonNummerService.save(OrganisasjonNummer.builder()
+                            .bestillingId(bestillingId)
+                            .organisasjonsnr(orgnummer)
+                            .build());
 
-                        organisasjonProgressService.save(progress);
-                    }
-
-                } catch (RuntimeException e) {
-
-                    envStatus.append("FEIL");
-
-                    status.append(isNotBlank(status) ? ',' : "")
-                            .append(environment)
-                            .append(':')
-                            .append("FEIL - ")
-                            .append(errorStatusDecoder.decodeRuntimeException(e));
-
-                    log.error("Feilet med å legge til organisasjon: {} i miljø: {}",
-                            organisasjon, environment, e);
+                    orgnumre.add(orgnummer);
                 }
-            });
-            if (!envStatus.toString().contains("FEIL")) {
-                status.append(environment)
+            } catch (RuntimeException e) {
+
+                status.append(isNotBlank(status) ? ',' : "")
+                        .append(environment)
                         .append(':')
-                        .append("OK");
+                        .append("FEIL - ")
+                        .append(errorStatusDecoder.decodeRuntimeException(e));
+
+                log.error("Feilet med å legge til organisasjon: {} i miljø: {}",
+                        organisasjon, environment, e);
             }
-        });
+        }));
+        deployOrganisasjoner(orgnumre, bestilling.getEnvironments(), status);
         progress.setOrganisasjonsforvalterStatus(status.toString());
     }
 
@@ -97,8 +93,13 @@ public class OrganisasjonClient implements OrganisasjonRegister {
     }
 
     @Override
-    public void gjenoprett(OrganisasjonBestillingProgress progress) {
+    public void gjenopprett(OrganisasjonBestillingProgress progress, List<String> miljoer) {
 
+        //TODO: Implementer Gjenopprett
+
+        if (nonNull(progress)) {
+            organisasjonProgressService.save(progress);
+        }
     }
 
     @Override

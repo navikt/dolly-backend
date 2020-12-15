@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface OrganisasjonRegister {
 
-    void opprett(RsOrganisasjonBestilling bestilling, OrganisasjonBestillingProgress progress);
+    void opprett(RsOrganisasjonBestilling bestilling, Long bestillingId);
 
-    void gjenoprett(OrganisasjonBestillingProgress progress);
+    void gjenopprett(OrganisasjonBestillingProgress progress, List<String> miljoer);
 
     void release(List<String> organisasjoner);
 }

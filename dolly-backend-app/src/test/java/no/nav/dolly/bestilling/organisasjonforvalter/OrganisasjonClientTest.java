@@ -2,9 +2,8 @@ package no.nav.dolly.bestilling.organisasjonforvalter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ma.glasnost.orika.MapperFacade;
-import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonRequest;
-import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonResponse;
-import no.nav.dolly.domain.jpa.OrganisasjonBestillingProgress;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonBestillingRequest;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonBestillingResponse;
 import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
 import no.nav.dolly.domain.resultset.organisasjon.RsOrganisasjoner;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
@@ -31,6 +30,7 @@ import static org.mockito.Mockito.when;
 public class OrganisasjonClientTest {
 
     private static final String ORG_NUMMER = "123456789";
+    private static final Long BESTILLING_ID = 123L;
 
     @Mock
     private static OrganisasjonConsumer organisasjonConsumer;
@@ -54,21 +54,18 @@ public class OrganisasjonClientTest {
     private OrganisasjonClient organisasjonClient;
 
 
-    private OrganisasjonResponse response;
+    private OrganisasjonBestillingResponse response;
     private RsOrganisasjonBestilling bestilling;
-    private OrganisasjonRequest request;
-    private OrganisasjonBestillingProgress progress;
+    private OrganisasjonBestillingRequest request;
 
     @Before
     public void setUp() {
 
-        response = OrganisasjonResponse.builder()
+        response = OrganisasjonBestillingResponse.builder()
                 .organisasjonsNummer(ORG_NUMMER)
                 .build();
 
-        progress = new OrganisasjonBestillingProgress();
-
-        OrganisasjonRequest.Organisasjon requestOrganisasjon = OrganisasjonRequest.Organisasjon.builder()
+        OrganisasjonBestillingRequest.SyntetiskOrganisasjon requestOrganisasjon = OrganisasjonBestillingRequest.SyntetiskOrganisasjon.builder()
                 .formaal("Testing")
                 .build();
 
@@ -82,7 +79,7 @@ public class OrganisasjonClientTest {
 
         requestOrganisasjon.setUnderenheter(Collections.singletonList(underOrganisasjon));
 
-        request = OrganisasjonRequest.builder()
+        request = OrganisasjonBestillingRequest.builder()
                 .organisasjoner(List.of(requestOrganisasjon, requestOrganisasjon2))
                 .build();
 
@@ -97,13 +94,13 @@ public class OrganisasjonClientTest {
     }
 
     @Test
-    public void should_return_created_and_correct_id_for_underorganisasjon() {
+    public void should_return_created_and_correct_formaal_for_underorganisasjon() {
 
-
-        organisasjonClient.opprett(bestilling, progress);
-        assertThat(progress.getOrganisasjonsforvalterStatus()).isNotBlank().contains("OK");
-        assertThat(request.getOrganisasjoner().get(0).getUnderenheter().get(0).getId()).contains("1");
-        assertThat(request.getOrganisasjoner().get(0).getUnderenheter().get(0).getParentId()).contains("0");
+        organisasjonClient.opprett(bestilling, BESTILLING_ID);
+        assertThat(request.getOrganisasjoner()).isNotEmpty();
+        assertThat(request.getOrganisasjoner().get(0).getUnderenheter()).isNotEmpty();
+        assertThat(request.getOrganisasjoner().get(0).getUnderenheter().get(0).getFormaal()).contains("underenhet");
+        assertThat(request.getOrganisasjoner().get(1).getUnderenheter()).isEmpty();
     }
 
 }

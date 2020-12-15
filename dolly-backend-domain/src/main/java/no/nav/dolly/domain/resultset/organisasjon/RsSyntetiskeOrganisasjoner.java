@@ -46,13 +46,16 @@ public class RsOrganisasjoner {
 
     public static class ForretningsAdresse {
         private String adresseType;
-        private String adresseLinje1;
-        private String adresseLinje2;
-        private String adresseLinje3;
-        private String adresseLinje4;
-        private String adresseLinje5;
+        private List<String> adresseLinjer;
+
+        public List<String> getAdresseLinjer() {
+            return isNull(adresseLinjer) ? new ArrayList<>() : adresseLinjer;
+        }
+
         private String postnr;
         private String kommunenr;
         private String landkode;
+        private String gatekode;
+        private String boenhet;
     }
 }

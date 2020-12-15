@@ -64,7 +64,7 @@ public class OrganisasjonBestillingService {
                         .build());
     }
 
-
+    @Transactional
     public void slettBestillingByBestillingId(Long bestillingId) {
 
         List<OrganisasjonBestillingProgress> bestillingProgressList = bestillingProgressRepository.findByBestillingId(bestillingId).orElse(new ArrayList<>());
