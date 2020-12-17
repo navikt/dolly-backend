@@ -8,6 +8,7 @@ import no.nav.dolly.bestilling.organisasjonforvalter.domain.BestillingRequest;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.BestillingResponse;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployRequest;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployResponse;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployResponse.OrgStatus;
 import no.nav.dolly.domain.jpa.OrganisasjonBestillingProgress;
 import no.nav.dolly.domain.jpa.OrganisasjonNummer;
 import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
@@ -84,19 +85,14 @@ public class OrganisasjonClient implements OrganisasjonRegister {
         ResponseEntity<DeployResponse> deployResponse = organisasjonConsumer.deployOrganisasjon(new DeployRequest(orgnumre, environments));
 
         if (deployResponse.hasBody()) {
-            deployResponse.getBody().getOrgStatus().forEach(orgStatus -> {
-                status.append(orgStatus.getOrgnummer());
-                status.append(" - ");
-                orgStatus.getEnvStatus().forEach(envStatus -> {
-                    status.append(envStatus.getEnvironment());
-                    status.append(":");
-                    status.append(envStatus.getStatus());
-                });
-            });
+            appendStatusForDeploy(status, Objects.requireNonNull(deployResponse.getBody()).getAdditionalProp1());
+            appendStatusForDeploy(status, Objects.requireNonNull(deployResponse.getBody()).getAdditionalProp2());
+            appendStatusForDeploy(status, Objects.requireNonNull(deployResponse.getBody()).getAdditionalProp3());
         } else {
             status.append("FEIL - Mottok ikke status fra Org-Forvalter deploy");
         }
     }
+
 
     @Override
     public void gjenopprett(OrganisasjonBestillingProgress progress, List<String> miljoer) {
@@ -106,6 +102,18 @@ public class OrganisasjonClient implements OrganisasjonRegister {
         if (nonNull(progress)) {
             organisasjonProgressService.save(progress);
         }
+    }
+
+    private void appendStatusForDeploy(StringBuilder status, OrgStatus orgStatus) {
+
+        if (isNull(status) || isNull(orgStatus)) {
+            return;
+        }
+        status.append(orgStatus.getEnvironment());
+        status.append(":");
+        status.append(orgStatus.getStatus());
+        status.append(" - ");
+        status.append(orgStatus.getDetaljer());
     }
 
     @Override
