@@ -67,13 +67,11 @@ public class OrganisasjonClientTest {
     public void setUp() {
 
         deployResponse = DeployResponse.builder()
-                .orgStatus(Collections.singletonList(DeployResponse.OrgStatus.builder()
-                        .orgnummer(ORG_NUMMER)
-                        .envStatus(Collections.singletonList(DeployResponse.EnvStatus.builder()
-                                .environment("q1")
-                                .status("OK")
-                                .build()))
-                        .build()))
+                .additionalProp1(DeployResponse.OrgStatus.builder()
+                        .environment("q1")
+                        .status("OK")
+                        .detaljer("Detaljer")
+                        .build())
                 .build();
 
         BestillingRequest.SyntetiskOrganisasjon requestOrganisasjon = BestillingRequest.SyntetiskOrganisasjon.builder()
