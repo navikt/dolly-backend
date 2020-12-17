@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrganisasjonDeployResponse {
+public class DeployResponse {
 
     private List<OrgStatus> orgStatus;
 

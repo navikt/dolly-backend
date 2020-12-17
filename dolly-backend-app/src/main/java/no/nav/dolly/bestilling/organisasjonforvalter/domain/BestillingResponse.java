@@ -11,7 +11,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrganisasjonBestillingResponse {
+public class BestillingResponse {
 
     private String organisasjonsNummer;
 }

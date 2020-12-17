@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.bestilling.OrganisasjonRegister;
-import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonBestillingRequest;
-import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonBestillingResponse;
-import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonDeployRequest;
-import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonDeployResponse;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.BestillingRequest;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.BestillingResponse;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployRequest;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployResponse;
 import no.nav.dolly.domain.jpa.OrganisasjonBestillingProgress;
 import no.nav.dolly.domain.jpa.OrganisasjonNummer;
 import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
@@ -41,14 +41,17 @@ public class OrganisasjonClient implements OrganisasjonRegister {
     public void opprett(RsOrganisasjonBestilling bestilling, Long bestillingId) {
 
         OrganisasjonBestillingProgress progress = new OrganisasjonBestillingProgress();
-        OrganisasjonBestillingRequest organisasjonBestillingRequest = mapperFacade.map(bestilling.getRsSyntetiskeOrganisasjoner(), OrganisasjonBestillingRequest.class);
+        BestillingRequest bestillingRequest = BestillingRequest.builder()
+                .organisasjoner(mapperFacade.mapAsList(bestilling.getOrganisasjoner(), BestillingRequest.SyntetiskOrganisasjon.class))
+                .build();
+
         StringBuilder status = new StringBuilder();
         List<String> orgnumre = new ArrayList<>();
 
-        bestilling.getEnvironments().forEach(environment -> organisasjonBestillingRequest.getOrganisasjoner().forEach(organisasjon -> {
+        bestilling.getEnvironments().forEach(environment -> bestillingRequest.getOrganisasjoner().forEach(organisasjon -> {
 
             try {
-                ResponseEntity<OrganisasjonBestillingResponse> response = organisasjonConsumer.postOrganisasjon(organisasjonBestillingRequest);
+                ResponseEntity<BestillingResponse> response = organisasjonConsumer.postOrganisasjon(bestillingRequest);
                 if (response.hasBody()) {
 
                     String orgnummer = Objects.requireNonNull(response.getBody()).getOrganisasjonsNummer();
@@ -63,8 +66,6 @@ public class OrganisasjonClient implements OrganisasjonRegister {
 
                 status.append(isNotBlank(status) ? ',' : "")
                         .append(environment)
-                        .append(':')
-                        .append("FEIL - ")
                         .append(errorStatusDecoder.decodeRuntimeException(e));
 
                 log.error("Feilet med å legge til organisasjon: {} i miljø: {}",
@@ -80,7 +81,7 @@ public class OrganisasjonClient implements OrganisasjonRegister {
         if (isNull(orgnumre) || orgnumre.isEmpty() || isNull(environments) || environments.isEmpty()) {
             throw new DollyFunctionalException("Ugyldig deployment, liste med miljø eller orgnumre eksisterer ikke");
         }
-        ResponseEntity<OrganisasjonDeployResponse> deployResponse = organisasjonConsumer.deployOrganisasjon(new OrganisasjonDeployRequest(orgnumre, environments));
+        ResponseEntity<DeployResponse> deployResponse = organisasjonConsumer.deployOrganisasjon(new DeployRequest(orgnumre, environments));
 
         if (deployResponse.hasBody()) {
             deployResponse.getBody().getOrgStatus().forEach(orgStatus -> {

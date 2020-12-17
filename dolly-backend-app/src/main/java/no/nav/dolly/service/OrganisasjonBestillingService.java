@@ -56,10 +56,10 @@ public class OrganisasjonBestillingService {
     public OrganisasjonBestilling saveBestilling(RsOrganisasjonBestilling request) {
         return saveBestillingToDB(
                 OrganisasjonBestilling.builder()
-                        .antall(request.getRsSyntetiskeOrganisasjoner().getOrganisasjoner().size())
+                        .antall(request.getOrganisasjoner().size())
                         .sistOppdatert(now())
                         .miljoer(join(",", request.getEnvironments()))
-                        .bestKriterier(toJson(request.getRsSyntetiskeOrganisasjoner()))
+                        .bestKriterier(toJson(request.getOrganisasjoner()))
                         .bruker(brukerService.fetchOrCreateBruker(getUserId()))
                         .build());
     }

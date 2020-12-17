@@ -9,7 +9,6 @@ import no.nav.dolly.security.oauth2.domain.AccessScopes;
 import no.nav.dolly.security.oauth2.domain.AccessToken;
 import no.nav.dolly.security.oauth2.service.TokenService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +29,6 @@ public class HelsepersonellConsumer {
     @Value("${HELSEPERSONELL_CLIENT_ID}")
     private String helsepersonellClientId;
 
-    @Cacheable("helsepersonell")
     @Timed(name = "providers", tags = { "operation", "leger-hent" })
     public ResponseEntity<HelsepersonellListeDTO> getHelsepersonell() {
 

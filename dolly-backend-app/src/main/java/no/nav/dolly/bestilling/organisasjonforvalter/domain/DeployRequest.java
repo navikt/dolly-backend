@@ -18,7 +18,7 @@ import static java.util.Objects.isNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OrganisasjonDeployRequest {
+public class DeployRequest {
 
     private List<String> orgnumre;
     private List<String> environments;

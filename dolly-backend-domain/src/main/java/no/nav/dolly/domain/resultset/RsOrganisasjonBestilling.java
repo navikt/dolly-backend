@@ -4,12 +4,15 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import no.nav.dolly.domain.resultset.organisasjon.RsSyntetiskeOrganisasjoner;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.Objects.isNull;
 
 @Getter
 @Setter
@@ -22,5 +25,51 @@ public class RsOrganisasjonBestilling {
     @Schema(description = "Liste av miljøer bestillingen skal deployes til")
     private List<String> environments;
 
-    private RsSyntetiskeOrganisasjoner rsSyntetiskeOrganisasjoner;
+    public List<String> getEnvironments() {
+        return isNull(environments) ? new ArrayList<>() : environments;
+    }
+
+    private List<SyntetiskOrganisasjon> organisasjoner;
+
+    public List<SyntetiskOrganisasjon> getOrganisasjoner() {
+        return isNull(organisasjoner) ? new ArrayList<>() : organisasjoner;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    public static class SyntetiskOrganisasjon {
+
+        private String enhetstype;
+        private String naeringskode;
+        private String formaal;
+        private String telefon;
+        private String epost;
+        private String nettside;
+
+        private Adresse forretningsadresse;
+        private Adresse postadresse;
+
+        private List<SyntetiskOrganisasjon> underenheter;
+
+        public List<SyntetiskOrganisasjon> getUnderenheter() {
+            return isNull(underenheter) ? new ArrayList<>() : underenheter;
+        }
+
+        @Data
+        @Builder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        public static class Adresse {
+
+            private List<String> adresselinjer;
+            private String postnr;
+            private String kommunenr;
+            private String landkode;
+        }
+    }
+
 }

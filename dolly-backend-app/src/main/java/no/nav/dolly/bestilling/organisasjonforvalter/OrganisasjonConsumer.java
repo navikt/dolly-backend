@@ -2,10 +2,10 @@ package no.nav.dolly.bestilling.organisasjonforvalter;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonBestillingRequest;
-import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonBestillingResponse;
-import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonDeployRequest;
-import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonDeployResponse;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.BestillingRequest;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.BestillingResponse;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployRequest;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployResponse;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.properties.ProvidersProps;
 import no.nav.dolly.security.oauth2.domain.AccessScopes;
@@ -44,7 +44,7 @@ public class OrganisasjonConsumer {
     private String organisasjonerClientId;
 
     @Timed(name = "providers", tags = { "operation", "organisasjon-hent" })
-    public ResponseEntity<OrganisasjonBestillingRequest> hentOrganisasjon(List<Long> orgnumre) {
+    public ResponseEntity<BestillingRequest> hentOrganisasjon(List<Long> orgnumre) {
 
         String callId = getNavCallId();
         AccessToken accessToken = getAccessToken(callId, "Organisasjon hent request sendt, callId: {}, consumerId: {}");
@@ -59,13 +59,13 @@ public class OrganisasjonConsumer {
                 .header(HEADER_NAV_CALL_ID, callId)
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .retrieve()
-                .toEntity(OrganisasjonBestillingRequest.class)
+                .toEntity(BestillingRequest.class)
                 .block();
     }
 
 
     @Timed(name = "providers", tags = { "operation", "organisasjon-opprett" })
-    public ResponseEntity<OrganisasjonBestillingResponse> postOrganisasjon(OrganisasjonBestillingRequest organisasjonBestillingRequest) {
+    public ResponseEntity<BestillingResponse> postOrganisasjon(BestillingRequest bestillingRequest) {
 
         String callId = getNavCallId();
         AccessToken accessToken = getAccessToken(callId, "Organisasjon oppretting sendt, callId: {}, consumerId: {}");
@@ -76,14 +76,14 @@ public class OrganisasjonConsumer {
                 .header(AUTHORIZATION, BEARER + accessToken.getTokenValue())
                 .header(HEADER_NAV_CALL_ID, callId)
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .body(organisasjonBestillingRequest, OrganisasjonBestillingRequest.class)
+                .body(bestillingRequest, BestillingRequest.class)
                 .retrieve()
-                .toEntity(OrganisasjonBestillingResponse.class)
+                .toEntity(BestillingResponse.class)
                 .block();
     }
 
     @Timed(name = "providers", tags = { "operation", "organisasjon-deploy" })
-    public ResponseEntity<OrganisasjonDeployResponse> deployOrganisasjon(OrganisasjonDeployRequest request) {
+    public ResponseEntity<DeployResponse> deployOrganisasjon(DeployRequest request) {
 
         String callId = getNavCallId();
         AccessToken accessToken = getAccessToken(callId, "Organisasjon deploy sendt, callId: {}, consumerId: {}");
@@ -94,9 +94,9 @@ public class OrganisasjonConsumer {
                 .header(AUTHORIZATION, BEARER + accessToken.getTokenValue())
                 .header(HEADER_NAV_CALL_ID, callId)
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .body(request, OrganisasjonDeployRequest.class)
+                .body(request, DeployRequest.class)
                 .retrieve()
-                .toEntity(OrganisasjonDeployResponse.class)
+                .toEntity(DeployResponse.class)
                 .block();
     }
 
