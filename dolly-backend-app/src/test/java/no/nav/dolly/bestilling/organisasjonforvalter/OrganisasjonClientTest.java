@@ -114,7 +114,9 @@ public class OrganisasjonClientTest {
 
         organisasjonClient.opprett(bestilling, BESTILLING_ID);
 
-        verify(organisasjonConsumer, times(1).description("Skal bare deploye organisasjoner en gang for to hoved organisasjoner")).deployOrganisasjon(any());
+        verify(organisasjonConsumer, times(1)
+                .description("Skal bare deploye organisasjoner en gang for to hoved organisasjoner"))
+                .deployOrganisasjon(any());
     }
 
     @Test
@@ -134,6 +136,7 @@ public class OrganisasjonClientTest {
 
         Assertions.assertThrows(DollyFunctionalException.class, () ->
                 organisasjonClient.opprett(bestilling, BESTILLING_ID));
+
         verify(organisasjonBestillingService, times(1)
                 .description("Skal sette feil på bestillingen nøyaktig en gang"))
                 .setBestillingFeil(anyLong(), any());
