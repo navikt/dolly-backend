@@ -55,9 +55,14 @@ public class KrrstubClient implements ClientRegister {
     }
 
     private void kobleMaalformTilSpraak(RsDollyUtvidetBestilling bestilling, DigitalKontaktdata digitalKontaktdata) {
-        if (nonNull(bestilling.getTpsf()) && isNotBlank(bestilling.getTpsf().getSprakKode()) && isBlank(digitalKontaktdata.getSpraak()))
-            List.of("NB", "NN", "EN", "SE").forEach(spraakKode -> digitalKontaktdata.setSpraak(
-                    spraakKode.equalsIgnoreCase(bestilling.getTpsf().getSprakKode()) ? spraakKode : ""));
+        if (nonNull(bestilling.getTpsf()) && isNotBlank(bestilling.getTpsf().getSprakKode()) && isBlank(digitalKontaktdata.getSpraak())) {
+            List.of("NB", "NN", "EN", "SE").forEach(spraakKode -> {
+                if (spraakKode.equalsIgnoreCase(bestilling.getTpsf().getSprakKode())) {
+                    digitalKontaktdata.setSpraak(
+                            spraakKode.equalsIgnoreCase(bestilling.getTpsf().getSprakKode()) ? spraakKode : "");
+                }
+            });
+        }
     }
 
     @Override
