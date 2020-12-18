@@ -7,6 +7,7 @@ import no.nav.dolly.bestilling.ClientRegister;
 import no.nav.dolly.domain.jpa.BestillingProgress;
 import no.nav.dolly.domain.resultset.RsDollyUtvidetBestilling;
 import no.nav.dolly.domain.resultset.krrstub.DigitalKontaktdata;
+import no.nav.dolly.domain.resultset.krrstub.RsDigitalKontaktdata;
 import no.nav.dolly.domain.resultset.tpsf.TpsPerson;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,9 @@ public class KrrstubClient implements ClientRegister {
         if (nonNull(bestilling.getKrrstub()) || (nonNull(bestilling.getTpsf()) && isNotBlank(bestilling.getTpsf().getSprakKode()))) {
 
             try {
-                DigitalKontaktdata digitalKontaktdata = mapperFacade.map(bestilling.getKrrstub(), DigitalKontaktdata.class);
+                DigitalKontaktdata digitalKontaktdata = mapperFacade.map(
+                        nonNull(bestilling.getKrrstub()) ? bestilling.getKrrstub() : new RsDigitalKontaktdata(),
+                        DigitalKontaktdata.class);
                 digitalKontaktdata.setPersonident(tpsPerson.getHovedperson());
 
                 kobleMaalformTilSpraak(bestilling, digitalKontaktdata);
