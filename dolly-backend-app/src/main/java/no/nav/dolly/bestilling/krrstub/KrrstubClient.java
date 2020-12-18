@@ -12,6 +12,7 @@ import no.nav.dolly.errorhandling.ErrorStatusDecoder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static java.util.Objects.nonNull;
@@ -58,8 +59,8 @@ public class KrrstubClient implements ClientRegister {
         if (nonNull(bestilling.getTpsf()) && isNotBlank(bestilling.getTpsf().getSprakKode()) && isBlank(digitalKontaktdata.getSpraak())) {
             List.of("NB", "NN", "EN", "SE").forEach(spraakKode -> {
                 if (spraakKode.equalsIgnoreCase(bestilling.getTpsf().getSprakKode())) {
-                    digitalKontaktdata.setSpraak(
-                            spraakKode.equalsIgnoreCase(bestilling.getTpsf().getSprakKode()) ? spraakKode : "");
+                    digitalKontaktdata.setSpraak(bestilling.getTpsf().getSprakKode());
+                    digitalKontaktdata.setSpraakOppdatert(ZonedDateTime.now());
                 }
             });
         }
