@@ -8,6 +8,7 @@ import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployResponse;
 import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
 import no.nav.dolly.exceptions.DollyFunctionalException;
+import no.nav.dolly.service.OrganisasjonBestillingService;
 import no.nav.dolly.service.OrganisasjonNummerService;
 import no.nav.dolly.service.OrganisasjonProgressService;
 import org.junit.Before;
@@ -27,6 +28,7 @@ import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -47,6 +49,9 @@ public class OrganisasjonClientTest {
 
     @Mock
     private OrganisasjonProgressService organisasjonProgressService;
+
+    @Mock
+    private OrganisasjonBestillingService organisasjonBestillingService;
 
     @Mock
     private ObjectMapper objectMapper;
@@ -118,7 +123,8 @@ public class OrganisasjonClientTest {
         organisasjonClient.opprett(bestilling, BESTILLING_ID);
 
         verify(organisasjonNummerService, times(2)
-                .description("Skal lagre orgnummer nøyaktig to ganger for to hovedorg med hver sin underenhet")).save(any());
+                .description("Skal lagre orgnummer nøyaktig to ganger for to hovedorg med hver sin underenhet"))
+                .save(any());
     }
 
     @Test
@@ -128,5 +134,8 @@ public class OrganisasjonClientTest {
 
         Assertions.assertThrows(DollyFunctionalException.class, () ->
                 organisasjonClient.opprett(bestilling, BESTILLING_ID));
+        verify(organisasjonBestillingService, times(1)
+                .description("Skal sette feil på bestillingen nøyaktig en gang"))
+                .setBestillingFeil(anyLong(), any());
     }
 }

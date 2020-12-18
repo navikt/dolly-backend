@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.lang.String.format;
@@ -62,6 +63,26 @@ public class OrganisasjonBestillingService {
                         .bestKriterier(toJson(request.getOrganisasjoner()))
                         .bruker(brukerService.fetchOrCreateBruker(getUserId()))
                         .build());
+    }
+
+    @Transactional
+    public void setBestillingFeil(Long bestillingId, String feil) {
+        Optional<OrganisasjonBestilling> byId = bestillingRepository.findById(bestillingId);
+
+        byId.ifPresent(bestilling -> {
+            bestilling.setFeil(feil);
+            bestillingRepository.save(bestilling);
+        });
+    }
+
+    @Transactional
+    public void setBestillingFerdig(Long bestillingId) {
+        Optional<OrganisasjonBestilling> byId = bestillingRepository.findById(bestillingId);
+
+        byId.ifPresent(bestilling -> {
+            bestilling.setFerdig(Boolean.TRUE);
+            bestillingRepository.save(bestilling);
+        });
     }
 
     @Transactional

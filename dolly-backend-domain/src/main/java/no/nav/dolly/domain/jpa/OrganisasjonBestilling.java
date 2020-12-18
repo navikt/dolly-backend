@@ -56,6 +56,9 @@ public class OrganisasjonBestilling {
     @Column(name = "feil")
     private String feil;
 
+    @Column(name = "ferdig")
+    private Boolean ferdig;
+
     @Column(name = "opprettet_fra_id")
     private Long opprettetFraId;
 
