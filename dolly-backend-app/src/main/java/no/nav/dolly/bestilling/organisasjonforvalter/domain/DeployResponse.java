@@ -1,10 +1,15 @@
 package no.nav.dolly.bestilling.organisasjonforvalter.domain;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Objects.isNull;
 
 @Data
 @Builder
@@ -12,20 +17,22 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DeployResponse {
 
-    private OrgStatus additionalProp1;
-    private OrgStatus additionalProp2;
-    private OrgStatus additionalProp3;
+    public enum Status {OK, ERROR}
+
+    private Map<String, List<EnvStatus>> orgStatus;
+
+    public Map<String, List<EnvStatus>> getOrgStatus() {
+        return isNull(orgStatus) ? (orgStatus = new HashMap<>()) : orgStatus;
+    }
 
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class OrgStatus {
+    public static class EnvStatus {
 
         private String environment;
-        private String status;
-        private String detaljer;
+        private Status status;
+        private String details;
     }
-
 }

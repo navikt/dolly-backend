@@ -21,8 +21,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Stack;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -60,18 +61,12 @@ public class OrganisasjonClientTest {
     private OrganisasjonClient organisasjonClient;
 
 
-    private DeployResponse deployResponse;
     private RsOrganisasjonBestilling bestilling;
 
     @Before
     public void setUp() {
 
-        deployResponse = DeployResponse.builder()
-                .additionalProp1(DeployResponse.OrgStatus.builder()
-                        .environment("q1")
-                        .status("OK")
-                        .detaljer("Detaljer")
-                        .build())
+        DeployResponse deployResponse = DeployResponse.builder()
                 .build();
 
         BestillingRequest.SyntetiskOrganisasjon requestOrganisasjon = BestillingRequest.SyntetiskOrganisasjon.builder()
@@ -100,12 +95,12 @@ public class OrganisasjonClientTest {
                                 .build()))
                 .build();
 
-        Stack<String> orgnummer = new Stack<>();
-        orgnummer.push(ORG_NUMMER);
-        orgnummer.push(ORG_NUMMER_TO);
+        Set<String> orgnummer = new HashSet<>();
+        orgnummer.add(ORG_NUMMER);
+        orgnummer.add(ORG_NUMMER_TO);
 
         when(mapperFacade.mapAsList(anyList(), eq(BestillingRequest.SyntetiskOrganisasjon.class))).thenReturn(List.of(requestOrganisasjon, requestOrganisasjon));
-        when(organisasjonConsumer.postOrganisasjon(any())).thenReturn(new ResponseEntity<>(new BestillingResponse(orgnummer.pop()), HttpStatus.CREATED));
+        when(organisasjonConsumer.postOrganisasjon(any())).thenReturn(new ResponseEntity<>(new BestillingResponse(orgnummer), HttpStatus.CREATED));
         when(organisasjonConsumer.deployOrganisasjon(any())).thenReturn(new ResponseEntity<>(deployResponse, HttpStatus.OK));
     }
 
@@ -114,15 +109,16 @@ public class OrganisasjonClientTest {
 
         organisasjonClient.opprett(bestilling, BESTILLING_ID);
 
-        verify(organisasjonConsumer, times(1).description("Skal deploye organisasjoner en gang for to hoved organisasjoner")).deployOrganisasjon(any());
+        verify(organisasjonConsumer, times(1).description("Skal bare deploye organisasjoner en gang for to hoved organisasjoner")).deployOrganisasjon(any());
     }
 
     @Test
-    public void should_run_orgnummer_save_exactly_two_times_for_two_hovedorganisasjoner() {
+    public void should_run_orgnummer_save_exactly_two_times_for_two_hovedorganisasjoner_with_one_underenhet_each() {
 
         organisasjonClient.opprett(bestilling, BESTILLING_ID);
 
-        verify(organisasjonNummerService, times(2).description("Skal lagre orgnummer nøyaktig to ganger")).save(any());
+        verify(organisasjonNummerService, times(2)
+                .description("Skal lagre orgnummer nøyaktig to ganger for to hovedorg med hver sin underenhet")).save(any());
     }
 
     @Test
@@ -133,5 +129,4 @@ public class OrganisasjonClientTest {
         Assertions.assertThrows(DollyFunctionalException.class, () ->
                 organisasjonClient.opprett(bestilling, BESTILLING_ID));
     }
-
 }

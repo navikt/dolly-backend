@@ -5,11 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class BestillingResponse {
 
-    private String organisasjonsNummer;
+    private Set<String> orgnummer;
 }

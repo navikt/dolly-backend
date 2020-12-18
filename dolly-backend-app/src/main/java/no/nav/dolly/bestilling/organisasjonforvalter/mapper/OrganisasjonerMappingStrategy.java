@@ -4,7 +4,7 @@ import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.BestillingRequest;
-import no.nav.dolly.bestilling.organisasjonforvalter.domain.BestillingRequest.SyntetiskOrganisasjon.Adresse;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.BestillingRequest.SyntetiskOrganisasjon.AdresseRequest;
 import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
 import no.nav.dolly.mapper.MappingStrategy;
 import org.springframework.stereotype.Component;
@@ -26,10 +26,10 @@ public class OrganisasjonerMappingStrategy implements MappingStrategy {
                 .customize(new CustomMapper<>() {
                     @Override
                     public void mapAtoB(RsOrganisasjonBestilling.SyntetiskOrganisasjon rsSyntetiskOrganisasjon, BestillingRequest.SyntetiskOrganisasjon requestOrganisasjon, MappingContext context) {
-                        List<Adresse> adresser = new ArrayList<>();
+                        List<AdresseRequest> adresser = new ArrayList<>();
                         if (nonNull(rsSyntetiskOrganisasjon.getForretningsadresse())) {
                             adresser.add(
-                                    Adresse.builder()
+                                    AdresseRequest.builder()
                                             .adresselinjer(rsSyntetiskOrganisasjon.getForretningsadresse().getAdresselinjer())
                                             .adressetype(FADR)
                                             .landkode(rsSyntetiskOrganisasjon.getForretningsadresse().getLandkode())
@@ -39,7 +39,7 @@ public class OrganisasjonerMappingStrategy implements MappingStrategy {
                         }
                         if (nonNull(rsSyntetiskOrganisasjon.getPostadresse())) {
                             adresser.add(
-                                    Adresse.builder()
+                                    AdresseRequest.builder()
                                             .adresselinjer(rsSyntetiskOrganisasjon.getPostadresse().getAdresselinjer())
                                             .adressetype(PADR)
                                             .landkode(rsSyntetiskOrganisasjon.getPostadresse().getLandkode())

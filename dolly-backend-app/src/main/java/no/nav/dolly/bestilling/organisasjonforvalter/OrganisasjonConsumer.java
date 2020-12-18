@@ -22,8 +22,6 @@ import java.util.UUID;
 
 import static java.lang.String.format;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
-import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
-import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Slf4j
@@ -56,8 +54,8 @@ public class OrganisasjonConsumer {
                                 .queryParam("orgnumre", orgnumre)
                                 .build())
                 .header(AUTHORIZATION, BEARER + accessToken.getTokenValue())
-                .header(HEADER_NAV_CALL_ID, callId)
-                .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
+//                .header(HEADER_NAV_CALL_ID, callId)
+//                .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .retrieve()
                 .toEntity(BestillingRequest.class)
                 .block();
@@ -74,9 +72,9 @@ public class OrganisasjonConsumer {
                 .post()
                 .uri(URI.create(providersProps.getOrganisasjonForvalter().getUrl() + ORGANISASJON_BESTILLING_URL))
                 .header(AUTHORIZATION, BEARER + accessToken.getTokenValue())
-                .header(HEADER_NAV_CALL_ID, callId)
-                .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .body(bestillingRequest, BestillingRequest.class)
+//                .header(HEADER_NAV_CALL_ID, callId)
+//                .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
+                .bodyValue(bestillingRequest)
                 .retrieve()
                 .toEntity(BestillingResponse.class)
                 .block();
@@ -92,9 +90,9 @@ public class OrganisasjonConsumer {
                 .post()
                 .uri(URI.create(providersProps.getOrganisasjonForvalter().getUrl() + ORGANISASJON_DEPLOYMENT_URL))
                 .header(AUTHORIZATION, BEARER + accessToken.getTokenValue())
-                .header(HEADER_NAV_CALL_ID, callId)
-                .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .body(request, DeployRequest.class)
+//                .header(HEADER_NAV_CALL_ID, callId)
+//                .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
+                .bodyValue(request)
                 .retrieve()
                 .toEntity(DeployResponse.class)
                 .block();

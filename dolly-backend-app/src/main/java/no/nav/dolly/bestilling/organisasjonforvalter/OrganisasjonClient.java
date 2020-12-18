@@ -8,7 +8,6 @@ import no.nav.dolly.bestilling.organisasjonforvalter.domain.BestillingRequest;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.BestillingResponse;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployRequest;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployResponse;
-import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployResponse.OrgStatus;
 import no.nav.dolly.domain.jpa.OrganisasjonBestillingProgress;
 import no.nav.dolly.domain.jpa.OrganisasjonNummer;
 import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
@@ -19,9 +18,11 @@ import no.nav.dolly.service.OrganisasjonProgressService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -47,21 +48,16 @@ public class OrganisasjonClient implements OrganisasjonRegister {
                 .build();
 
         StringBuilder status = new StringBuilder();
-        List<String> orgnumre = new ArrayList<>();
+        Set<String> orgnumre = new HashSet<>();
 
         bestilling.getEnvironments().forEach(environment -> bestillingRequest.getOrganisasjoner().forEach(organisasjon -> {
 
             try {
+                log.info("Bestiller orgnumre fra Organisasjon Forvalter");
                 ResponseEntity<BestillingResponse> response = organisasjonConsumer.postOrganisasjon(bestillingRequest);
                 if (response.hasBody()) {
 
-                    String orgnummer = Objects.requireNonNull(response.getBody()).getOrganisasjonsNummer();
-                    organisasjonNummerService.save(OrganisasjonNummer.builder()
-                            .bestillingId(bestillingId)
-                            .organisasjonsnr(orgnummer)
-                            .build());
-
-                    orgnumre.add(orgnummer);
+                    orgnumre.addAll(Objects.requireNonNull(response.getBody()).getOrgnummer());
                 }
             } catch (RuntimeException e) {
 
@@ -73,21 +69,24 @@ public class OrganisasjonClient implements OrganisasjonRegister {
                         organisasjon, environment, e);
             }
         }));
-        deployOrganisasjoner(orgnumre, bestilling.getEnvironments(), status);
+        saveOrgnumreToDbAndDeploy(orgnumre, bestillingId, bestilling.getEnvironments(), status);
         progress.setOrganisasjonsforvalterStatus(status.toString());
     }
 
-    private void deployOrganisasjoner(List<String> orgnumre, List<String> environments, StringBuilder status) {
+    private void saveOrgnumreToDbAndDeploy(Set<String> orgnumre, Long bestillingId, List<String> environments, StringBuilder status) {
 
+        log.info("Deployer orgnumre fra Organisasjon Forvalter");
         if (isNull(orgnumre) || orgnumre.isEmpty() || isNull(environments) || environments.isEmpty()) {
             throw new DollyFunctionalException("Ugyldig deployment, liste med miljø eller orgnumre eksisterer ikke");
         }
+        orgnumre.forEach(orgnummer -> organisasjonNummerService.save(OrganisasjonNummer.builder()
+                .bestillingId(bestillingId)
+                .organisasjonsnr(orgnummer)
+                .build()));
         ResponseEntity<DeployResponse> deployResponse = organisasjonConsumer.deployOrganisasjon(new DeployRequest(orgnumre, environments));
 
         if (deployResponse.hasBody()) {
-            appendStatusForDeploy(status, Objects.requireNonNull(deployResponse.getBody()).getAdditionalProp1());
-            appendStatusForDeploy(status, Objects.requireNonNull(deployResponse.getBody()).getAdditionalProp2());
-            appendStatusForDeploy(status, Objects.requireNonNull(deployResponse.getBody()).getAdditionalProp3());
+            deployResponse.getBody().getOrgStatus().entrySet().forEach(orgStatus -> appendStatusForDeploy(status, orgStatus));
         } else {
             status.append("FEIL - Mottok ikke status fra Org-Forvalter deploy");
         }
@@ -104,16 +103,21 @@ public class OrganisasjonClient implements OrganisasjonRegister {
         }
     }
 
-    private void appendStatusForDeploy(StringBuilder status, OrgStatus orgStatus) {
+    private void appendStatusForDeploy(StringBuilder status, Map.Entry<String, List<DeployResponse.EnvStatus>> orgStatus) {
 
         if (isNull(status) || isNull(orgStatus)) {
             return;
         }
-        status.append(orgStatus.getEnvironment());
-        status.append(":");
-        status.append(orgStatus.getStatus());
+        status.append(isNotBlank(status) ? ',' : "");
+        status.append(orgStatus.getKey());
         status.append(" - ");
-        status.append(orgStatus.getDetaljer());
+        orgStatus.getValue().forEach(envStatus -> {
+            status.append(envStatus.getEnvironment());
+            status.append(':');
+            status.append(envStatus.getStatus());
+            status.append("-");
+            status.append(envStatus.getDetails());
+        });
     }
 
     @Override
