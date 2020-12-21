@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Objects.nonNull;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "api/v1/organisasjon")
@@ -61,13 +63,17 @@ public class OrganisasjonController {
     }
 
     @GetMapping("/bestilling")
-    @Operation(description = "Hent status på bestilling")
-    public List<OrganisasjonBestillingProgress> hentStatus(@RequestParam Long bestillingId) {
+    @Operation(description = "Hent status på bestilling basert på bestillingId eller brukerId")
+    public List<OrganisasjonBestillingProgress> hentStatus(@RequestParam(required = false) Long bestillingId, @RequestParam(required = false) String brukerId) {
 
-        Optional<List<OrganisasjonBestillingProgress>> bestillingProgress = bestillingProgressRepository.findByBestillingId(bestillingId);
+        Optional<List<OrganisasjonBestillingProgress>> bestillingProgress = nonNull(brukerId)
+                ? bestillingProgressRepository.findbyBrukerId(brukerId)
+                : bestillingProgressRepository.findByBestillingId(bestillingId);
 
         if (bestillingProgress.isEmpty()) {
-            throw new NotFoundException("Fant ikke noen bestillinger med ID: " + bestillingId);
+            throw new NotFoundException(nonNull(brukerId)
+                    ? "Fant ikke noen bestillinger med brukerId: " + brukerId
+                    : "Fant ikke noen bestillinger med ID: " + bestillingId);
         }
         List<OrganisasjonBestillingProgress> statusList = new ArrayList<>();
 
