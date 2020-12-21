@@ -55,7 +55,7 @@ public class OrganisasjonClient implements OrganisasjonRegister {
 
         Set<String> orgnumre = new HashSet<>();
 
-        bestilling.getEnvironments().forEach(environment -> bestillingRequest.getOrganisasjoner().forEach(organisasjon -> {
+        bestillingRequest.getOrganisasjoner().forEach(organisasjon -> {
 
             try {
                 log.info("Bestiller orgnumre fra Organisasjon Forvalter");
@@ -66,12 +66,12 @@ public class OrganisasjonClient implements OrganisasjonRegister {
                 }
             } catch (RuntimeException e) {
 
-                log.error("Feilet med å legge til organisasjon: {} i miljø: {}",
-                        organisasjon, environment, e);
+                log.error("Feilet med å legge til organisasjon: {} i miljoer: {}",
+                        organisasjon, bestilling.getEnvironments(), e);
 
                 organisasjonBestillingService.setBestillingFeil(bestillingId, errorStatusDecoder.decodeRuntimeException(e));
             }
-        }));
+        });
         saveOrgnumreToDbAndDeploy(orgnumre, bestillingId, bestilling.getEnvironments());
 
         organisasjonBestillingService.setBestillingFerdig(bestillingId);
