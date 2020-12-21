@@ -29,11 +29,7 @@ public class RsOrganisasjonBestilling {
         return isNull(environments) ? new ArrayList<>() : environments;
     }
 
-    private List<SyntetiskOrganisasjon> organisasjoner;
-
-    public List<SyntetiskOrganisasjon> getOrganisasjoner() {
-        return isNull(organisasjoner) ? new ArrayList<>() : organisasjoner;
-    }
+    private SyntetiskOrganisasjon organisasjoner;
 
     @Data
     @Builder

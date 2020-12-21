@@ -20,6 +20,7 @@ import no.nav.dolly.service.OrganisasjonProgressService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
@@ -49,7 +50,7 @@ public class OrganisasjonClient implements OrganisasjonRegister {
     public void opprett(RsOrganisasjonBestilling bestilling, Long bestillingId) {
 
         BestillingRequest bestillingRequest = BestillingRequest.builder()
-                .organisasjoner(mapperFacade.mapAsList(bestilling.getOrganisasjoner(), BestillingRequest.SyntetiskOrganisasjon.class))
+                .organisasjoner(Collections.singletonList(mapperFacade.map(bestilling.getOrganisasjoner(), BestillingRequest.SyntetiskOrganisasjon.class)))
                 .build();
 
         Set<String> orgnumre = new HashSet<>();

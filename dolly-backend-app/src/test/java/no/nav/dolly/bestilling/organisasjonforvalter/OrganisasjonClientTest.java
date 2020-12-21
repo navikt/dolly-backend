@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -93,39 +92,38 @@ public class OrganisasjonClientTest {
 
         bestilling = RsOrganisasjonBestilling.builder()
                 .environments(List.of("q1"))
-                .organisasjoner(Collections.singletonList(
+                .organisasjoner(
                         RsOrganisasjonBestilling.SyntetiskOrganisasjon.builder()
                                 .forretningsadresse(adresse)
                                 .postadresse(adresse)
-                                .build()))
+                                .build())
                 .build();
 
         Set<String> orgnummer = new HashSet<>();
         orgnummer.add(ORG_NUMMER);
-        orgnummer.add(ORG_NUMMER_TO);
 
-        when(mapperFacade.mapAsList(anyList(), eq(BestillingRequest.SyntetiskOrganisasjon.class))).thenReturn(List.of(requestOrganisasjon, requestOrganisasjon));
+        when(mapperFacade.map(any(), eq(BestillingRequest.SyntetiskOrganisasjon.class))).thenReturn(requestOrganisasjon);
         when(organisasjonConsumer.postOrganisasjon(any())).thenReturn(new ResponseEntity<>(new BestillingResponse(orgnummer), HttpStatus.CREATED));
         when(organisasjonConsumer.deployOrganisasjon(any())).thenReturn(new ResponseEntity<>(deployResponse, HttpStatus.OK));
     }
 
     @Test
-    public void should_run_deploy_organisasjon_exactly_one_time_for_two_hovedorganisasjoner() {
+    public void should_run_deploy_organisasjon_exactly_one_time_for_one_hovedorganisasjon() {
 
         organisasjonClient.opprett(bestilling, BESTILLING_ID);
 
         verify(organisasjonConsumer, times(1)
-                .description("Skal bare deploye organisasjoner en gang for to hoved organisasjoner"))
+                .description("Skal bare deploye organisasjoner en gang for en hoved organisasjon"))
                 .deployOrganisasjon(any());
     }
 
     @Test
-    public void should_run_orgnummer_save_exactly_two_times_for_two_hovedorganisasjoner_with_one_underenhet_each() {
+    public void should_run_orgnummer_save_exactly_one_time_for_one_hovedorganisasjon_with_one_underenhet() {
 
         organisasjonClient.opprett(bestilling, BESTILLING_ID);
 
-        verify(organisasjonNummerService, times(2)
-                .description("Skal lagre orgnummer nøyaktig to ganger for to hovedorg med hver sin underenhet"))
+        verify(organisasjonNummerService, times(1)
+                .description("Skal lagre orgnummer nøyaktig en gang for en hovedorg med en underenhet"))
                 .save(any());
     }
 

@@ -57,7 +57,7 @@ public class OrganisasjonBestillingService {
     public OrganisasjonBestilling saveBestilling(RsOrganisasjonBestilling request) {
         return saveBestillingToDB(
                 OrganisasjonBestilling.builder()
-                        .antall(request.getOrganisasjoner().size())
+                        .antall(1)
                         .sistOppdatert(now())
                         .miljoer(join(",", request.getEnvironments()))
                         .bestKriterier(toJson(request.getOrganisasjoner()))
