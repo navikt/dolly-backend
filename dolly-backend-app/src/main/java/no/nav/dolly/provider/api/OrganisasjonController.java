@@ -11,7 +11,6 @@ import no.nav.dolly.domain.resultset.entity.bestilling.RsOrganisasjonBestillingS
 import no.nav.dolly.exceptions.NotFoundException;
 import no.nav.dolly.repository.OrganisasjonBestillingProgressRepository;
 import no.nav.dolly.service.OrganisasjonBestillingService;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -61,7 +60,6 @@ public class OrganisasjonController {
                 progressList.forEach(progress -> organisasjonClient.gjenopprett(progress, miljoer)));
     }
 
-    @Cacheable("orgBestilling")
     @GetMapping("/bestilling")
     @Operation(description = "Hent status på bestilling")
     public List<OrganisasjonBestillingProgress> hentStatus(@RequestParam Long bestillingId) {
