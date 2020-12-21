@@ -8,6 +8,7 @@ import no.nav.dolly.bestilling.organisasjonforvalter.domain.BestillingRequest;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.BestillingResponse;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployRequest;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployResponse;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployResponse.EnvStatus;
 import no.nav.dolly.domain.jpa.OrganisasjonBestillingProgress;
 import no.nav.dolly.domain.jpa.OrganisasjonNummer;
 import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
@@ -21,12 +22,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Slf4j
@@ -60,7 +61,7 @@ public class OrganisasjonClient implements OrganisasjonRegister {
                 ResponseEntity<BestillingResponse> response = organisasjonConsumer.postOrganisasjon(bestillingRequest);
                 if (response.hasBody()) {
 
-                    orgnumre.addAll(Objects.requireNonNull(response.getBody()).getOrgnummer());
+                    orgnumre.addAll(requireNonNull(response.getBody()).getOrgnummer());
                 }
             } catch (RuntimeException e) {
 
@@ -89,10 +90,11 @@ public class OrganisasjonClient implements OrganisasjonRegister {
         ResponseEntity<DeployResponse> deployResponse = organisasjonConsumer.deployOrganisasjon(new DeployRequest(orgnumre, environments));
 
         if (deployResponse.hasBody()) {
-            deployResponse.getBody().getOrgStatus().entrySet().forEach(orgStatus -> organisasjonProgressService.save(OrganisasjonBestillingProgress.builder()
+            requireNonNull(deployResponse.getBody()).getOrgStatus().entrySet().forEach(orgStatus -> organisasjonProgressService.save(OrganisasjonBestillingProgress.builder()
                     .bestillingId(bestillingId)
                     .organisasjonsnummer(orgStatus.getKey())
-                    .organisasjonsforvalterStatus(appendStatusForDeploy(orgStatus))
+                    .organisasjonsforvalterStatus(mapStatusFraDeploy(orgStatus))
+                    .uuid(mapUuidFraDeploy(orgStatus))
                     .build()));
         } else {
             organisasjonBestillingService.setBestillingFeil(bestillingId, FEIL_STATUS_ORGFORVALTER_DEPLOY);
@@ -111,7 +113,7 @@ public class OrganisasjonClient implements OrganisasjonRegister {
         }
     }
 
-    private String appendStatusForDeploy(Map.Entry<String, List<DeployResponse.EnvStatus>> orgStatus) {
+    private String mapStatusFraDeploy(Entry<String, List<EnvStatus>> orgStatus) {
 
         if (isNull(orgStatus)) {
             return null;
@@ -119,13 +121,35 @@ public class OrganisasjonClient implements OrganisasjonRegister {
         StringBuilder status = new StringBuilder();
         orgStatus.getValue().forEach(envStatus -> {
             status.append(isNotBlank(status) ? ',' : "");
-            status.append(envStatus.getEnvironment().toUpperCase());
+            status.append(envStatus.getEnvironment());
             status.append(':');
             status.append(envStatus.getStatus());
             if (nonNull(envStatus.getDetails())) {
                 status.append("-");
                 status.append(envStatus.getDetails());
             }
+        });
+        return status.toString();
+    }
+
+    private String mapUuidFraDeploy(Entry<String, List<EnvStatus>> orgStatus) {
+
+        if (isNull(orgStatus)) {
+            return null;
+        }
+        StringBuilder status = new StringBuilder();
+        orgStatus.getValue().forEach(envStatus -> {
+
+            log.info("Deploy har status: {} for org: {} i miljoe: {} med UUID: {}",
+                    envStatus.getStatus(),
+                    orgStatus.getKey(),
+                    envStatus.getEnvironment(),
+                    envStatus.getUuid());
+
+            status.append(isNotBlank(status) ? ',' : "");
+            status.append(envStatus.getEnvironment());
+            status.append(':');
+            status.append(envStatus.getUuid());
         });
         return status.toString();
     }

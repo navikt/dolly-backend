@@ -32,6 +32,7 @@ public class DeployResponse {
     public static class EnvStatus {
 
         private String environment;
+        private String uuid;
         private Status status;
         private String details;
     }

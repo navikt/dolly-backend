@@ -43,4 +43,6 @@ public class OrganisasjonBestillingProgress {
     @Column(name = "org_forvalter_status")
     private String organisasjonsforvalterStatus;
 
+    @Column(name = "uuid")
+    private String uuid;
 }
