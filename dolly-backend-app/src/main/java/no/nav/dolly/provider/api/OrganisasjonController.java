@@ -22,12 +22,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 @RestController
 @RequiredArgsConstructor
@@ -65,28 +61,18 @@ public class OrganisasjonController {
     }
 
     @GetMapping("/bestilling")
-    @Operation(description = "Hent status på bestilling basert på bestillingId eller brukerId. En av de må velges")
-    public List<OrganisasjonBestillingProgress> hentStatus(
-            @Parameter(description = "ID på bestilling av organisasjon", example = "123") @RequestParam(required = false) Long bestillingId,
-            @Parameter(description = "BrukerID som er unik til en Azure bruker (Dolly autensiering)", example = "1k9242uc-638g-1234-5678-7894k0j7lu6n") @RequestParam(required = false) String brukerId) {
+    @Operation(description = "Hent status på bestilling basert på bestillingId")
+    public RsOrganisasjonBestillingStatus hentBestilling(
+            @Parameter(description = "ID på bestilling av organisasjon", example = "123") @RequestParam Long bestillingId) {
 
-        if (isNull(bestillingId) && isNull(brukerId)) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Kallet må inneholde enten BestillingId eller BrukerID");
-        }
+        return bestillingService.fetchBestillingStatusById(bestillingId);
+    }
 
-        Optional<List<OrganisasjonBestillingProgress>> bestillingProgress = nonNull(brukerId)
-                ? bestillingProgressRepository.findbyBrukerId(brukerId)
-                : bestillingProgressRepository.findByBestillingId(bestillingId);
+    @GetMapping("/bestillingsstatus")
+    @Operation(description = "Hent status på bestilling basert på brukerId")
+    public List<RsOrganisasjonBestillingStatus> hentBestillingStatus(
+            @Parameter(description = "BrukerID som er unik til en Azure bruker (Dolly autensiering)", example = "1k9242uc-638g-1234-5678-7894k0j7lu6n") @RequestParam String brukerId) {
 
-        if (bestillingProgress.isEmpty()) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, nonNull(brukerId)
-                    ? "Fant ikke noen bestillinger med brukerId: " + brukerId
-                    : "Fant ikke noen bestillinger med ID: " + bestillingId);
-        }
-        List<OrganisasjonBestillingProgress> statusList = new ArrayList<>();
-
-        bestillingProgress.ifPresent(statusList::addAll);
-
-        return statusList;
+        return bestillingService.fetchBestillingStatusByBrukerId(brukerId);
     }
 }

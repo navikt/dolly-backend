@@ -6,11 +6,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface OrganisasjonBestillingRepository extends Repository<OrganisasjonBestilling, Long> {
 
     Optional<OrganisasjonBestilling> findById(Long id);
+
+    @Query("from OrganisasjonBestilling ob where ob.bruker.brukerId = :brukerId")
+    Optional<List<OrganisasjonBestilling>> findbyBrukerId(String brukerId);
 
     OrganisasjonBestilling save(OrganisasjonBestilling bestilling);
 
