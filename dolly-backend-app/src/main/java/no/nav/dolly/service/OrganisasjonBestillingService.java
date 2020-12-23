@@ -77,7 +77,7 @@ public class OrganisasjonBestillingService {
                             .environments(Arrays.asList(orgBestilling.getMiljoer().split(",")))
                             .feil(orgBestilling.getFeil())
                             .ferdig(orgBestilling.getFerdig())
-                            .id(orgBestilling.getId())
+                            .id(bestillingStatus.getBestillingId())
                             .organisasjonNummer(Long.getLong(bestillingStatus.getOrganisasjonsnummer()))
                             .sistOppdatert(orgBestilling.getSistOppdatert())
                             .status(singletonList(bestillingStatus))
