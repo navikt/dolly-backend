@@ -50,7 +50,7 @@ public class OrganisasjonClient implements OrganisasjonRegister {
     public void opprett(RsOrganisasjonBestilling bestilling, Long bestillingId) {
 
         BestillingRequest bestillingRequest = BestillingRequest.builder()
-                .organisasjoner(Collections.singletonList(mapperFacade.map(bestilling.getOrganisasjoner(), BestillingRequest.SyntetiskOrganisasjon.class)))
+                .organisasjoner(Collections.singletonList(mapperFacade.map(bestilling.getOrganisasjon(), BestillingRequest.SyntetiskOrganisasjon.class)))
                 .build();
 
         Set<String> orgnumre = new HashSet<>();

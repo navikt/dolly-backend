@@ -92,7 +92,7 @@ public class OrganisasjonClientTest {
 
         bestilling = RsOrganisasjonBestilling.builder()
                 .environments(List.of("q1"))
-                .organisasjoner(
+                .organisasjon(
                         RsOrganisasjonBestilling.SyntetiskOrganisasjon.builder()
                                 .forretningsadresse(adresse)
                                 .postadresse(adresse)

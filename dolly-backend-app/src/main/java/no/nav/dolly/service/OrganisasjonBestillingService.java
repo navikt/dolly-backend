@@ -104,7 +104,7 @@ public class OrganisasjonBestillingService {
                         .antall(1)
                         .sistOppdatert(now())
                         .miljoer(join(",", request.getEnvironments()))
-                        .bestKriterier(toJson(request.getOrganisasjoner()))
+                        .bestKriterier(toJson(request.getOrganisasjon()))
                         .bruker(brukerService.fetchOrCreateBruker(getUserId()))
                         .build());
     }
