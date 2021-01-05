@@ -107,11 +107,7 @@ public class OrganisasjonClient implements OrganisasjonRegister {
     @Override
     public void gjenopprett(OrganisasjonBestillingProgress progress, List<String> miljoer) {
 
-        //TODO: Implementer Gjenopprett
-
-        if (nonNull(progress)) {
-            organisasjonProgressService.save(progress);
-        }
+        throw new UnsupportedOperationException("Gjenopprett ikke implementert");
     }
 
     private String mapStatusFraDeploy(Entry<String, List<EnvStatus>> orgStatus) {
@@ -158,5 +154,6 @@ public class OrganisasjonClient implements OrganisasjonRegister {
     @Override
     public void release(List<String> orgnummer) {
 
+        throw new UnsupportedOperationException("Release ikke implementert");
     }
 }

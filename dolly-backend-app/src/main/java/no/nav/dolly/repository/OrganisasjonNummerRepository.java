@@ -17,5 +17,5 @@ public interface OrganisasjonNummerRepository extends Repository<OrganisasjonNum
     int deleteByBestillingId(Long bestillingId);
 
     @Modifying
-    int deleteByOrganisasjonsnr(Long OrganisasjonsNummer);
+    int deleteByOrganisasjonsnr(Long organisasjonsNummer);
 }

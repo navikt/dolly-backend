@@ -22,7 +22,7 @@ public class DeployResponse {
     private Map<String, List<EnvStatus>> orgStatus;
 
     public Map<String, List<EnvStatus>> getOrgStatus() {
-        return isNull(orgStatus) ? (orgStatus = new HashMap<>()) : orgStatus;
+        return isNull(orgStatus) ? new HashMap<>() : orgStatus;
     }
 
     @Data

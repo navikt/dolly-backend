@@ -82,7 +82,7 @@ public class BestillingRequest {
             private String vegadresseId;
 
             public List<String> getAdresselinjer() {
-                return isNull(adresselinjer) ? (adresselinjer = new ArrayList<>()) : adresselinjer;
+                return isNull(adresselinjer) ? new ArrayList<>() : adresselinjer;
             }
         }
     }
