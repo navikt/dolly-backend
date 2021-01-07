@@ -31,7 +31,6 @@ public class GjenopprettBestillingService extends DollyBestillingService {
 
     private BestillingService bestillingService;
     private ErrorStatusDecoder errorStatusDecoder;
-    private TpsfPersonCache tpsfPersonCache;
     private TpsfService tpsfService;
     private BestillingProgressService bestillingProgressService;
     private ForkJoinPool dollyForkJoinPool;
@@ -46,7 +45,6 @@ public class GjenopprettBestillingService extends DollyBestillingService {
 
         this.bestillingService = bestillingService;
         this.errorStatusDecoder = errorStatusDecoder;
-        this.tpsfPersonCache = tpsfPersonCache;
         this.tpsfService = tpsfService;
         this.bestillingProgressService = bestillingProgressService;
         this.dollyForkJoinPool = dollyForkJoinPool;

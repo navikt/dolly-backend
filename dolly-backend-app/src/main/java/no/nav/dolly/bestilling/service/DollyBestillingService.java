@@ -348,13 +348,13 @@ public class DollyBestillingService {
 
     protected void sendTestidenter(Bestilling bestilling, RsDollyBestillingRequest bestKriterier, BestillingProgress progress, Person person) {
 
-            TpsPerson tpsPerson = tpsfPersonCache.prepareTpsPersoner(person);
-            sendIdenterTilTPS(new ArrayList<>(List.of(bestilling.getMiljoer().split(","))),
-                    Stream.of(List.of(tpsPerson.getHovedperson()), tpsPerson.getPartnere(), tpsPerson.getBarn())
-                            .flatMap(list -> list.stream())
-                            .collect(Collectors.toList()),
-                    bestilling.getGruppe(), progress);
+        TpsPerson tpsPerson = tpsfPersonCache.prepareTpsPersoner(person);
+        sendIdenterTilTPS(new ArrayList<>(List.of(bestilling.getMiljoer().split(","))),
+                Stream.of(List.of(tpsPerson.getHovedperson()), tpsPerson.getPartnere(), tpsPerson.getBarn())
+                        .flatMap(list -> list.stream())
+                        .collect(Collectors.toList()),
+                bestilling.getGruppe(), progress);
 
-            gjenopprettNonTpsf(tpsPerson, bestKriterier, progress, false);
+        gjenopprettNonTpsf(tpsPerson, bestKriterier, progress, false);
     }
 }
