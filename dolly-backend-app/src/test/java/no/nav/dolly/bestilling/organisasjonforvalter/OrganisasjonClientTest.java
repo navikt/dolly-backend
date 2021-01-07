@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -38,7 +37,6 @@ import static org.mockito.Mockito.when;
 public class OrganisasjonClientTest {
 
     private static final String ORG_NUMMER = "123456789";
-    private static final String ORG_NUMMER_TO = "987654321";
     private static final Long BESTILLING_ID = 123L;
 
     @Mock
@@ -93,17 +91,17 @@ public class OrganisasjonClientTest {
 
         bestilling = RsOrganisasjonBestilling.builder()
                 .environments(List.of("q1"))
-                .organisasjon(Collections.singletonList(
+                .organisasjon(
                         RsOrganisasjonBestilling.SyntetiskOrganisasjon.builder()
                                 .forretningsadresse(adresse)
                                 .postadresse(adresse)
-                                .build()))
+                                .build())
                 .build();
 
         Set<String> orgnummer = new HashSet<>();
         orgnummer.add(ORG_NUMMER);
 
-        when(mapperFacade.mapAsList(anyList(), eq(BestillingRequest.SyntetiskOrganisasjon.class))).thenReturn(Collections.singletonList(requestOrganisasjon));
+        when(mapperFacade.map(any(), eq(BestillingRequest.SyntetiskOrganisasjon.class))).thenReturn(requestOrganisasjon);
         when(organisasjonConsumer.postOrganisasjon(any())).thenReturn(new ResponseEntity<>(new BestillingResponse(orgnummer), HttpStatus.CREATED));
         when(organisasjonConsumer.deployOrganisasjon(any())).thenReturn(new ResponseEntity<>(deployResponse, HttpStatus.OK));
     }

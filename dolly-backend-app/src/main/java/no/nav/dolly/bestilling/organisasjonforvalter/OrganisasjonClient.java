@@ -49,7 +49,7 @@ public class OrganisasjonClient implements OrganisasjonRegister {
     public void opprett(RsOrganisasjonBestilling bestilling, Long bestillingId) {
 
         BestillingRequest bestillingRequest = BestillingRequest.builder()
-                .organisasjoner(mapperFacade.mapAsList(bestilling.getOrganisasjon(), BestillingRequest.SyntetiskOrganisasjon.class))
+                .organisasjoner(List.of(mapperFacade.map(bestilling.getOrganisasjon(), BestillingRequest.SyntetiskOrganisasjon.class)))
                 .build();
 
         Set<String> orgnumre = new HashSet<>();
