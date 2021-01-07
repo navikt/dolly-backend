@@ -9,7 +9,6 @@ import no.nav.dolly.domain.jpa.Bestilling;
 import no.nav.dolly.domain.jpa.BestillingProgress;
 import no.nav.dolly.domain.resultset.RsDollyBestillingRequest;
 import no.nav.dolly.domain.resultset.tpsf.Person;
-import no.nav.dolly.domain.resultset.tpsf.TpsPerson;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
 import no.nav.dolly.metrics.CounterCustomRegistry;
 import no.nav.dolly.service.BestillingProgressService;
@@ -20,7 +19,6 @@ import org.springframework.cache.CacheManager;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
@@ -70,12 +68,7 @@ public class GjenopprettBestillingService extends DollyBestillingService {
                                 List<Person> personer = tpsfService.hentTestpersoner(singletonList(gjenopprettFraProgress.getIdent()));
 
                                 if (!personer.isEmpty()) {
-                                    TpsPerson tpsPerson = tpsfPersonCache.prepareTpsPersoner(personer.get(0));
-                                    sendIdenterTilTPS(new ArrayList<>(List.of(bestilling.getMiljoer().split(","))),
-                                            getApplicableIdents(tpsPerson),
-                                            bestilling.getGruppe(), progress);
-
-                                    gjenopprettNonTpsf(tpsPerson, bestKriterier, progress, false);
+                                    sendTestidenter(bestilling, bestKriterier, progress, personer.get(0));
                                 } else {
                                     progress.setFeil("NA:Feil= Finner ikke personen i database");
                                 }
