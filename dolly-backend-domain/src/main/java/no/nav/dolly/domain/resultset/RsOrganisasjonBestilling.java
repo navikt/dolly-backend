@@ -31,6 +31,10 @@ public class RsOrganisasjonBestilling {
 
     private List<SyntetiskOrganisasjon> organisasjon;
 
+    public List<SyntetiskOrganisasjon> getOrganisasjon() {
+        return isNull(organisasjon) ? new ArrayList<>() : organisasjon;
+    }
+
     @Data
     @Builder
     @NoArgsConstructor
