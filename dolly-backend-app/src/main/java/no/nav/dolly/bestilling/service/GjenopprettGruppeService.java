@@ -70,9 +70,7 @@ public class GjenopprettGruppeService extends DollyBestillingService {
                                 if (!personer.isEmpty()) {
                                     TpsPerson tpsPerson = tpsfPersonCache.prepareTpsPersoner(personer.get(0));
                                     sendIdenterTilTPS(new ArrayList<>(List.of(bestilling.getMiljoer().split(","))),
-                                            Stream.of(List.of(tpsPerson.getHovedperson()), tpsPerson.getPartnere(), tpsPerson.getBarn())
-                                                    .flatMap(list -> list.stream())
-                                                    .collect(Collectors.toList()),
+                                            getApplicableIdents(tpsPerson),
                                             bestilling.getGruppe(), progress);
 
                                     gjenopprettNonTpsf(tpsPerson, bestKriterier, progress, false);

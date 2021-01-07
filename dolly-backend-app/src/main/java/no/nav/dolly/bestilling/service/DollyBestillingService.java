@@ -20,6 +20,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.springframework.cache.CacheManager;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -75,6 +78,12 @@ public class DollyBestillingService {
     private final ObjectMapper objectMapper;
     private final List<ClientRegister> clientRegisters;
     private final CounterCustomRegistry counterCustomRegistry;
+
+    protected static List<String> getApplicableIdents(TpsPerson tpsPerson) {
+        return Stream.of(List.of(tpsPerson.getHovedperson()), tpsPerson.getPartnere(), tpsPerson.getBarn())
+                .flatMap(list -> list.stream())
+                .collect(Collectors.toList());
+    }
 
     @Async
     public void oppdaterPersonAsync(RsDollyUpdateRequest request, Bestilling bestilling) {

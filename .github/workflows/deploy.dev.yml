@@ -2,7 +2,7 @@ name: Deploy dev
 
 on:
   push:
-    branches: master
+    branches: feature/opprett-fra-gruppe
 
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/dolly-backend:${{ github.sha }}
