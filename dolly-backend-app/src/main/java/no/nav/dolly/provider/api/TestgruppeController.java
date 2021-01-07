@@ -4,6 +4,8 @@ import static no.nav.dolly.config.CachingConfig.CACHE_BESTILLING;
 import static no.nav.dolly.config.CachingConfig.CACHE_GRUPPE;
 
 import java.util.List;
+
+import no.nav.dolly.bestilling.service.*;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -23,11 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import ma.glasnost.orika.MapperFacade;
-import no.nav.dolly.bestilling.service.DollyBestillingService;
-import no.nav.dolly.bestilling.service.ImportAvPersonerFraTpsService;
-import no.nav.dolly.bestilling.service.LeggTilPaaGruppeService;
-import no.nav.dolly.bestilling.service.OpprettPersonerByKriterierService;
-import no.nav.dolly.bestilling.service.OpprettPersonerFraIdenterMedKriterierService;
 import no.nav.dolly.domain.jpa.Bestilling;
 import no.nav.dolly.domain.jpa.Testgruppe;
 import no.nav.dolly.domain.resultset.RsDollyBestillingFraIdenterRequest;
@@ -49,13 +46,13 @@ import no.nav.dolly.service.TestgruppeService;
 public class TestgruppeController {
 
     private final BestillingService bestillingService;
-    private final DollyBestillingService dollyBestillingService;
     private final MapperFacade mapperFacade;
     private final ImportAvPersonerFraTpsService importAvPersonerFraTpsService;
     private final LeggTilPaaGruppeService leggTilPaaGruppeService;
     private final TestgruppeService testgruppeService;
     private final OpprettPersonerByKriterierService opprettPersonerByKriterierService;
     private final OpprettPersonerFraIdenterMedKriterierService opprettPersonerFraIdenterMedKriterierService;
+    private final GjenopprettGruppeService gjenopprettGruppeService;
 
     @CacheEvict(value = CACHE_GRUPPE, allEntries = true)
     @Transactional
@@ -169,6 +166,16 @@ public class TestgruppeController {
         Bestilling bestilling = bestillingService.saveBestilling(gruppeId, request);
 
         leggTilPaaGruppeService.executeAsync(bestilling);
+        return mapperFacade.map(bestilling, RsBestillingStatus.class);
+    }
+
+    @CacheEvict(value = { CACHE_BESTILLING, CACHE_GRUPPE }, allEntries = true)
+    @PostMapping("/{gruppeId}/gjenopprett")
+    @Operation(description = "Gjenopprett testidenter tilhørende en gruppe med liste for tilhørende miljoer")
+    public RsBestillingStatus gjenopprettBestilling(@PathVariable("gruppeId") Long gruppeId, @RequestParam(value = "miljoer") String miljoer) {
+
+        Bestilling bestilling = bestillingService.createBestillingForGjenopprettFraGruppe(gruppeId, miljoer);
+        gjenopprettGruppeService.executeAsync(bestilling);
         return mapperFacade.map(bestilling, RsBestillingStatus.class);
     }
 }

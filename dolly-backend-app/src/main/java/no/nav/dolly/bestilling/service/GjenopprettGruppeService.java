@@ -1,19 +1,6 @@
 package no.nav.dolly.bestilling.service;
 
-import static java.util.Collections.singletonList;
-import static java.util.Objects.nonNull;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ForkJoinPool;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.springframework.cache.CacheManager;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.bestilling.ClientRegister;
 import no.nav.dolly.bestilling.tpsf.TpsfResponseHandler;
@@ -29,22 +16,32 @@ import no.nav.dolly.service.BestillingProgressService;
 import no.nav.dolly.service.BestillingService;
 import no.nav.dolly.service.IdentService;
 import no.nav.dolly.service.TpsfPersonCache;
+import org.springframework.cache.CacheManager;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ForkJoinPool;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.Objects.nonNull;
 
 @Service
-public class GjenopprettBestillingService extends DollyBestillingService {
+public class GjenopprettGruppeService extends DollyBestillingService {
 
     private BestillingService bestillingService;
     private ErrorStatusDecoder errorStatusDecoder;
     private TpsfPersonCache tpsfPersonCache;
     private TpsfService tpsfService;
-    private BestillingProgressService bestillingProgressService;
     private ForkJoinPool dollyForkJoinPool;
 
-    public GjenopprettBestillingService(TpsfResponseHandler tpsfResponseHandler, TpsfService tpsfService, TpsfPersonCache tpsfPersonCache,
-            IdentService identService, BestillingProgressService bestillingProgressService,
-            BestillingService bestillingService, MapperFacade mapperFacade, CacheManager cacheManager,
-            ObjectMapper objectMapper, List<ClientRegister> clientRegisters, CounterCustomRegistry counterCustomRegistry,
-            ErrorStatusDecoder errorStatusDecoder, ForkJoinPool dollyForkJoinPool) {
+    public GjenopprettGruppeService(TpsfResponseHandler tpsfResponseHandler, TpsfService tpsfService, TpsfPersonCache tpsfPersonCache,
+                                    IdentService identService, BestillingProgressService bestillingProgressService,
+                                    BestillingService bestillingService, MapperFacade mapperFacade, CacheManager cacheManager,
+                                    ObjectMapper objectMapper, List<ClientRegister> clientRegisters, CounterCustomRegistry counterCustomRegistry,
+                                    ErrorStatusDecoder errorStatusDecoder, ForkJoinPool dollyForkJoinPool) {
         super(tpsfResponseHandler, tpsfService, tpsfPersonCache, identService, bestillingProgressService, bestillingService,
                 mapperFacade, cacheManager, objectMapper, clientRegisters, counterCustomRegistry);
 
@@ -52,7 +49,6 @@ public class GjenopprettBestillingService extends DollyBestillingService {
         this.errorStatusDecoder = errorStatusDecoder;
         this.tpsfPersonCache = tpsfPersonCache;
         this.tpsfService = tpsfService;
-        this.bestillingProgressService = bestillingProgressService;
         this.dollyForkJoinPool = dollyForkJoinPool;
     }
 
@@ -63,20 +59,21 @@ public class GjenopprettBestillingService extends DollyBestillingService {
 
         if (nonNull(bestKriterier)) {
             dollyForkJoinPool.submit(() -> {
-                bestillingProgressService.fetchBestillingProgressByBestillingId(bestilling.getOpprettetFraId()).parallelStream()
-                        .filter(ident -> !bestillingService.isStoppet(bestilling.getId()))
-                        .map(gjenopprettFraProgress -> {
+                bestilling.getGruppe().getTestidenter().parallelStream()
+                        .filter(testident -> !bestillingService.isStoppet(bestilling.getId()))
+                        .map(testident -> {
 
-                            BestillingProgress progress = new BestillingProgress(bestilling.getId(), gjenopprettFraProgress.getIdent());
+                            BestillingProgress progress = new BestillingProgress(bestilling.getId(), testident.getIdent());
                             try {
-                                List<Person> personer = tpsfService.hentTestpersoner(singletonList(gjenopprettFraProgress.getIdent()));
+                                List<Person> personer = tpsfService.hentTestpersoner(List.of(testident.getIdent()));
 
                                 if (!personer.isEmpty()) {
                                     TpsPerson tpsPerson = tpsfPersonCache.prepareTpsPersoner(personer.get(0));
                                     sendIdenterTilTPS(new ArrayList<>(List.of(bestilling.getMiljoer().split(","))),
                                             Stream.of(List.of(tpsPerson.getHovedperson()), tpsPerson.getPartnere(), tpsPerson.getBarn())
                                                     .flatMap(list -> list.stream())
-                                                    .collect(Collectors.toList()), bestilling.getGruppe(), progress);
+                                                    .collect(Collectors.toList()),
+                                            bestilling.getGruppe(), progress);
 
                                     gjenopprettNonTpsf(tpsPerson, bestKriterier, progress, false);
                                 } else {
@@ -94,9 +91,6 @@ public class GjenopprettBestillingService extends DollyBestillingService {
                         .collect(Collectors.toList());
                 oppdaterBestillingFerdig(bestilling);
             });
-        } else {
-            bestilling.setFeil("Feil: kunne ikke mappe JSON request, se logg!");
-            oppdaterBestillingFerdig(bestilling);
         }
     }
 }
