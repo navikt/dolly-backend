@@ -4,6 +4,7 @@ import no.nav.dolly.domain.jpa.OrganisasjonBestillingProgress;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +16,7 @@ public interface OrganisasjonBestillingProgressRepository extends Repository<Org
     Optional<List<OrganisasjonBestillingProgress>> findByBestillingId(Long bestillingId);
 
     @Query("from OrganisasjonBestillingProgress obp where obp.bestillingId in (select ob.id from OrganisasjonBestilling ob where ob.bruker.brukerId = :brukerId)")
-    Optional<List<OrganisasjonBestillingProgress>> findbyBrukerId(String brukerId);
+    Optional<List<OrganisasjonBestillingProgress>> findbyBrukerId(@Param("brukerId") String brukerId);
 
     @Modifying
     int deleteByBestillingId(Long bestillingId);

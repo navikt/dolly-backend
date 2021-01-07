@@ -22,6 +22,8 @@ import java.util.UUID;
 
 import static java.lang.String.format;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
+import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
+import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Slf4j
@@ -54,8 +56,8 @@ public class OrganisasjonConsumer {
                                 .queryParam("orgnumre", orgnumre)
                                 .build())
                 .header(AUTHORIZATION, BEARER + accessToken.getTokenValue())
-//                .header(HEADER_NAV_CALL_ID, callId)
-//                .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
+                .header(HEADER_NAV_CALL_ID, callId)
+                .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .retrieve()
                 .toEntity(BestillingRequest.class)
                 .block();

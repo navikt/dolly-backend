@@ -28,24 +28,14 @@ public class OrganisasjonerMappingStrategy implements MappingStrategy {
                     public void mapAtoB(RsOrganisasjonBestilling.SyntetiskOrganisasjon rsSyntetiskOrganisasjon, BestillingRequest.SyntetiskOrganisasjon requestOrganisasjon, MappingContext context) {
                         List<AdresseRequest> adresser = new ArrayList<>();
                         if (nonNull(rsSyntetiskOrganisasjon.getForretningsadresse())) {
-                            adresser.add(
-                                    AdresseRequest.builder()
-                                            .adresselinjer(rsSyntetiskOrganisasjon.getForretningsadresse().getAdresselinjer())
-                                            .adressetype(FADR)
-                                            .landkode(rsSyntetiskOrganisasjon.getForretningsadresse().getLandkode())
-                                            .kommunenr(rsSyntetiskOrganisasjon.getForretningsadresse().getKommunenr())
-                                            .postnr(rsSyntetiskOrganisasjon.getForretningsadresse().getPostnr())
-                                            .build());
+                            AdresseRequest adresse = mapperFacade.map(rsSyntetiskOrganisasjon.getForretningsadresse(), AdresseRequest.class);
+                            adresse.setAdressetype(FADR);
+                            adresser.add(adresse);
                         }
                         if (nonNull(rsSyntetiskOrganisasjon.getPostadresse())) {
-                            adresser.add(
-                                    AdresseRequest.builder()
-                                            .adresselinjer(rsSyntetiskOrganisasjon.getPostadresse().getAdresselinjer())
-                                            .adressetype(PADR)
-                                            .landkode(rsSyntetiskOrganisasjon.getPostadresse().getLandkode())
-                                            .kommunenr(rsSyntetiskOrganisasjon.getPostadresse().getKommunenr())
-                                            .postnr(rsSyntetiskOrganisasjon.getPostadresse().getPostnr())
-                                            .build());
+                            AdresseRequest adresse = mapperFacade.map(rsSyntetiskOrganisasjon.getPostadresse(), AdresseRequest.class);
+                            adresse.setAdressetype(PADR);
+                            adresser.add(adresse);
                         }
                         requestOrganisasjon.setAdresser(adresser);
 

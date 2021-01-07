@@ -20,7 +20,6 @@ import no.nav.dolly.service.OrganisasjonProgressService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
@@ -50,7 +49,7 @@ public class OrganisasjonClient implements OrganisasjonRegister {
     public void opprett(RsOrganisasjonBestilling bestilling, Long bestillingId) {
 
         BestillingRequest bestillingRequest = BestillingRequest.builder()
-                .organisasjoner(Collections.singletonList(mapperFacade.map(bestilling.getOrganisasjon(), BestillingRequest.SyntetiskOrganisasjon.class)))
+                .organisasjoner(mapperFacade.mapAsList(bestilling.getOrganisasjon(), BestillingRequest.SyntetiskOrganisasjon.class))
                 .build();
 
         Set<String> orgnumre = new HashSet<>();
@@ -66,8 +65,7 @@ public class OrganisasjonClient implements OrganisasjonRegister {
                 }
             } catch (RuntimeException e) {
 
-                log.error("Feilet med å legge til organisasjon: {} i miljoer: {}",
-                        organisasjon, bestilling.getEnvironments(), e);
+                log.error("Feilet med å opprette organisasjon(er)", e);
 
                 organisasjonBestillingService.setBestillingFeil(bestillingId, errorStatusDecoder.decodeRuntimeException(e));
             }
