@@ -11,6 +11,7 @@ import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
 import no.nav.dolly.domain.resultset.entity.bestilling.RsOrganisasjonBestillingStatus;
 import no.nav.dolly.exceptions.ConstraintViolationException;
 import no.nav.dolly.exceptions.NotFoundException;
+import no.nav.dolly.mapper.strategy.JsonBestillingMapper;
 import no.nav.dolly.repository.OrganisasjonBestillingRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -40,6 +41,7 @@ public class OrganisasjonBestillingService {
     private final OrganisasjonProgressService progressService;
     private final BrukerService brukerService;
     private final ObjectMapper objectMapper;
+    private final JsonBestillingMapper jsonBestillingMapper;
 
     public RsOrganisasjonBestillingStatus fetchBestillingStatusById(Long bestillingId) {
         OrganisasjonBestilling bestilling = bestillingRepository.findById(bestillingId)
@@ -50,6 +52,7 @@ public class OrganisasjonBestillingService {
 
         return RsOrganisasjonBestillingStatus.builder()
                 .status(bestillingProgress)
+                .bestilling(jsonBestillingMapper.mapOrganisasjonBestillingRequest(bestilling.getBestKriterier()))
                 .sistOppdatert(bestilling.getSistOppdatert())
                 .organisasjonNummer(Long.getLong(bestillingProgress.get(0).getOrganisasjonsnummer()))
                 .id(bestillingId)
@@ -72,15 +75,15 @@ public class OrganisasjonBestillingService {
                                     "Fant ikke noen bestillinger med bestillingId: " + bestillingStatus.getBestillingId())
                     );
                     statusListe.add(RsOrganisasjonBestillingStatus.builder()
-                            .antallLevert(orgBestilling.getAntall())
-                            //TODO: Legge på bestilling fra kriterier
-                            .environments(Arrays.asList(orgBestilling.getMiljoer().split(",")))
-                            .feil(orgBestilling.getFeil())
-                            .ferdig(orgBestilling.getFerdig())
-                            .id(bestillingStatus.getBestillingId())
-                            .organisasjonNummer(Long.getLong(bestillingStatus.getOrganisasjonsnummer()))
-                            .sistOppdatert(orgBestilling.getSistOppdatert())
                             .status(singletonList(bestillingStatus))
+                            .bestilling(jsonBestillingMapper.mapOrganisasjonBestillingRequest(orgBestilling.getBestKriterier()))
+                            .sistOppdatert(orgBestilling.getSistOppdatert())
+                            .organisasjonNummer(Long.getLong(bestillingStatus.getOrganisasjonsnummer()))
+                            .id(bestillingStatus.getBestillingId())
+                            .ferdig(orgBestilling.getFerdig())
+                            .feil(orgBestilling.getFeil())
+                            .environments(Arrays.asList(orgBestilling.getMiljoer().split(",")))
+                            .antallLevert(orgBestilling.getAntall())
                             .build());
 
                 }

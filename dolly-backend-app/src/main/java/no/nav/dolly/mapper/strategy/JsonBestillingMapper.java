@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.domain.resultset.RsDollyBestillingRequest;
-import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
+import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling.SyntetiskOrganisasjon;
 import no.nav.dolly.domain.resultset.tpsf.RsTpsfUtvidetBestilling;
 import org.springframework.stereotype.Component;
 
@@ -46,12 +46,12 @@ public class JsonBestillingMapper {
         return new RsDollyBestillingRequest();
     }
 
-    public RsOrganisasjonBestilling mapOrganisasjonBestillingRequest(String jsonInput) {
+    public SyntetiskOrganisasjon mapOrganisasjonBestillingRequest(String jsonInput) {
         try {
-            return objectMapper.readValue(nonNull(jsonInput) ? jsonInput : "{}", RsOrganisasjonBestilling.class);
+            return objectMapper.readValue(nonNull(jsonInput) ? jsonInput : "{}", SyntetiskOrganisasjon.class);
         } catch (IOException e) {
             log.error("Mapping av JSON fra database bestKriterier feilet. {}", e.getMessage(), e);
         }
-        return new RsOrganisasjonBestilling();
+        return new SyntetiskOrganisasjon();
     }
 }

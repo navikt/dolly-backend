@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import no.nav.dolly.domain.jpa.OrganisasjonBestillingProgress;
-import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
+import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling.SyntetiskOrganisasjon;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class RsOrganisasjonBestillingStatus {
     private List<OrganisasjonBestillingProgress> status;
     private Long organisasjonNummer;
 
-    private RsOrganisasjonBestilling bestilling;
+    private SyntetiskOrganisasjon bestilling;
 
     public List<String> getEnvironments() {
         if (isNull(environments)) {
