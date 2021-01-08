@@ -173,7 +173,7 @@ public class TestgruppeController {
     }
 
     @CacheEvict(value = {CACHE_BESTILLING, CACHE_GRUPPE}, allEntries = true)
-    @PostMapping("/{gruppeId}/gjenopprett")
+    @PutMapping("/{gruppeId}/gjenopprett")
     @Operation(description = "Gjenopprett testidenter tilhørende en gruppe med liste for tilhørende miljoer")
     public RsBestillingStatus gjenopprettBestilling(@PathVariable("gruppeId") Long gruppeId, @RequestParam(value = "miljoer") String miljoer) {
 
