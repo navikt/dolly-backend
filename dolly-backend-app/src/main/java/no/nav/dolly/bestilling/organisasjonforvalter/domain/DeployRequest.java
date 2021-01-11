@@ -28,6 +28,9 @@ public class DeployRequest {
     }
 
     public List<String> getEnvironments() {
-        return isNull(environments) ? (environments = new ArrayList<>()) : environments;
+        if (isNull(environments)) {
+            environments = new ArrayList<>();
+        }
+        return environments;
     }
 }
