@@ -26,7 +26,7 @@ public class RsOrganisasjonBestilling {
     private List<String> environments;
 
     public List<String> getEnvironments() {
-        return isNull(environments) ? new ArrayList<>() : environments;
+        return isNull(environments) ? (environments = new ArrayList<>()) : environments;
     }
 
     private SyntetiskOrganisasjon organisasjon;
@@ -51,7 +51,7 @@ public class RsOrganisasjonBestilling {
         private List<SyntetiskOrganisasjon> underenheter;
 
         public List<SyntetiskOrganisasjon> getUnderenheter() {
-            return isNull(underenheter) ? new ArrayList<>() : underenheter;
+            return isNull(underenheter) ? (underenheter = new ArrayList<>()) : underenheter;
         }
 
         @Data

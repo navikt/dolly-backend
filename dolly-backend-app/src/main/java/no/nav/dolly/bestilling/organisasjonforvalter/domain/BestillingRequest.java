@@ -26,7 +26,7 @@ public class BestillingRequest {
     private List<SyntetiskOrganisasjon> organisasjoner;
 
     public List<SyntetiskOrganisasjon> getOrganisasjoner() {
-        return isNull(organisasjoner) ? new ArrayList<>() : organisasjoner;
+        return isNull(organisasjoner) ? (organisasjoner = new ArrayList<>()) : organisasjoner;
     }
 
     @Data
@@ -52,13 +52,13 @@ public class BestillingRequest {
         private List<AdresseRequest> adresser;
 
         public List<AdresseRequest> getAdresser() {
-            return isNull(adresser) ? new ArrayList<>() : adresser;
+            return isNull(adresser) ? (adresser = new ArrayList<>()) : adresser;
         }
 
         private List<SyntetiskOrganisasjon> underenheter;
 
         public List<SyntetiskOrganisasjon> getUnderenheter() {
-            return isNull(underenheter) ? new ArrayList<>() : underenheter;
+            return isNull(underenheter) ? (underenheter = new ArrayList<>()) : underenheter;
         }
 
         @Data
@@ -82,7 +82,7 @@ public class BestillingRequest {
             private String vegadresseId;
 
             public List<String> getAdresselinjer() {
-                return isNull(adresselinjer) ? new ArrayList<>() : adresselinjer;
+                return isNull(adresselinjer) ? (adresselinjer = new ArrayList<>()) : adresselinjer;
             }
         }
     }

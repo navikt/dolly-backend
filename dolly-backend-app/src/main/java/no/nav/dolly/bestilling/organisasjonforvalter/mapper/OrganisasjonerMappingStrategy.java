@@ -39,9 +39,7 @@ public class OrganisasjonerMappingStrategy implements MappingStrategy {
                         }
                         requestOrganisasjon.setAdresser(adresser);
 
-                        if (!rsSyntetiskOrganisasjon.getUnderenheter().isEmpty()) {
-                            requestOrganisasjon.setUnderenheter(mapperFacade.mapAsList(rsSyntetiskOrganisasjon.getUnderenheter(), BestillingRequest.SyntetiskOrganisasjon.class));
-                        }
+                        requestOrganisasjon.setUnderenheter(mapperFacade.mapAsList(rsSyntetiskOrganisasjon.getUnderenheter(), BestillingRequest.SyntetiskOrganisasjon.class));
                     }
                 })
                 .byDefault()
