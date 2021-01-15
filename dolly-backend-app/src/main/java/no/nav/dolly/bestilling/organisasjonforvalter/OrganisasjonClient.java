@@ -102,10 +102,9 @@ public class OrganisasjonClient implements OrganisasjonRegister {
     }
 
 
-    @Override
-    public void gjenopprett(OrganisasjonBestillingProgress progress, List<String> miljoer) {
+    public ResponseEntity<DeployResponse> gjenopprett(Set<String> orgnumre, List<String> miljoer) {
 
-        throw new UnsupportedOperationException("Gjenopprett ikke implementert");
+        return organisasjonConsumer.gjenopprettOrganisasjon(new DeployRequest(orgnumre, miljoer));
     }
 
     private String mapStatusFraDeploy(Entry<String, List<EnvStatus>> orgStatus) {

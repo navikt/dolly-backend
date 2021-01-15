@@ -5,25 +5,24 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.bestilling.organisasjonforvalter.OrganisasjonClient;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployResponse;
 import no.nav.dolly.domain.jpa.OrganisasjonBestilling;
-import no.nav.dolly.domain.jpa.OrganisasjonBestillingProgress;
 import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
 import no.nav.dolly.domain.resultset.entity.bestilling.RsOrganisasjonBestillingStatus;
-import no.nav.dolly.repository.OrganisasjonBestillingProgressRepository;
 import no.nav.dolly.service.OrganisasjonBestillingService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +31,6 @@ public class OrganisasjonController {
 
     private final OrganisasjonClient organisasjonClient;
     private final OrganisasjonBestillingService bestillingService;
-    private final OrganisasjonBestillingProgressRepository bestillingProgressRepository;
     private final MapperFacade mapperFacade;
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -46,18 +44,11 @@ public class OrganisasjonController {
         return mapperFacade.map(bestilling, RsOrganisasjonBestillingStatus.class);
     }
 
-    @PutMapping("/bestilling")
+    @PostMapping("/gjenopprett/{orgnumre}")
     @Operation(description = "Gjenopprett organisasjon")
-    public void gjenopprettOrganisasjon(@RequestParam Long bestillingId, @RequestParam List<String> miljoer) {
+    public ResponseEntity<DeployResponse> gjenopprettOrganisasjon(@PathVariable Set<String> orgnumre, @RequestParam List<String> miljoer) {
 
-        Optional<List<OrganisasjonBestillingProgress>> bestillingProgress = bestillingProgressRepository.findByBestillingId(bestillingId);
-
-        if (bestillingProgress.isEmpty()) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Fant ikke noen bestillinger med ID: " + bestillingId);
-        }
-
-        bestillingProgress.ifPresent(progressList ->
-                progressList.forEach(progress -> organisasjonClient.gjenopprett(progress, miljoer)));
+        return organisasjonClient.gjenopprett(orgnumre, miljoer);
     }
 
     @GetMapping("/bestilling")

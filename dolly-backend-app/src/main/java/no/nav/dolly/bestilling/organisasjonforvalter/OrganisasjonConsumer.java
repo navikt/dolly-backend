@@ -82,19 +82,34 @@ public class OrganisasjonConsumer {
                 .block();
     }
 
+    @Timed(name = "providers", tags = { "operation", "organisasjon-gjenopprett" })
+    public ResponseEntity<DeployResponse> gjenopprettOrganisasjon(DeployRequest deployRequest) {
+
+        String callId = getNavCallId();
+        AccessToken accessToken = getAccessToken(callId, "Organisasjon gjenoppretting sendt, callId: {}, consumerId: {}");
+
+        return sendDeployOrganisasjonRequest(deployRequest, callId, accessToken);
+    }
+
+
     @Timed(name = "providers", tags = { "operation", "organisasjon-deploy" })
     public ResponseEntity<DeployResponse> deployOrganisasjon(DeployRequest request) {
 
         String callId = getNavCallId();
         AccessToken accessToken = getAccessToken(callId, "Organisasjon deploy sendt, callId: {}, consumerId: {}");
 
+        return sendDeployOrganisasjonRequest(request, callId, accessToken);
+    }
+
+
+    private ResponseEntity<DeployResponse> sendDeployOrganisasjonRequest(DeployRequest deployRequest, String callId, AccessToken accessToken) {
         return webClient
                 .post()
                 .uri(URI.create(providersProps.getOrganisasjonForvalter().getUrl() + ORGANISASJON_DEPLOYMENT_URL))
                 .header(AUTHORIZATION, BEARER + accessToken.getTokenValue())
                 .header(HEADER_NAV_CALL_ID, callId)
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .bodyValue(request)
+                .bodyValue(deployRequest)
                 .retrieve()
                 .toEntity(DeployResponse.class)
                 .block();

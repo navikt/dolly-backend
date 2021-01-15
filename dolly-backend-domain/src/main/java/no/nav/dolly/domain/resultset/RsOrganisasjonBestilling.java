@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +48,7 @@ public class RsOrganisasjonBestilling {
         private String telefon;
         private String epost;
         private String nettside;
+        private LocalDate stiftelsesdato;
 
         private Adresse forretningsadresse;
         private Adresse postadresse;
