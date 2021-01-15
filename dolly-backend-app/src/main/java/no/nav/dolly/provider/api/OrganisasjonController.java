@@ -5,16 +5,16 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.bestilling.organisasjonforvalter.OrganisasjonClient;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployRequest;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployResponse;
 import no.nav.dolly.domain.jpa.OrganisasjonBestilling;
 import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
 import no.nav.dolly.domain.resultset.entity.bestilling.RsOrganisasjonBestillingStatus;
 import no.nav.dolly.service.OrganisasjonBestillingService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,11 +43,11 @@ public class OrganisasjonController {
         return mapperFacade.map(bestilling, RsOrganisasjonBestillingStatus.class);
     }
 
-    @PostMapping("/gjenopprett/{orgnumre}")
+    @PutMapping("/gjenopprett")
     @Operation(description = "Gjenopprett organisasjon")
-    public ResponseEntity<DeployResponse> gjenopprettOrganisasjon(@PathVariable Set<String> orgnumre, @RequestParam List<String> miljoer) {
+    public DeployResponse gjenopprettOrganisasjon(@RequestBody DeployRequest request) {
 
-        return organisasjonClient.gjenopprett(orgnumre, miljoer);
+        return organisasjonClient.gjenopprett(request);
     }
 
     @GetMapping("/bestilling")
