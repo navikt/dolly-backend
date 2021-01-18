@@ -10,7 +10,6 @@ import no.nav.dolly.domain.jpa.OrganisasjonBestillingProgress;
 import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
 import no.nav.dolly.domain.resultset.entity.bestilling.RsOrganisasjonBestillingStatus;
 import no.nav.dolly.exceptions.ConstraintViolationException;
-import no.nav.dolly.exceptions.NotFoundException;
 import no.nav.dolly.mapper.strategy.JsonBestillingMapper;
 import no.nav.dolly.repository.OrganisasjonBestillingRepository;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -59,7 +58,7 @@ public class OrganisasjonBestillingService {
                 .status(bestillingProgress)
                 .bestilling(jsonBestillingMapper.mapOrganisasjonBestillingRequest(bestilling.getBestKriterier()))
                 .sistOppdatert(bestilling.getSistOppdatert())
-                .organisasjonNummer(bestillingProgress.get(0).getOrganisasjonsnummer())
+                .organisasjonNummer(bestillingProgress.isEmpty() ? null : bestillingProgress.get(0).getOrganisasjonsnummer())
                 .id(bestillingId)
                 .ferdig(bestilling.getFerdig())
                 .feil(bestilling.getFeil())

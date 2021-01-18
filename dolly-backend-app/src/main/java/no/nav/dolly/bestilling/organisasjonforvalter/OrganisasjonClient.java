@@ -88,7 +88,7 @@ public class OrganisasjonClient implements OrganisasjonRegister {
             return deployResponseResponseEntity.getBody();
         }
 
-        throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, FEIL_STATUS_ORGFORVALTER_DEPLOY);
+        throw new HttpClientErrorException(HttpStatus.NOT_FOUND, FEIL_STATUS_ORGFORVALTER_DEPLOY);
     }
 
     private void saveOrgnumreToDbAndDeploy(Set<String> orgnumre, Long bestillingId, List<String> environments) {

@@ -3,9 +3,7 @@ package no.nav.dolly.provider.api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
-import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.bestilling.OrganisasjonRegister;
-import no.nav.dolly.bestilling.organisasjonforvalter.OrganisasjonClient;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployRequest;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployResponse;
 import no.nav.dolly.domain.jpa.OrganisasjonBestilling;
@@ -24,10 +22,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
+import java.util.Set;
 
+import static java.util.Arrays.asList;
 import static no.nav.dolly.config.CachingConfig.CACHE_ORG_BESTILLING;
 
 @RestController
@@ -37,7 +36,6 @@ public class OrganisasjonController {
 
     private final OrganisasjonRegister organisasjonClient;
     private final OrganisasjonBestillingService bestillingService;
-    private final MapperFacade mapperFacade;
 
     @ResponseStatus(HttpStatus.CREATED)
     @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
