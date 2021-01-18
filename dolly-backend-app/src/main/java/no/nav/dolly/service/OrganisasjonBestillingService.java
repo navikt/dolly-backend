@@ -10,7 +10,6 @@ import no.nav.dolly.domain.jpa.OrganisasjonBestillingProgress;
 import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
 import no.nav.dolly.domain.resultset.entity.bestilling.RsOrganisasjonBestillingStatus;
 import no.nav.dolly.exceptions.ConstraintViolationException;
-import no.nav.dolly.exceptions.NotFoundException;
 import no.nav.dolly.mapper.strategy.JsonBestillingMapper;
 import no.nav.dolly.repository.OrganisasjonBestillingRepository;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -45,16 +44,21 @@ public class OrganisasjonBestillingService {
 
     public RsOrganisasjonBestillingStatus fetchBestillingStatusById(Long bestillingId) {
         OrganisasjonBestilling bestilling = bestillingRepository.findById(bestillingId)
-                .orElseThrow(() -> new NotFoundException(format("Fant ikke bestilling på bestillingId %d", bestillingId)));
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, format("Fant ikke bestilling på bestillingId %d", bestillingId)));
 
-        List<OrganisasjonBestillingProgress> bestillingProgress =
-                progressService.fetchOrganisasjonBestillingProgressByBestillingsId(bestillingId);
+        List<OrganisasjonBestillingProgress> bestillingProgress = new ArrayList<>();
+
+        try {
+            bestillingProgress = progressService.fetchOrganisasjonBestillingProgressByBestillingsId(bestillingId);
+        } catch (HttpClientErrorException e) {
+            log.info("Status ikke opprettet for bestilling enda");
+        }
 
         return RsOrganisasjonBestillingStatus.builder()
                 .status(bestillingProgress)
                 .bestilling(jsonBestillingMapper.mapOrganisasjonBestillingRequest(bestilling.getBestKriterier()))
                 .sistOppdatert(bestilling.getSistOppdatert())
-                .organisasjonNummer(Long.getLong(bestillingProgress.get(0).getOrganisasjonsnummer()))
+                .organisasjonNummer(Long.getLong(bestillingProgress.isEmpty() ? null : bestillingProgress.get(0).getOrganisasjonsnummer()))
                 .id(bestillingId)
                 .ferdig(bestilling.getFerdig())
                 .feil(bestilling.getFeil())

@@ -18,6 +18,7 @@ import no.nav.dolly.service.OrganisasjonBestillingService;
 import no.nav.dolly.service.OrganisasjonNummerService;
 import no.nav.dolly.service.OrganisasjonProgressService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -45,6 +46,7 @@ public class OrganisasjonClient implements OrganisasjonRegister {
     private final ErrorStatusDecoder errorStatusDecoder;
     private final MapperFacade mapperFacade;
 
+    @Async
     @Override
     public void opprett(RsOrganisasjonBestilling bestilling, Long bestillingId) {
 
@@ -101,7 +103,7 @@ public class OrganisasjonClient implements OrganisasjonRegister {
         }
     }
 
-
+    @Async
     @Override
     public void gjenopprett(OrganisasjonBestillingProgress progress, List<String> miljoer) {
 
