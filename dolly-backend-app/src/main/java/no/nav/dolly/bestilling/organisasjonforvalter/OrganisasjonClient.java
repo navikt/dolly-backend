@@ -58,6 +58,13 @@ public class OrganisasjonClient implements OrganisasjonRegister {
 
         Set<String> orgnumre = new HashSet<>();
 
+        organisasjonProgressService.save(OrganisasjonBestillingProgress.builder()
+                .bestillingId(bestillingId)
+                .organisasjonsnummer("NA")
+                .uuid("NA")
+                .organisasjonsforvalterStatus("Pågående")
+                .build());
+
         bestillingRequest.getOrganisasjoner().forEach(organisasjon -> {
 
             try {
@@ -79,16 +86,18 @@ public class OrganisasjonClient implements OrganisasjonRegister {
         organisasjonBestillingService.setBestillingFerdig(bestillingId);
     }
 
+    @Async
     @Override
     public DeployResponse gjenopprett(DeployRequest request) {
 
         ResponseEntity<DeployResponse> deployResponseResponseEntity = organisasjonConsumer.gjenopprettOrganisasjon(request);
 
-        if (deployResponseResponseEntity.hasBody()) {
-            return deployResponseResponseEntity.getBody();
+        if (!deployResponseResponseEntity.hasBody()) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, FEIL_STATUS_ORGFORVALTER_DEPLOY);
         }
 
-        throw new HttpClientErrorException(HttpStatus.NOT_FOUND, FEIL_STATUS_ORGFORVALTER_DEPLOY);
+        return deployResponseResponseEntity.getBody();
+
     }
 
     private void saveOrgnumreToDbAndDeploy(Set<String> orgnumre, Long bestillingId, List<String> environments) {
@@ -102,6 +111,8 @@ public class OrganisasjonClient implements OrganisasjonRegister {
                 .bestillingId(bestillingId)
                 .organisasjonsnr(orgnummer)
                 .build()));
+
+
         ResponseEntity<DeployResponse> deployResponse = organisasjonConsumer.deployOrganisasjon(new DeployRequest(orgnumre, environments));
 
         if (deployResponse.hasBody()) {

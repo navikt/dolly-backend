@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import no.nav.dolly.bestilling.OrganisasjonRegister;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployRequest;
-import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployResponse;
 import no.nav.dolly.domain.jpa.OrganisasjonBestilling;
 import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
 import no.nav.dolly.domain.resultset.entity.bestilling.RsOrganisasjonBestillingStatus;
@@ -52,13 +51,20 @@ public class OrganisasjonController {
     @PutMapping("/gjenopprett/{bestillingId}")
     @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
     @Operation(description = "Gjenopprett organisasjon")
-    public DeployResponse gjenopprettOrganisasjon(@PathVariable("bestillingId") Long bestillingId, @RequestParam(value = "miljoer", required = false) String miljoer) {
+    public RsOrganisasjonBestillingStatus gjenopprettOrganisasjon(@PathVariable("bestillingId") Long bestillingId, @RequestParam(value = "miljoer", required = false) String miljoer) {
 
         DeployRequest request = new DeployRequest(
                 Set.of(bestillingService.fetchBestillingStatusById(bestillingId).getOrganisasjonNummer()),
                 asList(miljoer.split(",")));
 
-        return organisasjonClient.gjenopprett(request);
+        RsOrganisasjonBestillingStatus status = bestillingService.fetchBestillingStatusById(bestillingId);
+        status.setEnvironments(request.getEnvironments());
+
+        OrganisasjonBestilling bestilling = bestillingService.saveBestilling(status);
+
+        organisasjonClient.gjenopprett(request);
+
+        return bestillingService.fetchBestillingStatusById(bestilling.getId());
     }
 
     @GetMapping("/bestilling")

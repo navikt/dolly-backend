@@ -27,6 +27,7 @@ import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.time.LocalDateTime.now;
 import static java.util.Collections.singletonList;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.nav.dolly.util.CurrentAuthentication.getUserId;
 
@@ -60,7 +61,7 @@ public class OrganisasjonBestillingService {
                 .sistOppdatert(bestilling.getSistOppdatert())
                 .organisasjonNummer(bestillingProgress.isEmpty() ? null : bestillingProgress.get(0).getOrganisasjonsnummer())
                 .id(bestillingId)
-                .ferdig(bestilling.getFerdig())
+                .ferdig(!isNull(bestilling.getFerdig()) && bestilling.getFerdig())
                 .feil(bestilling.getFeil())
                 .environments(Arrays.asList(bestilling.getMiljoer().split(",")))
                 .antallLevert(bestilling.getAntall())
@@ -84,7 +85,7 @@ public class OrganisasjonBestillingService {
                             .sistOppdatert(orgBestilling.getSistOppdatert())
                             .organisasjonNummer(bestillingStatus.getOrganisasjonsnummer())
                             .id(bestillingStatus.getBestillingId())
-                            .ferdig(orgBestilling.getFerdig())
+                            .ferdig(!isNull(orgBestilling.getFerdig()) && orgBestilling.getFerdig())
                             .feil(orgBestilling.getFeil())
                             .environments(Arrays.asList(orgBestilling.getMiljoer().split(",")))
                             .antallLevert(orgBestilling.getAntall())
@@ -112,6 +113,18 @@ public class OrganisasjonBestillingService {
                         .sistOppdatert(now())
                         .miljoer(join(",", request.getEnvironments()))
                         .bestKriterier(toJson(request.getOrganisasjon()))
+                        .bruker(brukerService.fetchOrCreateBruker(getUserId()))
+                        .build());
+    }
+
+    @Transactional
+    public OrganisasjonBestilling saveBestilling(RsOrganisasjonBestillingStatus status) {
+        return saveBestillingToDB(
+                OrganisasjonBestilling.builder()
+                        .antall(1)
+                        .sistOppdatert(now())
+                        .miljoer(join(",", status.getEnvironments()))
+                        .bestKriterier(toJson(status.getBestilling()))
                         .bruker(brukerService.fetchOrCreateBruker(getUserId()))
                         .build());
     }
