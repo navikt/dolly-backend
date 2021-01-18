@@ -59,7 +59,7 @@ public class OrganisasjonBestillingService {
                 .status(bestillingProgress)
                 .bestilling(jsonBestillingMapper.mapOrganisasjonBestillingRequest(bestilling.getBestKriterier()))
                 .sistOppdatert(bestilling.getSistOppdatert())
-                .organisasjonNummer(Long.getLong(bestillingProgress.isEmpty() ? null : bestillingProgress.get(0).getOrganisasjonsnummer()))
+                .organisasjonNummer(bestillingProgress.get(0).getOrganisasjonsnummer())
                 .id(bestillingId)
                 .ferdig(bestilling.getFerdig())
                 .feil(bestilling.getFeil())

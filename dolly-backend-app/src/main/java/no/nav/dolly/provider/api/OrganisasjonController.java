@@ -24,11 +24,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
-import java.util.Set;
-
-import static java.util.Arrays.asList;
 
 import static no.nav.dolly.config.CachingConfig.CACHE_ORG_BESTILLING;
 
@@ -53,8 +51,8 @@ public class OrganisasjonController {
         return bestillingService.fetchBestillingStatusById(bestilling.getId());
     }
 
-    @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
     @PutMapping("/gjenopprett/{bestillingId}")
+    @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
     @Operation(description = "Gjenopprett organisasjon")
     public DeployResponse gjenopprettOrganisasjon(@PathVariable("bestillingId") Long bestillingId, @RequestParam(value = "miljoer", required = false) String miljoer) {
 

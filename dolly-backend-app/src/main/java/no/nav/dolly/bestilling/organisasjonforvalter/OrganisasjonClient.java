@@ -118,12 +118,6 @@ public class OrganisasjonClient implements OrganisasjonRegister {
     }
 
 
-    @Override
-    public void gjenopprett(OrganisasjonBestillingProgress progress, List<String> miljoer) {
-
-        throw new UnsupportedOperationException("Gjenopprett ikke implementert");
-    }
-
     private String mapStatusFraDeploy(Entry<String, List<EnvStatus>> orgStatus) {
 
         if (isNull(orgStatus)) {
