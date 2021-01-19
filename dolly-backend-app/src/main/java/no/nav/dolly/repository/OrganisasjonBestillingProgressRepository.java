@@ -12,6 +12,7 @@ import java.util.Optional;
 
 public interface OrganisasjonBestillingProgressRepository extends Repository<OrganisasjonBestillingProgress, Long> {
 
+    @Modifying
     Optional<OrganisasjonBestillingProgress> save(OrganisasjonBestillingProgress bestillingProgress);
 
     Optional<List<OrganisasjonBestillingProgress>> findByBestillingId(Long bestillingId);
