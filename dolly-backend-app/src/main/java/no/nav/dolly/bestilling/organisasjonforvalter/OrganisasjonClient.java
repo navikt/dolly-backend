@@ -116,12 +116,17 @@ public class OrganisasjonClient implements OrganisasjonRegister {
         ResponseEntity<DeployResponse> deployResponse = organisasjonConsumer.deployOrganisasjon(new DeployRequest(orgnumre, environments));
 
         if (deployResponse.hasBody()) {
-            requireNonNull(deployResponse.getBody()).getOrgStatus().entrySet().forEach(orgStatus -> organisasjonProgressService.save(OrganisasjonBestillingProgress.builder()
-                    .bestillingId(bestillingId)
-                    .organisasjonsnummer(orgStatus.getKey())
-                    .organisasjonsforvalterStatus(mapStatusFraDeploy(orgStatus))
-                    .uuid(mapUuidFraDeploy(orgStatus))
-                    .build()));
+            requireNonNull(deployResponse.getBody()).getOrgStatus().entrySet().forEach(orgStatus -> {
+                if (!organisasjonProgressService.fetchOrganisasjonBestillingProgressByBestillingsId(bestillingId).isEmpty()) {
+                    organisasjonProgressService.deleteByBestillingId(bestillingId);
+                }
+                organisasjonProgressService.save(OrganisasjonBestillingProgress.builder()
+                        .bestillingId(bestillingId)
+                        .organisasjonsnummer(orgStatus.getKey())
+                        .organisasjonsforvalterStatus(mapStatusFraDeploy(orgStatus))
+                        .uuid(mapUuidFraDeploy(orgStatus))
+                        .build());
+            });
         } else {
             organisasjonBestillingService.setBestillingFeil(bestillingId, FEIL_STATUS_ORGFORVALTER_DEPLOY);
             log.error(FEIL_STATUS_ORGFORVALTER_DEPLOY);
