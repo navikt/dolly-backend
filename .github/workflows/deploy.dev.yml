@@ -2,7 +2,7 @@ name: Deploy dev
 
 on:
   push:
-    branches: organisasjon-bestilling-endringer
+    branches: master
 
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/dolly-backend:${{ github.sha }}
