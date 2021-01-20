@@ -33,6 +33,8 @@ dolly:
         nav-call-id: Unik identifikator, typisk UUID (128 bit)
 
 spring:
+  jpa:
+    open-in-view: false
   main:
     allow-bean-definition-overriding: true
   security:
