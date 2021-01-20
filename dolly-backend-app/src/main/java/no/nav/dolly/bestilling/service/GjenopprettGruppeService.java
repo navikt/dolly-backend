@@ -26,11 +26,11 @@ import org.springframework.cache.CacheManager;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Objects.nonNull;
@@ -84,7 +84,7 @@ public class GjenopprettGruppeService extends DollyBestillingService {
 
                                 if (!personer.isEmpty()) {
                                     TpsPerson tpsPerson = tpsfPersonCache.prepareTpsPersoner(personer.get(0));
-                                    sendIdenterTilTPS(new ArrayList<>(List.of(bestilling.getMiljoer().split(","))),
+                                    sendIdenterTilTPS(Stream.of(bestilling.getMiljoer().split(",")).collect(Collectors.toList()),
                                             Stream.of(List.of(tpsPerson.getHovedperson()), tpsPerson.getPartnere(), tpsPerson.getBarn())
                                                     .flatMap(Collection::stream)
                                                     .collect(toList()),
