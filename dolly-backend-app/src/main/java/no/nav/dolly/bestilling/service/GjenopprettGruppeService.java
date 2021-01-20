@@ -18,7 +18,6 @@ import no.nav.dolly.domain.resultset.tpsf.TpsPerson;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
 import no.nav.dolly.metrics.CounterCustomRegistry;
 import no.nav.dolly.repository.IdentRepository.GruppeBestillingIdent;
-import no.nav.dolly.repository.TestgruppeRepository;
 import no.nav.dolly.service.BestillingProgressService;
 import no.nav.dolly.service.BestillingService;
 import no.nav.dolly.service.IdentService;
@@ -52,7 +51,7 @@ public class GjenopprettGruppeService extends DollyBestillingService {
                                     IdentService identService, BestillingProgressService bestillingProgressService,
                                     BestillingService bestillingService, MapperFacade mapperFacade, CacheManager cacheManager,
                                     ObjectMapper objectMapper, List<ClientRegister> clientRegisters, CounterCustomRegistry counterCustomRegistry,
-                                    ErrorStatusDecoder errorStatusDecoder, ForkJoinPool dollyForkJoinPool, TestgruppeRepository testgruppeRepository) {
+                                    ErrorStatusDecoder errorStatusDecoder, ForkJoinPool dollyForkJoinPool) {
         super(tpsfResponseHandler, tpsfService, tpsfPersonCache, identService, bestillingProgressService, bestillingService,
                 mapperFacade, cacheManager, objectMapper, clientRegisters, counterCustomRegistry);
 
