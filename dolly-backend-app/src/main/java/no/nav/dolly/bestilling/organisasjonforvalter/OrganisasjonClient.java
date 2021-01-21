@@ -70,6 +70,11 @@ public class OrganisasjonClient implements OrganisasjonRegister {
             try {
                 log.info("Bestiller orgnumre fra Organisasjon Forvalter");
                 ResponseEntity<BestillingResponse> response = organisasjonConsumer.postOrganisasjon(bestillingRequest);
+
+                if (!response.getStatusCode().is2xxSuccessful()) {
+                    throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "Organisasjon forvalteren returnerte feilstatus: " + response.getStatusCode());
+                }
+
                 if (response.hasBody()) {
 
                     orgnumre.addAll(requireNonNull(response.getBody()).getOrgnummer());
@@ -81,17 +86,15 @@ public class OrganisasjonClient implements OrganisasjonRegister {
                         organisasjonBestillingProgress.setOrganisasjonsforvalterStatus("Deployer");
 
                         organisasjonProgressService.save(organisasjonBestillingProgress);
+                        saveOrgnumreToDbAndDeploy(orgnumre, bestillingId, bestilling.getEnvironments());
                     }
                 }
             } catch (RuntimeException e) {
 
                 log.error("Feilet med å opprette organisasjon(er)", e);
-
                 organisasjonBestillingService.setBestillingFeil(bestillingId, errorStatusDecoder.decodeRuntimeException(e));
             }
         });
-        saveOrgnumreToDbAndDeploy(orgnumre, bestillingId, bestilling.getEnvironments());
-
         organisasjonBestillingService.setBestillingFerdig(bestillingId);
     }
 
