@@ -93,6 +93,7 @@ public class OrganisasjonClient implements OrganisasjonRegister {
 
                 log.error("Feilet med å opprette organisasjon(er)", e);
                 organisasjonBestillingService.setBestillingFeil(bestillingId, errorStatusDecoder.decodeRuntimeException(e));
+                throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "Feilet med å opprette organisasjon(er)");
             }
         });
         organisasjonBestillingService.setBestillingFerdig(bestillingId);
