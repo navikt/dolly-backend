@@ -135,6 +135,8 @@ public class OrganisasjonBestillingService {
 
         byId.ifPresent(bestilling -> {
             bestilling.setFeil(feil);
+            bestilling.setFerdig(Boolean.TRUE);
+            bestilling.setSistOppdatert(now());
             bestillingRepository.save(bestilling);
         });
     }
@@ -145,6 +147,7 @@ public class OrganisasjonBestillingService {
 
         byId.ifPresent(bestilling -> {
             bestilling.setFerdig(Boolean.TRUE);
+            bestilling.setSistOppdatert(now());
             bestillingRepository.save(bestilling);
         });
     }
