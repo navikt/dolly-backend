@@ -71,23 +71,20 @@ public class OrganisasjonClient implements OrganisasjonRegister {
                 log.info("Bestiller orgnumre fra Organisasjon Forvalter");
                 ResponseEntity<BestillingResponse> response = organisasjonConsumer.postOrganisasjon(bestillingRequest);
 
-                if (!response.getStatusCode().is2xxSuccessful()) {
-                    throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "Organisasjon forvalteren returnerte feilstatus: " + response.getStatusCode());
+                if (!response.hasBody()) {
+                    throw new DollyFunctionalException("Response fra org forvalteren mangler body");
                 }
 
-                if (response.hasBody()) {
+                orgnumre.addAll(requireNonNull(response.getBody()).getOrgnummer());
+                if (!organisasjonProgressService.fetchOrganisasjonBestillingProgressByBestillingsId(bestillingId).isEmpty()) {
+                    List<OrganisasjonBestillingProgress> organisasjonBestillingProgresses = organisasjonProgressService.fetchOrganisasjonBestillingProgressByBestillingsId(bestillingId);
+                    OrganisasjonBestillingProgress organisasjonBestillingProgress = organisasjonBestillingProgresses.get(0);
+                    organisasjonBestillingProgress.setBestillingId(bestillingId);
+                    organisasjonBestillingProgress.setOrganisasjonsnummer(requireNonNull(response.getBody().getOrgnummer().iterator().next()));
+                    organisasjonBestillingProgress.setOrganisasjonsforvalterStatus("Deployer");
 
-                    orgnumre.addAll(requireNonNull(response.getBody()).getOrgnummer());
-                    if (!organisasjonProgressService.fetchOrganisasjonBestillingProgressByBestillingsId(bestillingId).isEmpty()) {
-                        List<OrganisasjonBestillingProgress> organisasjonBestillingProgresses = organisasjonProgressService.fetchOrganisasjonBestillingProgressByBestillingsId(bestillingId);
-                        OrganisasjonBestillingProgress organisasjonBestillingProgress = organisasjonBestillingProgresses.get(0);
-                        organisasjonBestillingProgress.setBestillingId(bestillingId);
-                        organisasjonBestillingProgress.setOrganisasjonsnummer(requireNonNull(response.getBody().getOrgnummer().iterator().next()));
-                        organisasjonBestillingProgress.setOrganisasjonsforvalterStatus("Deployer");
-
-                        organisasjonProgressService.save(organisasjonBestillingProgress);
-                        saveOrgnumreToDbAndDeploy(orgnumre, bestillingId, bestilling.getEnvironments());
-                    }
+                    organisasjonProgressService.save(organisasjonBestillingProgress);
+                    saveOrgnumreToDbAndDeploy(orgnumre, bestillingId, bestilling.getEnvironments());
                 }
             } catch (RuntimeException e) {
 

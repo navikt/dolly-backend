@@ -103,7 +103,7 @@ public class OrganisasjonClientTest {
         orgnummer.add(ORG_NUMMER);
 
         when(mapperFacade.map(any(), eq(BestillingRequest.SyntetiskOrganisasjon.class))).thenReturn(requestOrganisasjon);
-        when(organisasjonConsumer.postOrganisasjon(any())).thenReturn(new ResponseEntity<>(new BestillingResponse(orgnummer), HttpStatus.OK));
+        when(organisasjonConsumer.postOrganisasjon(any())).thenReturn(new ResponseEntity<>(new BestillingResponse(orgnummer), HttpStatus.CREATED));
         when(organisasjonConsumer.deployOrganisasjon(any())).thenReturn(new ResponseEntity<>(deployResponse, HttpStatus.OK));
         when(organisasjonProgressService.fetchOrganisasjonBestillingProgressByBestillingsId(any())).thenReturn(Collections.singletonList(new OrganisasjonBestillingProgress()));
     }
@@ -129,7 +129,7 @@ public class OrganisasjonClientTest {
     }
 
     @Test
-    public void should_throw_dollyfunctionalerror_for_empty_orgnummer_response() {
+    public void should_throw_httpclienterror_for_empty_orgnummer_response() {
 
         when(organisasjonConsumer.postOrganisasjon(any())).thenReturn(new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR));
 
