@@ -64,7 +64,7 @@ public class OrganisasjonBestillingService {
                 .ferdig(!isNull(bestilling.getFerdig()) && bestilling.getFerdig())
                 .feil(bestilling.getFeil())
                 .environments(Arrays.asList(bestilling.getMiljoer().split(",")))
-                .antallLevert(bestilling.getAntall())
+                .antallLevert(bestilling.getFerdig() != null && bestilling.getFerdig() ? 1 : 0)
                 .build();
     }
 
@@ -88,7 +88,7 @@ public class OrganisasjonBestillingService {
                             .ferdig(!isNull(orgBestilling.getFerdig()) && orgBestilling.getFerdig())
                             .feil(orgBestilling.getFeil())
                             .environments(Arrays.asList(orgBestilling.getMiljoer().split(",")))
-                            .antallLevert(orgBestilling.getAntall())
+                            .antallLevert(orgBestilling.getFerdig() != null && orgBestilling.getFerdig() ? 1 : 0)
                             .build());
 
                 }
