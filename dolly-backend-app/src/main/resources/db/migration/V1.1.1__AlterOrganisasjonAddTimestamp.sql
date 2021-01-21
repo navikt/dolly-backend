@@ -3,4 +3,4 @@
 -------------------------------
 
 alter table organisasjon_bestilling
-    alter column sist_oppdatert type timestamp
+alter column sist_oppdatert type timestamp
