@@ -44,7 +44,7 @@ public class OrganisasjonConsumer {
     private String organisasjonerClientId;
 
     @Timed(name = "providers", tags = { "operation", "organisasjon-hent" })
-    public ResponseEntity<BestillingRequest> hentOrganisasjon(List<Long> orgnumre) {
+    public ResponseEntity<BestillingRequest> hentOrganisasjon(List<String> orgnumre) {
 
         AccessToken accessToken = getAccessToken("Organisasjon hent request sendt, callId: {}, consumerId: {}");
 

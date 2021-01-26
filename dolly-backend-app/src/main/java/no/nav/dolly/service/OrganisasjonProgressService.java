@@ -23,6 +23,21 @@ public class OrganisasjonProgressService {
         return organisasjonProgressRepository.save(progress);
     }
 
+    @Transactional
+    public void setBestillingFeil(Long bestillingsId, String status) {
+
+        Optional<List<OrganisasjonBestillingProgress>> bestillingProgress =
+                organisasjonProgressRepository.findByBestillingId(bestillingsId);
+        if (bestillingProgress.isEmpty()) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND,
+                    "Fant ikke noen bestillingStatus med bestillingId: " + bestillingsId);
+        }
+
+        bestillingProgress.get().get(0).setOrganisasjonsforvalterStatus(status);
+
+        organisasjonProgressRepository.save(bestillingProgress.get().get(0));
+    }
+
     public List<OrganisasjonBestillingProgress> fetchOrganisasjonBestillingProgressByBestillingsId(Long bestillingsId) {
         Optional<List<OrganisasjonBestillingProgress>> bestillingProgress =
                 organisasjonProgressRepository.findByBestillingId(bestillingsId);
