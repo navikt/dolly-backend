@@ -77,7 +77,7 @@ public class OrganisasjonController {
     }
 
     @GetMapping("/bestillingsstatus")
-    @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
+    @Cacheable(value = CACHE_ORG_BESTILLING)
     @Operation(description = "Hent status på bestilling basert på brukerId")
     public List<RsOrganisasjonBestillingStatus> hentBestillingStatus(
             @Parameter(description = "BrukerID som er unik til en Azure bruker (Dolly autensiering)", example = "1k9242uc-638g-1234-5678-7894k0j7lu6n") @RequestParam String brukerId) {

@@ -12,6 +12,7 @@ import no.nav.dolly.domain.resultset.entity.bestilling.RsOrganisasjonBestillingS
 import no.nav.dolly.exceptions.ConstraintViolationException;
 import no.nav.dolly.mapper.strategy.JsonBestillingMapper;
 import no.nav.dolly.repository.OrganisasjonBestillingRepository;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import static java.lang.String.join;
 import static java.time.LocalDateTime.now;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.nonNull;
+import static no.nav.dolly.config.CachingConfig.CACHE_ORG_BESTILLING;
 import static no.nav.dolly.util.CurrentAuthentication.getUserId;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.apache.logging.log4j.util.Strings.isBlank;
@@ -98,6 +100,7 @@ public class OrganisasjonBestillingService {
     }
 
     @Transactional
+    @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
     public OrganisasjonBestilling saveBestillingToDB(OrganisasjonBestilling bestilling) {
         try {
             return bestillingRepository.save(bestilling);
@@ -107,6 +110,7 @@ public class OrganisasjonBestillingService {
     }
 
     @Transactional
+    @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
     public OrganisasjonBestilling saveBestilling(RsOrganisasjonBestilling request) {
         return saveBestillingToDB(
                 OrganisasjonBestilling.builder()
@@ -119,6 +123,7 @@ public class OrganisasjonBestillingService {
     }
 
     @Transactional
+    @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
     public OrganisasjonBestilling saveBestilling(RsOrganisasjonBestillingStatus status) {
         return saveBestillingToDB(
                 OrganisasjonBestilling.builder()
@@ -131,6 +136,7 @@ public class OrganisasjonBestillingService {
     }
 
     @Transactional
+    @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
     public void setBestillingFeil(Long bestillingId, String feil) {
         Optional<OrganisasjonBestilling> byId = bestillingRepository.findById(bestillingId);
 
@@ -143,6 +149,7 @@ public class OrganisasjonBestillingService {
     }
 
     @Transactional
+    @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
     public void setBestillingFerdig(Long bestillingId) {
         Optional<OrganisasjonBestilling> byId = bestillingRepository.findById(bestillingId);
 
@@ -154,6 +161,7 @@ public class OrganisasjonBestillingService {
     }
 
     @Transactional
+    @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
     public void slettBestillingByBestillingId(Long bestillingId) {
 
         progressService.deleteByBestillingId(bestillingId);
