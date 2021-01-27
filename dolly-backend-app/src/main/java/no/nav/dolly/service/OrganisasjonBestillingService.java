@@ -5,8 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dolly.bestilling.organisasjonforvalter.OrganisasjonConsumer;
-import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonDetaljer;
 import no.nav.dolly.domain.jpa.OrganisasjonBestilling;
 import no.nav.dolly.domain.jpa.OrganisasjonBestillingProgress;
 import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
@@ -25,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.lang.String.join;
@@ -45,8 +42,6 @@ public class OrganisasjonBestillingService {
 
     private final OrganisasjonBestillingRepository bestillingRepository;
     private final OrganisasjonProgressService progressService;
-    private final OrganisasjonNummerService organisasjonNummerService;
-    private final OrganisasjonConsumer organisasjonConsumer;
     private final BrukerService brukerService;
     private final ObjectMapper objectMapper;
     private final JsonBestillingMapper jsonBestillingMapper;
@@ -59,16 +54,6 @@ public class OrganisasjonBestillingService {
 
         try {
             bestillingProgressList = progressService.fetchOrganisasjonBestillingProgressByBestillingsId(bestillingId);
-
-            OrganisasjonBestillingProgress progress = bestillingProgressList.get(0);
-
-            OrganisasjonDetaljer organisasjon = organisasjonConsumer.hentOrganisasjon(
-                    singletonList(organisasjonNummerService.fetchOrganisasjonNummereFromBestillingsId(
-                            bestillingId).get(0).getOrganisasjonsnr()));
-
-            progress.setOrganisasjonsforvalterStatus(Arrays.stream(bestilling.getMiljoer().split(",")).map(miljoe -> miljoe + ":OK").collect(Collectors.joining()));
-            progress.setOrganisasjonsnummer(organisasjon.getOrganisasjonsnummer());
-
         } catch (HttpClientErrorException e) {
             log.info("Status ikke opprettet for bestilling enda");
         }
