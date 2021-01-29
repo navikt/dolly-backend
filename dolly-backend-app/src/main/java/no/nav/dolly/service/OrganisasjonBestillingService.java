@@ -62,7 +62,7 @@ public class OrganisasjonBestillingService {
         }
 
         return RsOrganisasjonBestillingStatus.builder()
-                .statuser(singletonList(RsOrganisasjonStatusRapport.builder()
+                .status(singletonList(RsOrganisasjonStatusRapport.builder()
                         .navn("Organisasjon Forvalter")
                         .id(SystemTyper.ORGANISASJON_FORVALTER)
                         .statuser(singletonList(RsOrganisasjonStatusRapport.Status.builder()
@@ -97,7 +97,7 @@ public class OrganisasjonBestillingService {
                                     "Fant ikke noen bestillinger med bestillingId: " + bestillingStatus.getBestillingId())
                     );
                     statusListe.add(RsOrganisasjonBestillingStatus.builder()
-                            .statuser(singletonList(RsOrganisasjonStatusRapport.builder()
+                            .status(singletonList(RsOrganisasjonStatusRapport.builder()
                                     .navn("Organisasjon Forvalter")
                                     .id(SystemTyper.ORGANISASJON_FORVALTER)
                                     .statuser(singletonList(RsOrganisasjonStatusRapport.Status.builder()
