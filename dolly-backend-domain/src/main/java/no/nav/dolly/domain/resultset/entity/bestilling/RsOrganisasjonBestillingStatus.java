@@ -31,7 +31,7 @@ public class RsOrganisasjonBestillingStatus {
     private List<String> environments;
     private String organisasjonNummer;
 
-    private List<RsOrganisasjonStatusRapport> statuser;
+    private List<RsOrganisasjonStatusRapport> status;
 
     private SyntetiskOrganisasjon bestilling;
 
