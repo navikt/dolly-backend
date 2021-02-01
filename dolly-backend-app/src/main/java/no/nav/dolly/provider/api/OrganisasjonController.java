@@ -53,13 +53,16 @@ public class OrganisasjonController {
     @Operation(description = "Gjenopprett organisasjon")
     public RsOrganisasjonBestillingStatus gjenopprettOrganisasjon(@PathVariable("bestillingId") Long bestillingId, @RequestParam(value = "miljoer", required = false) String miljoer) {
 
+        RsOrganisasjonBestillingStatus bestillingStatus = bestillingService.fetchBestillingStatusById(bestillingId);
+
         DeployRequest request = new DeployRequest(
-                Set.of(bestillingService.fetchBestillingStatusById(bestillingId).getOrganisasjonNummer()),
+                Set.of(bestillingStatus.getOrganisasjonNummer()),
                 asList(miljoer.split(",")));
 
         RsOrganisasjonBestillingStatus status = RsOrganisasjonBestillingStatus.builder()
                 .organisasjonNummer(request.getOrgnumre().iterator().next())
                 .environments(request.getEnvironments())
+                .bestilling(bestillingStatus.getBestilling())
                 .build();
 
         OrganisasjonBestilling bestilling = bestillingService.saveBestilling(status);

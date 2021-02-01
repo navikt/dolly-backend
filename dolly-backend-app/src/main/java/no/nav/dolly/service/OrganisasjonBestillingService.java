@@ -23,8 +23,10 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.lang.String.join;
@@ -49,6 +51,7 @@ public class OrganisasjonBestillingService {
     private final JsonBestillingMapper jsonBestillingMapper;
 
     public RsOrganisasjonBestillingStatus fetchBestillingStatusById(Long bestillingId) {
+
         OrganisasjonBestilling bestilling = bestillingRepository.findById(bestillingId)
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, format("Fant ikke bestilling på bestillingId %d", bestillingId)));
 
@@ -121,12 +124,15 @@ public class OrganisasjonBestillingService {
 
                 }
         );
-        return statusListe;
+        return statusListe.stream()
+                .sorted(Comparator.comparingLong(RsOrganisasjonBestillingStatus::getId))
+                .collect(Collectors.toList());
     }
 
     @Transactional
     @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
     public OrganisasjonBestilling saveBestillingToDB(OrganisasjonBestilling bestilling) {
+
         try {
             return bestillingRepository.save(bestilling);
         } catch (DataIntegrityViolationException e) {
@@ -137,6 +143,7 @@ public class OrganisasjonBestillingService {
     @Transactional
     @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
     public OrganisasjonBestilling saveBestilling(RsOrganisasjonBestilling request) {
+
         return saveBestillingToDB(
                 OrganisasjonBestilling.builder()
                         .antall(1)
@@ -150,6 +157,7 @@ public class OrganisasjonBestillingService {
     @Transactional
     @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
     public OrganisasjonBestilling saveBestilling(RsOrganisasjonBestillingStatus status) {
+
         return saveBestillingToDB(
                 OrganisasjonBestilling.builder()
                         .antall(1)
@@ -163,6 +171,7 @@ public class OrganisasjonBestillingService {
     @Transactional
     @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
     public void setBestillingFeil(Long bestillingId, String feil) {
+
         Optional<OrganisasjonBestilling> byId = bestillingRepository.findById(bestillingId);
 
         byId.ifPresent(bestilling -> {
@@ -176,6 +185,7 @@ public class OrganisasjonBestillingService {
     @Transactional
     @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
     public void setBestillingFerdig(Long bestillingId) {
+
         Optional<OrganisasjonBestilling> byId = bestillingRepository.findById(bestillingId);
 
         byId.ifPresent(bestilling -> {
@@ -194,6 +204,7 @@ public class OrganisasjonBestillingService {
     }
 
     private String toJson(Object object) {
+
         try {
             if (nonNull(object)) {
                 return objectMapper.writer().writeValueAsString(object);
