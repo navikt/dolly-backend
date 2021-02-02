@@ -46,6 +46,7 @@ public class OrganisasjonBestillingService {
 
     private final OrganisasjonBestillingRepository bestillingRepository;
     private final OrganisasjonProgressService progressService;
+    private final OrganisasjonNummerService organisasjonNummerService;
     private final BrukerService brukerService;
     private final ObjectMapper objectMapper;
     private final JsonBestillingMapper jsonBestillingMapper;
@@ -199,6 +200,13 @@ public class OrganisasjonBestillingService {
     @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
     public void slettBestillingByBestillingId(Long bestillingId) {
 
+        Optional<OrganisasjonBestilling> orgBestilling = bestillingRepository.findById(bestillingId);
+
+        if (orgBestilling.isEmpty()) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Fant ikke noen bestilling med id: " + bestillingId);
+        }
+
+        organisasjonNummerService.deleteByBestillingId(bestillingId);
         progressService.deleteByBestillingId(bestillingId);
         bestillingRepository.deleteBestillingWithNoChildren(bestillingId);
     }

@@ -12,6 +12,7 @@ import no.nav.dolly.service.OrganisasjonBestillingService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -88,5 +89,13 @@ public class OrganisasjonController {
             @Parameter(description = "BrukerID som er unik til en Azure bruker (Dolly autensiering)", example = "1k9242uc-638g-1234-5678-7894k0j7lu6n") @RequestParam String brukerId) {
 
         return bestillingService.fetchBestillingStatusByBrukerId(brukerId);
+    }
+
+    @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
+    @DeleteMapping("/bestilling/{bestillingId}")
+    @Operation(description = "Slett gruppe")
+    public void slettgruppe(@PathVariable("bestillingId") Long bestillingId) {
+
+        bestillingService.slettBestillingByBestillingId(bestillingId);
     }
 }
