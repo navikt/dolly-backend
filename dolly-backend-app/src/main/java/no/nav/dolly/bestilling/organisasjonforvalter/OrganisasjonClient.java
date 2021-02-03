@@ -99,6 +99,11 @@ public class OrganisasjonClient {
                 .organisasjonsforvalterStatus("Deployer")
                 .build());
 
+        organisasjonNummerService.save(OrganisasjonNummer.builder()
+                .bestillingId(bestillingId)
+                .organisasjonsnr(request.getOrgnumre().iterator().next())
+                .build());
+
         deployOrganisasjon(request.getOrgnumre(), bestillingId, request.getEnvironments());
     }
 

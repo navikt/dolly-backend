@@ -92,10 +92,10 @@ public class OrganisasjonController {
     }
 
     @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
-    @DeleteMapping("/bestilling/{bestillingId}")
+    @DeleteMapping("/bestilling/{orgnummer}")
     @Operation(description = "Slett gruppe")
-    public void slettgruppe(@PathVariable("bestillingId") Long bestillingId) {
+    public void slettgruppe(@PathVariable("orgnummer") Long orgnummer) {
 
-        bestillingService.slettBestillingByBestillingId(bestillingId);
+        bestillingService.slettBestillingByOrgnummer(orgnummer);
     }
 }

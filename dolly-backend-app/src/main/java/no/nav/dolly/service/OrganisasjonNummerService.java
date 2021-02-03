@@ -29,9 +29,20 @@ public class OrganisasjonNummerService {
                 () -> new NotFoundException("Kunne ikke finne noen organisasjoner knyttet til bestillingId=" + bestillingsId + ", i tabell ORGANISASJON_BESTILLINGS_PROGRESS"));
     }
 
+    public List<OrganisasjonNummer> fetchBestillingsIdFromOrganisasjonNummer(Long orgnummer) {
+        return organisasjonNummerRepository.findByOrganisasjonNummer(orgnummer.toString()).orElseThrow(
+                () -> new NotFoundException("Kunne ikke finne noen bestillinger knyttet til organisasjonNummer=" + orgnummer + ", i tabell ORGANISASJON_BESTILLINGS_PROGRESS"));
+    }
+
     @Transactional
     @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
     public void deleteByBestillingId(Long bestillingId) {
         organisasjonNummerRepository.deleteByBestillingId(bestillingId);
+    }
+
+    @Transactional
+    @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
+    public void deleteByOrgnummer(Long orgnummer) {
+        organisasjonNummerRepository.deleteByOrganisasjonsnr(orgnummer);
     }
 }

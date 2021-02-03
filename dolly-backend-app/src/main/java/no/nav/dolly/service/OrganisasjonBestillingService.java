@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.domain.jpa.OrganisasjonBestilling;
 import no.nav.dolly.domain.jpa.OrganisasjonBestillingProgress;
+import no.nav.dolly.domain.jpa.OrganisasjonNummer;
 import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
 import no.nav.dolly.domain.resultset.RsOrganisasjonStatusRapport;
 import no.nav.dolly.domain.resultset.SystemTyper;
@@ -200,15 +201,26 @@ public class OrganisasjonBestillingService {
     @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
     public void slettBestillingByBestillingId(Long bestillingId) {
 
-        Optional<OrganisasjonBestilling> orgBestilling = bestillingRepository.findById(bestillingId);
-
-        if (orgBestilling.isEmpty()) {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Fant ikke noen bestilling med id: " + bestillingId);
-        }
+        bestillingRepository.findById(bestillingId).orElseThrow(() ->
+                new HttpClientErrorException(HttpStatus.NOT_FOUND, "Fant ikke noen bestilling med id: " + bestillingId));
 
         organisasjonNummerService.deleteByBestillingId(bestillingId);
         progressService.deleteByBestillingId(bestillingId);
         bestillingRepository.deleteBestillingWithNoChildren(bestillingId);
+    }
+
+    @Transactional
+    @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
+    public void slettBestillingByOrgnummer(Long orgnummer) {
+
+        List<Long> bestillinger = organisasjonNummerService.fetchBestillingsIdFromOrganisasjonNummer(orgnummer).stream()
+                .map(OrganisasjonNummer::getBestillingId)
+                .collect(Collectors.toList());
+
+        organisasjonNummerService.deleteByOrgnummer(orgnummer);
+        progressService.deleteByOrgnummer(orgnummer);
+
+        bestillinger.forEach(bestillingRepository::deleteBestillingWithNoChildren);
     }
 
     private String toJson(Object object) {
