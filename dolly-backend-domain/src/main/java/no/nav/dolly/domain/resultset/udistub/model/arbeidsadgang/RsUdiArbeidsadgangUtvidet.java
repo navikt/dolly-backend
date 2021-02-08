@@ -15,10 +15,12 @@ import no.nav.dolly.domain.resultset.udistub.model.UdiHarType;
 @Getter
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class RsUdiArbeidsadgang {
+public class RsUdiArbeidsadgangUtvidet {
 
     private UdiArbeidOmfangType arbeidsOmfang;
     private UdiHarType harArbeidsAdgang;
     private RsUdiPeriode periode;
     private UdiArbeidsadgangType typeArbeidsadgang;
+    private String forklaring;
+    private String hjemmel;
 }
