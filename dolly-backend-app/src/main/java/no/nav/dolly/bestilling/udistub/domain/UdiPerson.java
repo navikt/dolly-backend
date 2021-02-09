@@ -23,7 +23,7 @@ import java.util.List;
 public class UdiPerson {
 
     private List<UdiAlias> aliaser;
-    private UdiArbeidsadgang arbeidsadgangUtvidet;
+    private UdiArbeidsadgang arbeidsadgang;
     private Boolean avgjoerelseUavklart;
     private Boolean flyktning;
     private LocalDate foedselsDato;

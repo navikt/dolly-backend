@@ -24,7 +24,7 @@ import static java.util.Objects.isNull;
 public class RsUdiPerson {
 
     private List<RsUdiAlias> aliaser;
-    private RsUdiArbeidsadgang arbeidsadgangUtvidet;
+    private RsUdiArbeidsadgang arbeidsadgang;
     private RsUdiOppholdStatus oppholdStatus;
     private Boolean avgjoerelseUavklart;
     private Boolean harOppholdsTillatelse;
