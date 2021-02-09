@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import no.nav.dolly.domain.resultset.udistub.model.arbeidsadgang.RsUdiArbeidsadgang;
-import no.nav.dolly.domain.resultset.udistub.model.avgjoerelse.RsUdiAvgjorelse;
 import no.nav.dolly.domain.resultset.udistub.model.opphold.RsUdiOppholdStatus;
 
 import java.time.LocalDateTime;
@@ -24,7 +23,6 @@ import static java.util.Objects.isNull;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RsUdiPerson {
 
-    private List<RsUdiAvgjorelse> avgjoerelser;
     private List<RsUdiAlias> aliaser;
     private RsUdiArbeidsadgang arbeidsadgangUtvidet;
     private RsUdiOppholdStatus oppholdStatus;
