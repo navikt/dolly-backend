@@ -26,7 +26,7 @@ public class RsUdiPerson {
 
     private List<RsUdiAvgjorelse> avgjoerelser;
     private List<RsUdiAlias> aliaser;
-    private RsUdiArbeidsadgang arbeidsadgang;
+    private RsUdiArbeidsadgang arbeidsadgangUtvidet;
     private RsUdiOppholdStatus oppholdStatus;
     private Boolean avgjoerelseUavklart;
     private Boolean harOppholdsTillatelse;

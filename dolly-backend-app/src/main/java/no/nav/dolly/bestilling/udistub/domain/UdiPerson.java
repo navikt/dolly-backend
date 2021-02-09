@@ -27,7 +27,7 @@ import static java.util.Objects.isNull;
 public class UdiPerson {
 
     private List<UdiAlias> aliaser;
-    private UdiArbeidsadgang arbeidsadgang;
+    private UdiArbeidsadgang arbeidsadgangUtvidet;
     private Boolean avgjoerelseUavklart;
     private List<UdiAvgjorelse> avgjoerelser;
     private Boolean flyktning;
