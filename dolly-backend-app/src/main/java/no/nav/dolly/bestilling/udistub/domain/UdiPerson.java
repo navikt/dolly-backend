@@ -9,7 +9,6 @@ import lombok.Setter;
 import no.nav.dolly.domain.resultset.udistub.model.UdiHarType;
 import no.nav.dolly.domain.resultset.udistub.model.UdiPersonNavn;
 import no.nav.dolly.domain.resultset.udistub.model.arbeidsadgang.UdiArbeidsadgang;
-import no.nav.dolly.domain.resultset.udistub.model.arbeidsadgang.UdiArbeidsadgangUtvidet;
 import no.nav.dolly.domain.resultset.udistub.model.avgjoerelse.UdiAvgjorelse;
 import no.nav.dolly.domain.resultset.udistub.model.opphold.UdiOppholdStatus;
 
@@ -29,7 +28,6 @@ public class UdiPerson {
 
     private List<UdiAlias> aliaser;
     private UdiArbeidsadgang arbeidsadgang;
-    private UdiArbeidsadgangUtvidet arbeidsadgangUtvidet;
     private Boolean avgjoerelseUavklart;
     private List<UdiAvgjorelse> avgjoerelser;
     private Boolean flyktning;

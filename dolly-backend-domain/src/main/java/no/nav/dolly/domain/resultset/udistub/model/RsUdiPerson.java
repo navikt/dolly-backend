@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import no.nav.dolly.domain.resultset.udistub.model.arbeidsadgang.RsUdiArbeidsadgang;
-import no.nav.dolly.domain.resultset.udistub.model.arbeidsadgang.RsUdiArbeidsadgangUtvidet;
 import no.nav.dolly.domain.resultset.udistub.model.avgjoerelse.RsUdiAvgjorelse;
 import no.nav.dolly.domain.resultset.udistub.model.opphold.RsUdiOppholdStatus;
 
@@ -28,7 +27,6 @@ public class RsUdiPerson {
     private List<RsUdiAvgjorelse> avgjoerelser;
     private List<RsUdiAlias> aliaser;
     private RsUdiArbeidsadgang arbeidsadgang;
-    private RsUdiArbeidsadgangUtvidet arbeidsadgangUtvidet;
     private RsUdiOppholdStatus oppholdStatus;
     private Boolean avgjoerelseUavklart;
     private Boolean harOppholdsTillatelse;

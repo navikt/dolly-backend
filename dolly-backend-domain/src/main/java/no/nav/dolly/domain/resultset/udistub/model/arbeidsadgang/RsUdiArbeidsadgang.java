@@ -21,4 +21,6 @@ public class RsUdiArbeidsadgang {
     private UdiHarType harArbeidsAdgang;
     private RsUdiPeriode periode;
     private UdiArbeidsadgangType typeArbeidsadgang;
+    private String forklaring;
+    private String hjemmel;
 }
