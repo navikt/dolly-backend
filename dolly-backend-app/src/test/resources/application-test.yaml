@@ -44,4 +44,6 @@ providers:
     url: http://arenaforvalterdummy
   aaregdata:
     url: http://aaregdatadummy
+  udistub:
+    url: http://udi-stubdummy
 
