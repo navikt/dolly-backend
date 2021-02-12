@@ -28,7 +28,6 @@ import no.nav.dolly.repository.BestillingProgressRepository;
 import no.nav.dolly.repository.BestillingRepository;
 import no.nav.dolly.repository.IdentRepository;
 import no.nav.dolly.repository.TestgruppeRepository;
-import no.nav.dolly.util.CurrentAuthentication;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -157,7 +156,6 @@ public class BestillingService {
     public Bestilling saveBestilling(Long gruppeId, RsDollyBestilling request, RsTpsfBasisBestilling tpsf, Integer antall,
             List<String> opprettFraIdenter) {
         Testgruppe gruppe = testgruppeRepository.findById(gruppeId).orElseThrow(() -> new NotFoundException("Finner ikke gruppe basert på gruppeID: " + gruppeId));
-        log.info("OID: {}", CurrentAuthentication.getUserId());
         fixAaregAbstractClassProblem(request.getAareg());
         fixPdlAbstractClassProblem(request.getPdlforvalter());
         return saveBestillingToDB(

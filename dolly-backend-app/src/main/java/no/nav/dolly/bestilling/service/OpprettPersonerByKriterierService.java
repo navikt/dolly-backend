@@ -17,7 +17,6 @@ import no.nav.dolly.service.BestillingProgressService;
 import no.nav.dolly.service.BestillingService;
 import no.nav.dolly.service.IdentService;
 import no.nav.dolly.service.TpsfPersonCache;
-import no.nav.dolly.util.CurrentAuthentication;
 import org.springframework.cache.CacheManager;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -59,7 +58,6 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
     public void executeAsync(Bestilling bestilling) {
 
         RsDollyBestillingRequest bestKriterier = getDollyBestillingRequest(bestilling);
-        log.info("OID: {}", CurrentAuthentication.getUserId());
 
         if (nonNull(bestKriterier)) {
 
@@ -67,14 +65,11 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
                     mapperFacade.map(bestKriterier.getTpsf(), TpsfBestilling.class) : new TpsfBestilling();
             tpsfBestilling.setAntall(1);
 
-            Collections.singletonList("test").parallelStream().forEach((test) -> log.info("OID paralell: {}", CurrentAuthentication.getUserId()));
             dollyForkJoinPool.submit(() -> {
-                log.info("OID: 1 {}", CurrentAuthentication.getUserId());
                 Collections.nCopies(bestilling.getAntallIdenter(), true).parallelStream()
                         .filter(ident -> !bestillingService.isStoppet(bestilling.getId()))
                         .map(ident -> {
 
-                            log.info("OID: 2 {}", CurrentAuthentication.getUserId());
                             BestillingProgress progress = null;
                             try {
                                 List<String> leverteIdenter = tpsfService.opprettIdenterTpsf(tpsfBestilling);
@@ -101,7 +96,6 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
                         })
                         .collect(Collectors.toList());
                 oppdaterBestillingFerdig(bestilling);
-                log.info("OID: {}", CurrentAuthentication.getUserId());
             });
 
         } else {

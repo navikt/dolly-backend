@@ -11,7 +11,6 @@ import no.nav.dolly.domain.jpa.BestillingProgress;
 import no.nav.dolly.domain.resultset.RsDollyUtvidetBestilling;
 import no.nav.dolly.domain.resultset.tpsf.TpsPerson;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
-import no.nav.dolly.util.CurrentAuthentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,7 +32,6 @@ public class UdiStubClient implements ClientRegister {
         if (nonNull(bestilling.getUdistub())) {
             StringBuilder status = new StringBuilder();
 
-            log.info("OID: 1 {}", CurrentAuthentication.getUserId());
             try {
                 UdiPersonResponse eksisterendeUdiPerson = udiStubConsumer.getUdiPerson(tpsPerson.getHovedperson());
 

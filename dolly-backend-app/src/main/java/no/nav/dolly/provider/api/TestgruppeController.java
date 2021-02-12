@@ -133,12 +133,9 @@ public class TestgruppeController {
     @PostMapping("/{gruppeId}/bestilling")
     @Operation(description = "Opprett berikede testpersoner basert på fødselsdato, kjønn og identtype")
     public RsBestillingStatus opprettIdentBestilling(@PathVariable("gruppeId") Long gruppeId, @RequestBody RsDollyBestillingRequest request) {
-        log.info("OID: {}", CurrentAuthentication.getUserId());
         Bestilling bestilling = bestillingService.saveBestilling(gruppeId, request, request.getTpsf(), request.getAntall(), null);
 
-        log.info("OID: {}", CurrentAuthentication.getUserId());
         opprettPersonerByKriterierService.executeAsync(bestilling);
-        log.info("OID: {}", CurrentAuthentication.getUserId());
         return mapperFacade.map(bestilling, RsBestillingStatus.class);
     }
 
