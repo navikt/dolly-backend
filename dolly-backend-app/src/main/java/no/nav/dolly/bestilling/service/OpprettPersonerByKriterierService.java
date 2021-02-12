@@ -68,10 +68,12 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
             tpsfBestilling.setAntall(1);
 
             dollyForkJoinPool.submit(() -> {
+                log.info("OID: 1 {}", CurrentAuthentication.getUserId());
                 Collections.nCopies(bestilling.getAntallIdenter(), true).parallelStream()
                         .filter(ident -> !bestillingService.isStoppet(bestilling.getId()))
                         .map(ident -> {
 
+                            log.info("OID: 2 {}", CurrentAuthentication.getUserId());
                             BestillingProgress progress = null;
                             try {
                                 List<String> leverteIdenter = tpsfService.opprettIdenterTpsf(tpsfBestilling);
