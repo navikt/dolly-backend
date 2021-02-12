@@ -2,6 +2,7 @@ package no.nav.dolly.provider.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.bestilling.service.GjenopprettGruppeService;
 import no.nav.dolly.bestilling.service.ImportAvPersonerFraTpsService;
@@ -46,6 +47,7 @@ import static no.nav.dolly.config.CachingConfig.CACHE_GRUPPE;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping(value = "api/v1/gruppe")
 public class TestgruppeController {
 
@@ -131,9 +133,12 @@ public class TestgruppeController {
     @PostMapping("/{gruppeId}/bestilling")
     @Operation(description = "Opprett berikede testpersoner basert på fødselsdato, kjønn og identtype")
     public RsBestillingStatus opprettIdentBestilling(@PathVariable("gruppeId") Long gruppeId, @RequestBody RsDollyBestillingRequest request) {
+        log.info("OID: {}", CurrentAuthentication.getUserId());
         Bestilling bestilling = bestillingService.saveBestilling(gruppeId, request, request.getTpsf(), request.getAntall(), null);
 
+        log.info("OID: {}", CurrentAuthentication.getUserId());
         opprettPersonerByKriterierService.executeAsync(bestilling);
+        log.info("OID: {}", CurrentAuthentication.getUserId());
         return mapperFacade.map(bestilling, RsBestillingStatus.class);
     }
 
