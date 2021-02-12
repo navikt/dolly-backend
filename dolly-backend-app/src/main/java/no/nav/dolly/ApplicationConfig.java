@@ -9,11 +9,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.security.concurrent.DelegatingSecurityContextExecutorService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import java.net.ProxySelector;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 
 @SpringBootApplication
@@ -45,8 +47,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public ForkJoinPool dollyForkJoinPool() {
-
-        return new ForkJoinPool(THREADS_COUNT, new ForkJoinWorkerThreadFactory(), null, true);
+    public ExecutorService dollyForkJoinPool() {
+        return new DelegatingSecurityContextExecutorService(new ForkJoinPool(THREADS_COUNT, new ForkJoinWorkerThreadFactory(), null, true));
     }
 }

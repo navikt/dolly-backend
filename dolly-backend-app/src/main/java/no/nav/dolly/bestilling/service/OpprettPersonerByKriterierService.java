@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
@@ -38,13 +38,13 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
     private ErrorStatusDecoder errorStatusDecoder;
     private MapperFacade mapperFacade;
     private TpsfService tpsfService;
-    private ForkJoinPool dollyForkJoinPool;
+    private ExecutorService dollyForkJoinPool;
 
     public OpprettPersonerByKriterierService(TpsfResponseHandler tpsfResponseHandler, TpsfService tpsfService,
-            TpsfPersonCache tpsfPersonCache, IdentService identService, BestillingProgressService bestillingProgressService,
-            BestillingService bestillingService, MapperFacade mapperFacade, CacheManager cacheManager,
-            ObjectMapper objectMapper, List<ClientRegister> clientRegisters, CounterCustomRegistry counterCustomRegistry,
-            ErrorStatusDecoder errorStatusDecoder, ForkJoinPool dollyForkJoinPool) {
+                                             TpsfPersonCache tpsfPersonCache, IdentService identService, BestillingProgressService bestillingProgressService,
+                                             BestillingService bestillingService, MapperFacade mapperFacade, CacheManager cacheManager,
+                                             ObjectMapper objectMapper, List<ClientRegister> clientRegisters, CounterCustomRegistry counterCustomRegistry,
+                                             ErrorStatusDecoder errorStatusDecoder, ExecutorService dollyForkJoinPool) {
         super(tpsfResponseHandler, tpsfService, tpsfPersonCache, identService, bestillingProgressService,
                 bestillingService, mapperFacade, cacheManager, objectMapper, clientRegisters, counterCustomRegistry);
 
