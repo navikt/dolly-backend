@@ -137,6 +137,7 @@ public class TestgruppeController {
         return mapperFacade.map(bestilling, RsBestillingStatus.class);
     }
 
+    @CacheEvict(value = { CACHE_BESTILLING, CACHE_GRUPPE }, allEntries = true)
     @GetMapping("/test")
     @Operation(description = "test")
     public String test() {
