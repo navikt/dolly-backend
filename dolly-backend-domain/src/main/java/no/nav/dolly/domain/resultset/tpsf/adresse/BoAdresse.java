@@ -41,4 +41,8 @@ public abstract class BoAdresse {
     public boolean isGateadresse() {
         return "GATE".equals(getAdressetype());
     }
+
+    public boolean isMatrikkeladresse() {
+        return "MATR".equals(getAdressetype());
+    }
 }
