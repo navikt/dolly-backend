@@ -69,11 +69,7 @@ public class PdlVergemaalMappingStrategy implements MappingStrategy {
                         person.getVergemaal().forEach(vergemaal -> {
 
                             PdlVergemaal pdlVergemaal = new PdlVergemaal();
-                            try {
-                                pdlVergemaal.setEmbete(kodeverkConsumer.getKodeverkByName(EMBETE_KODEVERK).get(vergemaal.getEmbete()));
-                            } catch (RuntimeException e) {
-                                log.error("Mapping av {} feilet", vergemaal.getEmbete(), e);
-                            }
+                            pdlVergemaal.setEmbete(kodeverkConsumer.getKodeverkByName(EMBETE_KODEVERK).get(vergemaal.getEmbete()));
                             pdlVergemaal.setFolkeregistermetadata(Folkeregistermetadata.builder()
                                     .gyldighetstidspunkt(mapperFacade.map(vergemaal.getVedtakDato(), LocalDate.class))
                                     .build());

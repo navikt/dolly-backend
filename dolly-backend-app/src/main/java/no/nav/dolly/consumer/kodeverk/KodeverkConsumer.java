@@ -2,14 +2,12 @@ package no.nav.dolly.consumer.kodeverk;
 
 import lombok.RequiredArgsConstructor;
 import no.nav.dolly.consumer.kodeverk.domain.KodeverkBetydningerResponse;
-import no.nav.dolly.exceptions.KodeverkException;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.properties.ProvidersProps;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -18,7 +16,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import static no.nav.dolly.config.CachingConfig.CACHE_KODEVERK;
+import static no.nav.dolly.config.CachingConfig.CACHE_KODEVERK_2;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
@@ -49,7 +47,7 @@ public class KodeverkConsumer {
         return kodeverkResponse.hasBody() ? kodeverkResponse.getBody() : KodeverkBetydningerResponse.builder().build();
     }
 
-    @Cacheable(CACHE_KODEVERK)
+    @Cacheable(CACHE_KODEVERK_2)
     @Timed(name = "providers", tags = {"operation", "hentKodeverk"})
     public Map<String, String> getKodeverkByName(String kodeverk) {
 
@@ -62,15 +60,10 @@ public class KodeverkConsumer {
 
     private ResponseEntity<KodeverkBetydningerResponse> getKodeverk(String kodeverk) {
 
-        try {
-            return restTemplate.exchange(RequestEntity.get(
-                    URI.create(providersProps.getKodeverk().getUrl() + getKodeverksnavnUrl(kodeverk.replace(" ", "%20"))))
-                    .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                    .header(HEADER_NAV_CALL_ID, generateCallId())
-                    .build(), KodeverkBetydningerResponse.class);
-
-        } catch (HttpClientErrorException e) {
-            throw new KodeverkException(e.getStatusCode(), e.getResponseBodyAsString());
-        }
+        return restTemplate.exchange(RequestEntity.get(
+                URI.create(providersProps.getKodeverk().getUrl() + getKodeverksnavnUrl(kodeverk.replace(" ", "%20"))))
+                .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
+                .header(HEADER_NAV_CALL_ID, generateCallId())
+                .build(), KodeverkBetydningerResponse.class);
     }
 }
