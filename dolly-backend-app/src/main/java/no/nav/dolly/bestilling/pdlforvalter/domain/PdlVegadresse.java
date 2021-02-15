@@ -15,7 +15,7 @@ public class PdlVegadresse {
 
     private String adressekode;
     private String adressenavn;
-    private String adressetillegsnavn;
+    private String adressetilleggsnavn;
     private String bruksenhetsnummer;
     private PdlAdresse.Bruksenhetstype bruksenhetstype;
     private String husbokstav;
