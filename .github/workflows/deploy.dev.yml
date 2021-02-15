@@ -2,7 +2,7 @@ name: Deploy dev
 
 on:
   push:
-    branches: master
+    branches: feature/delt_adresse
 
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/dolly-backend:${{ github.sha }}
