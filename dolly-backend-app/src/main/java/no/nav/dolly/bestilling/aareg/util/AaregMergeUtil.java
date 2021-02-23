@@ -90,7 +90,7 @@ public class AaregMergeUtil {
             arbeidsforholdId = new AtomicInteger(
                     eksisterendeArbeidsforhold.stream()
                             .map(ArbeidsforholdResponse::getArbeidsforholdId)
-                            .map(id -> id.replace("-", ""))
+                            .map(id -> id.replaceAll("[^\\d]", ""))
                             .mapToInt(Integer::valueOf)
                             .max().orElse(0)
             );
@@ -100,9 +100,14 @@ public class AaregMergeUtil {
 
         for (int i = 0; i < nyeArbeidsforhold.size(); i++) {
             Arbeidsforhold nyttArbeidsforhold = nyeArbeidsforhold.get(i);
-            nyttArbeidsforhold.setArbeidsforholdID(nonNull(arbeidsforholdId)
-                    ? Integer.toString(arbeidsforholdId.addAndGet(1))
-                    : eksisterendeArbeidsforhold.get(i).getArbeidsforholdId());
+            if (nonNull(arbeidsforholdId)) {
+                nyttArbeidsforhold.setArbeidsforholdID(Integer.toString(arbeidsforholdId.addAndGet(1)));
+            } else {
+                nyttArbeidsforhold.setArbeidsforholdID(
+                        nyeArbeidsforhold.size() > eksisterendeArbeidsforhold.size() && i >= eksisterendeArbeidsforhold.size() ?
+                                eksisterendeArbeidsforhold.get(0).getArbeidsforholdId() + i :
+                                eksisterendeArbeidsforhold.get(i).getArbeidsforholdId() + i);
+            }
             nyttArbeidsforhold.getPermisjon().forEach(permisjon ->
                     permisjon.setPermisjonsId(Integer.toString(permisjonId.addAndGet(1))));
             nyttArbeidsforhold.setArbeidstaker(RsPersonAareg.builder()
