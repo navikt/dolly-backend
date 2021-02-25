@@ -23,6 +23,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -89,7 +90,7 @@ public class OrganisasjonBestillingService {
             } else {
                 log.info("Klarte ikke å hente organisasjon bestillinger på brukeren");
             }
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
 
         List<RsOrganisasjonBestillingStatus> statusListe = new ArrayList<>();
