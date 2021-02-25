@@ -79,17 +79,28 @@ public class OrganisasjonBestillingService {
 
     public List<RsOrganisasjonBestillingStatus> fetchBestillingStatusByBrukerId(String brukerId) {
 
-        List<OrganisasjonBestillingProgress> bestillingProgress = progressService.fetchOrganisasjonBestillingProgressByBrukerId(brukerId);
+        List<OrganisasjonBestillingProgress> bestillingProgress;
+
+        try {
+            bestillingProgress = progressService.fetchOrganisasjonBestillingProgressByBrukerId(brukerId);
+        } catch (HttpClientErrorException e) {
+            if (404 == e.getRawStatusCode()) {
+                log.info("Brukeren har ingen bestilte organisasjoner");
+            } else {
+                log.info("Klarte ikke å hente organisasjon bestillinger på brukeren");
+            }
+            return new ArrayList<>();
+        }
 
         List<RsOrganisasjonBestillingStatus> statusListe = new ArrayList<>();
         bestillingProgress.forEach(bestillingStatus -> {
 
-                    OrganisasjonBestilling orgBestilling = bestillingRepository.findById(bestillingStatus.getBestillingId()).orElseThrow(() ->
-                            new HttpClientErrorException(HttpStatus.BAD_REQUEST,
-                                    "Fant ikke noen bestillinger med bestillingId: " + bestillingStatus.getBestillingId())
-                    );
-                    statusListe.add(RsOrganisasjonBestillingStatus.builder()
-                            .status(BestillingOrganisasjonStatusMapper.buildOrganisasjonStatusMap(bestillingStatus))
+            OrganisasjonBestilling orgBestilling = bestillingRepository.findById(bestillingStatus.getBestillingId()).orElseThrow(() ->
+                    new HttpClientErrorException(HttpStatus.BAD_REQUEST,
+                            "Fant ikke noen bestillinger med bestillingId: " + bestillingStatus.getBestillingId())
+            );
+            statusListe.add(RsOrganisasjonBestillingStatus.builder()
+                    .status(BestillingOrganisasjonStatusMapper.buildOrganisasjonStatusMap(bestillingStatus))
                             .bestilling(jsonBestillingMapper.mapOrganisasjonBestillingRequest(orgBestilling.getBestKriterier()))
                             .sistOppdatert(orgBestilling.getSistOppdatert())
                             .organisasjonNummer(bestillingStatus.getOrganisasjonsnummer())
