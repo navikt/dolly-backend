@@ -26,6 +26,15 @@ public class ErrorStatusDecoder {
 
     private final ObjectMapper objectMapper;
 
+    public static String encodeStatus(String toBeEncoded) {
+        return Objects.nonNull(toBeEncoded) ?
+                toBeEncoded.replaceAll("\\[\\s", "")
+                        .replace("[", "")
+                        .replace("]", "")
+                        .replace(',', ';')
+                        .replace(':', '=') : "";
+    }
+
     public String getErrorText(HttpStatus errorStatus, String errorMsg) {
 
         StringBuilder builder = new StringBuilder()
@@ -52,6 +61,16 @@ public class ErrorStatusDecoder {
         }
 
         return builder.toString();
+    }
+
+    public String decodeException(Exception e) {
+
+        log.error("Teknisk feil {} mottatt fra system", e.getMessage(), e);
+        return new StringBuilder()
+                .append("Feil= ")
+                .append("Teknisk feil. Se logg! ")
+                .append(encodeStatus(e.getMessage()))
+                .toString();
     }
 
     public String decodeRuntimeException(RuntimeException e) {
@@ -109,14 +128,5 @@ public class ErrorStatusDecoder {
         } else {
             builder.append(encodeStatus(responseBody));
         }
-    }
-
-    public static String encodeStatus(String toBeEncoded) {
-        return Objects.nonNull(toBeEncoded) ?
-                toBeEncoded.replaceAll("\\[\\s", "")
-                        .replace("[", "")
-                        .replace("]", "")
-                        .replace(',', ';')
-                        .replace(':', '=') : "";
     }
 }

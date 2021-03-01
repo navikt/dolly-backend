@@ -81,6 +81,7 @@ public class RsBestillingStatus {
 
         private RsTpsfUtvidetBestilling tpsf;
         private List<String> importFraTps;
+        private List<String> importFraPdl;
         private String kildeMiljoe;
 
         private RsPdldata pdlforvalter;

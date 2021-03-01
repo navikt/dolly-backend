@@ -14,14 +14,14 @@ import no.nav.dolly.domain.jpa.Bestilling;
 import no.nav.dolly.domain.jpa.BestillingProgress;
 import no.nav.dolly.domain.resultset.RsDollyBestillingRequest;
 import no.nav.dolly.domain.resultset.tpsf.Person;
-import no.nav.dolly.domain.resultset.tpsf.TpsPerson;
+import no.nav.dolly.domain.resultset.tpsf.DollyPerson;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
 import no.nav.dolly.metrics.CounterCustomRegistry;
 import no.nav.dolly.repository.IdentRepository.GruppeBestillingIdent;
 import no.nav.dolly.service.BestillingProgressService;
 import no.nav.dolly.service.BestillingService;
 import no.nav.dolly.service.IdentService;
-import no.nav.dolly.service.TpsfPersonCache;
+import no.nav.dolly.service.DollyPersonCache;
 import org.springframework.cache.CacheManager;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -43,23 +43,23 @@ public class GjenopprettGruppeService extends DollyBestillingService {
     private ErrorStatusDecoder errorStatusDecoder;
     private TpsfService tpsfService;
     private ExecutorService dollyForkJoinPool;
-    private TpsfPersonCache tpsfPersonCache;
+    private DollyPersonCache dollyPersonCache;
     private List<ClientRegister> clientRegisters;
     private IdentService identService;
 
-    public GjenopprettGruppeService(TpsfResponseHandler tpsfResponseHandler, TpsfService tpsfService, TpsfPersonCache tpsfPersonCache,
+    public GjenopprettGruppeService(TpsfResponseHandler tpsfResponseHandler, TpsfService tpsfService, DollyPersonCache dollyPersonCache,
                                     IdentService identService, BestillingProgressService bestillingProgressService,
                                     BestillingService bestillingService, MapperFacade mapperFacade, CacheManager cacheManager,
                                     ObjectMapper objectMapper, List<ClientRegister> clientRegisters, CounterCustomRegistry counterCustomRegistry,
                                     ErrorStatusDecoder errorStatusDecoder, ExecutorService dollyForkJoinPool) {
-        super(tpsfResponseHandler, tpsfService, tpsfPersonCache, identService, bestillingProgressService, bestillingService,
+        super(tpsfResponseHandler, tpsfService, dollyPersonCache, identService, bestillingProgressService, bestillingService,
                 mapperFacade, cacheManager, objectMapper, clientRegisters, counterCustomRegistry);
 
         this.bestillingService = bestillingService;
         this.errorStatusDecoder = errorStatusDecoder;
         this.tpsfService = tpsfService;
         this.dollyForkJoinPool = dollyForkJoinPool;
-        this.tpsfPersonCache = tpsfPersonCache;
+        this.dollyPersonCache = dollyPersonCache;
         this.clientRegisters = clientRegisters;
         this.identService = identService;
     }
@@ -83,14 +83,14 @@ public class GjenopprettGruppeService extends DollyBestillingService {
                                 List<Person> personer = tpsfService.hentTestpersoner(List.of(testident.getIdent()));
 
                                 if (!personer.isEmpty()) {
-                                    TpsPerson tpsPerson = tpsfPersonCache.prepareTpsPersoner(personer.get(0));
+                                    DollyPerson dollyPerson = dollyPersonCache.prepareTpsPersoner(personer.get(0));
                                     sendIdenterTilTPS(Stream.of(bestilling.getMiljoer().split(",")).collect(Collectors.toList()),
-                                            Stream.of(List.of(tpsPerson.getHovedperson()), tpsPerson.getPartnere(), tpsPerson.getBarn())
+                                            Stream.of(List.of(dollyPerson.getHovedperson()), dollyPerson.getPartnere(), dollyPerson.getBarn())
                                                     .flatMap(Collection::stream)
                                                     .collect(toList()),
                                             bestilling.getGruppe(), progress);
 
-                                    gjenopprettNonTpsf(tpsPerson, bestKriterier, progress, false);
+                                    gjenopprettNonTpsf(dollyPerson, bestKriterier, progress, false);
 
                                     coBestillinger.stream()
                                             .filter(gruppe -> gruppe.getIdent().equals(testident.getIdent()))
@@ -105,7 +105,7 @@ public class GjenopprettGruppeService extends DollyBestillingService {
                                                                 Bestilling.builder()
                                                                         .bestKriterier(bestilling1.getBestkriterier())
                                                                         .miljoer(bestilling.getMiljoer())
-                                                                        .build()), tpsPerson, progress, false);
+                                                                        .build()), dollyPerson, progress, false);
                                                         return register;
                                                     })
                                                     .collect(toList()))

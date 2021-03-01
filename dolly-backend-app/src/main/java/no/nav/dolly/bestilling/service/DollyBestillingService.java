@@ -14,21 +14,21 @@ import no.nav.dolly.domain.jpa.Testgruppe;
 import no.nav.dolly.domain.resultset.RsDollyBestillingRequest;
 import no.nav.dolly.domain.resultset.RsDollyRelasjonRequest;
 import no.nav.dolly.domain.resultset.RsDollyUpdateRequest;
+import no.nav.dolly.domain.resultset.tpsf.DollyPerson;
 import no.nav.dolly.domain.resultset.tpsf.Person;
 import no.nav.dolly.domain.resultset.tpsf.RsOppdaterPersonResponse;
 import no.nav.dolly.domain.resultset.tpsf.RsSkdMeldingResponse;
 import no.nav.dolly.domain.resultset.tpsf.RsTpsfUtvidetBestilling;
 import no.nav.dolly.domain.resultset.tpsf.SendSkdMeldingTilTpsResponse;
 import no.nav.dolly.domain.resultset.tpsf.ServiceRoutineResponseStatus;
-import no.nav.dolly.domain.resultset.tpsf.TpsPerson;
 import no.nav.dolly.domain.resultset.tpsf.TpsfBestilling;
 import no.nav.dolly.domain.resultset.tpsf.TpsfRelasjonRequest;
 import no.nav.dolly.exceptions.TpsfException;
 import no.nav.dolly.metrics.CounterCustomRegistry;
 import no.nav.dolly.service.BestillingProgressService;
 import no.nav.dolly.service.BestillingService;
+import no.nav.dolly.service.DollyPersonCache;
 import no.nav.dolly.service.IdentService;
-import no.nav.dolly.service.TpsfPersonCache;
 import org.springframework.cache.CacheManager;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.lang.String.join;
@@ -51,6 +52,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static no.nav.dolly.config.CachingConfig.CACHE_BESTILLING;
 import static no.nav.dolly.config.CachingConfig.CACHE_GRUPPE;
+import static no.nav.dolly.domain.jpa.Testident.Master.TPSF;
 import static no.nav.dolly.domain.resultset.tpsf.RsOppdaterPersonResponse.getIdentResponse;
 import static no.nav.dolly.errorhandling.ErrorStatusDecoder.encodeStatus;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -66,7 +68,7 @@ public class DollyBestillingService {
 
     private final TpsfResponseHandler tpsfResponseHandler;
     private final TpsfService tpsfService;
-    private final TpsfPersonCache tpsfPersonCache;
+    private final DollyPersonCache dollyPersonCache;
     private final IdentService identService;
     private final BestillingProgressService bestillingProgressService;
     private final BestillingService bestillingService;
@@ -176,10 +178,10 @@ public class DollyBestillingService {
                     oppdaterPersonResponse.getIdentTupler().stream()
                             .map(RsOppdaterPersonResponse.IdentTuple::getIdent).collect(toList()), null, progress);
 
-            TpsPerson tpsPerson = tpsfPersonCache.prepareTpsPersoner(oppdaterPersonResponse);
+            DollyPerson dollyPerson = dollyPersonCache.prepareTpsPersoner(oppdaterPersonResponse);
             counterCustomRegistry.invoke(request);
             clientRegisters.forEach(clientRegister ->
-                    clientRegister.gjenopprett(request, tpsPerson, progress, true));
+                    clientRegister.gjenopprett(request, dollyPerson, progress, true));
 
             oppdaterProgress(bestilling, progress);
 
@@ -203,8 +205,8 @@ public class DollyBestillingService {
 
             RsDollyBestillingRequest utvidetBestilling = getDollyBestillingRequest(bestilling);
 
-            TpsPerson tpsPerson = tpsfPersonCache.prepareTpsPersoner(getIdentResponse(identer));
-            gjenopprettNonTpsf(tpsPerson, utvidetBestilling, progress, true);
+            DollyPerson dollyPerson = dollyPersonCache.prepareTpsPersoner(getIdentResponse(identer));
+            gjenopprettNonTpsf(dollyPerson, utvidetBestilling, progress, true);
 
             oppdaterProgress(bestilling, progress);
 
@@ -243,19 +245,24 @@ public class DollyBestillingService {
         }
     }
 
-    protected void gjenopprettNonTpsf(TpsPerson tpsPerson, RsDollyBestillingRequest bestKriterier,
+    protected void gjenopprettNonTpsf(DollyPerson dollyPerson, RsDollyBestillingRequest bestKriterier,
                                       BestillingProgress progress, boolean isOpprettEndre) {
 
         counterCustomRegistry.invoke(bestKriterier);
-        clientRegisters.forEach(clientRegister ->
-                clientRegister.gjenopprett(bestKriterier, tpsPerson, progress, isOpprettEndre));
+        clientRegisters.stream()
+                .filter(clientRegister -> clientRegister.isTestnorgeRelevant() || dollyPerson.isTpsfMaster())
+                .map(clientRegister -> {
+                    clientRegister.gjenopprett(bestKriterier, dollyPerson, progress, isOpprettEndre);
+                    return true;
+                })
+                .collect(Collectors.toList());
     }
 
-    protected TpsPerson buildTpsPerson(Bestilling bestilling, List<String> leverteIdenter, List<Person> personer) {
+    protected DollyPerson buildTpsPerson(Bestilling bestilling, List<String> leverteIdenter, List<Person> personer) {
 
         Iterator<String> leverteIdenterIterator = leverteIdenter.iterator();
 
-        TpsPerson tpsPerson = TpsPerson.builder()
+        DollyPerson dollyPerson = DollyPerson.builder()
                 .hovedperson(leverteIdenterIterator.next())
                 .persondetaljer(personer)
                 .build();
@@ -266,14 +273,14 @@ public class DollyBestillingService {
 
                 if (nonNull(tpsfBestilling.getRelasjoner())) {
                     if (nonNull(tpsfBestilling.getRelasjoner().getPartner())) {
-                        tpsPerson.getPartnere().add(leverteIdenterIterator.next());
+                        dollyPerson.getPartnere().add(leverteIdenterIterator.next());
                     } else {
                         for (int i = 0; i < tpsfBestilling.getRelasjoner().getPartnere().size(); i++) {
-                            tpsPerson.getPartnere().add(leverteIdenterIterator.next());
+                            dollyPerson.getPartnere().add(leverteIdenterIterator.next());
                         }
                     }
                     while (leverteIdenterIterator.hasNext()) {
-                        tpsPerson.getBarn().add(leverteIdenterIterator.next());
+                        dollyPerson.getBarn().add(leverteIdenterIterator.next());
                     }
                 }
             } catch (IOException e) {
@@ -281,7 +288,7 @@ public class DollyBestillingService {
             }
         }
 
-        return tpsPerson;
+        return dollyPerson;
     }
 
     protected void oppdaterBestillingFerdig(Bestilling bestilling) {
@@ -330,7 +337,7 @@ public class DollyBestillingService {
             }
 
             if (nonNull(testgruppe)) {
-                identService.saveIdentTilGruppe(hovedperson, testgruppe);
+                identService.saveIdentTilGruppe(hovedperson, testgruppe, TPSF);
             }
             if (!successMiljoer.isEmpty()) {
                 progress.setTpsfSuccessEnv(join(",", successMiljoer));

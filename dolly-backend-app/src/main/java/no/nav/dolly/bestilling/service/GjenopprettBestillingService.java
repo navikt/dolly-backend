@@ -9,13 +9,13 @@ import no.nav.dolly.domain.jpa.Bestilling;
 import no.nav.dolly.domain.jpa.BestillingProgress;
 import no.nav.dolly.domain.resultset.RsDollyBestillingRequest;
 import no.nav.dolly.domain.resultset.tpsf.Person;
-import no.nav.dolly.domain.resultset.tpsf.TpsPerson;
+import no.nav.dolly.domain.resultset.tpsf.DollyPerson;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
 import no.nav.dolly.metrics.CounterCustomRegistry;
 import no.nav.dolly.service.BestillingProgressService;
 import no.nav.dolly.service.BestillingService;
 import no.nav.dolly.service.IdentService;
-import no.nav.dolly.service.TpsfPersonCache;
+import no.nav.dolly.service.DollyPersonCache;
 import org.springframework.cache.CacheManager;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -38,14 +38,14 @@ public class GjenopprettBestillingService extends DollyBestillingService {
     private TpsfService tpsfService;
     private BestillingProgressService bestillingProgressService;
     private ExecutorService dollyForkJoinPool;
-    private TpsfPersonCache tpsfPersonCache;
+    private DollyPersonCache dollyPersonCache;
 
-    public GjenopprettBestillingService(TpsfResponseHandler tpsfResponseHandler, TpsfService tpsfService, TpsfPersonCache tpsfPersonCache,
+    public GjenopprettBestillingService(TpsfResponseHandler tpsfResponseHandler, TpsfService tpsfService, DollyPersonCache dollyPersonCache,
                                         IdentService identService, BestillingProgressService bestillingProgressService,
                                         BestillingService bestillingService, MapperFacade mapperFacade, CacheManager cacheManager,
                                         ObjectMapper objectMapper, List<ClientRegister> clientRegisters, CounterCustomRegistry counterCustomRegistry,
                                         ErrorStatusDecoder errorStatusDecoder, ExecutorService dollyForkJoinPool) {
-        super(tpsfResponseHandler, tpsfService, tpsfPersonCache, identService, bestillingProgressService, bestillingService,
+        super(tpsfResponseHandler, tpsfService, dollyPersonCache, identService, bestillingProgressService, bestillingService,
                 mapperFacade, cacheManager, objectMapper, clientRegisters, counterCustomRegistry);
 
         this.bestillingService = bestillingService;
@@ -53,7 +53,7 @@ public class GjenopprettBestillingService extends DollyBestillingService {
         this.tpsfService = tpsfService;
         this.bestillingProgressService = bestillingProgressService;
         this.dollyForkJoinPool = dollyForkJoinPool;
-        this.tpsfPersonCache = tpsfPersonCache;
+        this.dollyPersonCache = dollyPersonCache;
     }
 
     @Async
@@ -72,14 +72,14 @@ public class GjenopprettBestillingService extends DollyBestillingService {
                                 List<Person> personer = tpsfService.hentTestpersoner(singletonList(gjenopprettFraProgress.getIdent()));
 
                                 if (!personer.isEmpty()) {
-                                    TpsPerson tpsPerson = tpsfPersonCache.prepareTpsPersoner(personer.get(0));
+                                    DollyPerson dollyPerson = dollyPersonCache.prepareTpsPersoner(personer.get(0));
                                     sendIdenterTilTPS(new ArrayList<>(List.of(bestilling.getMiljoer().split(","))),
-                                            Stream.of(List.of(tpsPerson.getHovedperson()), tpsPerson.getPartnere(), tpsPerson.getBarn())
+                                            Stream.of(List.of(dollyPerson.getHovedperson()), dollyPerson.getPartnere(), dollyPerson.getBarn())
                                                     .flatMap(Collection::stream)
                                                     .collect(Collectors.toList()),
                                             bestilling.getGruppe(), progress);
 
-                                    gjenopprettNonTpsf(tpsPerson, bestKriterier, progress, false);
+                                    gjenopprettNonTpsf(dollyPerson, bestKriterier, progress, false);
                                 } else {
                                     progress.setFeil("NA:Feil= Finner ikke personen i database");
                                 }
