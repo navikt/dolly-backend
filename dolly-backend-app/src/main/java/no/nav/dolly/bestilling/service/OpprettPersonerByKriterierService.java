@@ -40,7 +40,6 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
     private MapperFacade mapperFacade;
     private TpsfService tpsfService;
     private ExecutorService dollyForkJoinPool;
-    private DollyPersonCache dollyPersonCache;
 
     public OpprettPersonerByKriterierService(TpsfResponseHandler tpsfResponseHandler, TpsfService tpsfService,
                                              DollyPersonCache dollyPersonCache, IdentService identService,
@@ -59,7 +58,6 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
         this.mapperFacade = mapperFacade;
         this.tpsfService = tpsfService;
         this.dollyForkJoinPool = dollyForkJoinPool;
-        this.dollyPersonCache = dollyPersonCache;
     }
 
     @Async

@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
-import static java.util.Objects.nonNull;
-
 @Component
 public final class PdlPersonStrategyMapper implements MappingStrategy {
 
@@ -25,12 +23,11 @@ public final class PdlPersonStrategyMapper implements MappingStrategy {
                     @Override
                     public void mapAtoB(PdlPersonBolk.PersonBolk personBolk, Person person, MappingContext context) {
 
-                        PdlPerson.Navn navn = personBolk.getPerson().getNavn().stream()
-                                .filter(personNavn -> !personNavn.getMetadata().isHistorisk())
-                                .findFirst().orElse(null);
-
-                        if (nonNull(navn)) {
-                            mapperFacade.map(navn, person);
+                        if (personBolk.getPerson().getNavn().stream()
+                                .anyMatch(personNavn -> !personNavn.getMetadata().isHistorisk())) {
+                            mapperFacade.map(personBolk.getPerson().getNavn().stream()
+                                    .filter(personNavn -> !personNavn.getMetadata().isHistorisk())
+                                    .findFirst().get(), person);
                         }
 
                         person.setIdenttype(personBolk.getPerson().getFolkeregisteridentifikator().stream()
@@ -39,18 +36,18 @@ public final class PdlPersonStrategyMapper implements MappingStrategy {
                                 .findFirst().orElse(null));
 
                         person.setKjonn(personBolk.getPerson().getKjoenn().stream()
-                                        .anyMatch(kjoenn -> !kjoenn.getMetadata().isHistorisk()) ?
+                                .anyMatch(kjoenn -> !kjoenn.getMetadata().isHistorisk()) ?
                                 personBolk.getPerson().getKjoenn().stream()
-                                .filter(kjoenn -> !kjoenn.getMetadata().isHistorisk())
-                                .map(PdlPerson.PdlKjoenn::getKjoenn)
-                                .findFirst().get().substring(0, 1) : null);
+                                        .filter(kjoenn -> !kjoenn.getMetadata().isHistorisk())
+                                        .map(PdlPerson.PdlKjoenn::getKjoenn)
+                                        .findFirst().get().substring(0, 1) : null);
 
                         person.setFoedselsdato(personBolk.getPerson().getFoedsel().stream()
                                 .anyMatch(foedsel -> !foedsel.getMetadata().isHistorisk()) ?
                                 personBolk.getPerson().getFoedsel().stream()
-                                .filter(foedsel -> !foedsel.getMetadata().isHistorisk())
-                                .map(PdlPerson.Foedsel::getFoedselsdato)
-                                .findFirst().get().atStartOfDay() : null);
+                                        .filter(foedsel -> !foedsel.getMetadata().isHistorisk())
+                                        .map(PdlPerson.Foedsel::getFoedselsdato)
+                                        .findFirst().get().atStartOfDay() : null);
 
                         person.setDoedsdato(personBolk.getPerson().getDoedsfall().stream()
                                 .anyMatch(doedsfall -> !doedsfall.getMetadata().isHistorisk()) ?
