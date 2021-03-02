@@ -54,7 +54,7 @@ public class UdiMergeService {
                    .map(historikk -> UdiAlias.builder().fnr(historikk).build())
                     .collect(Collectors.toList());
         }
-        else if (nonNull(request)) {
+        else if (dollyPerson.isTpsfMaster() && nonNull(request)) {
             request.setEnvironments(environments);
             ResponseEntity<RsAliasResponse> response = tpsfService.createAliases(request);
             return response.hasBody() ?
