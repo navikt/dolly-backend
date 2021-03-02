@@ -398,6 +398,6 @@ public class DollyBestillingService {
             dollyPerson = dollyPersonCache.preparePdlPersoner(pdlPerson);
         }
 
-        return Optional.of(dollyPerson);
+        return nonNull(dollyPerson) ? Optional.of(dollyPerson) : Optional.empty();
     }
 }

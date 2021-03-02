@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
@@ -46,9 +47,14 @@ public class UdiMergeService {
         return appendAttributes(udiPerson, isLeggTil ? nyUdiPerson.getAliaser() : emptyList(), Status.UPDATE, dollyPerson);
     }
 
-    public List<UdiAlias> getAliaser(RsAliasRequest request, List<String> environments) {
+    public List<UdiAlias> getAliaser(RsAliasRequest request, List<String> environments, DollyPerson dollyPerson) {
 
-        if (nonNull(request)) {
+        if (dollyPerson.isPdlMaster() && !dollyPerson.getIdenthistorikk().isEmpty()) {
+            return dollyPerson.getIdenthistorikk().stream()
+                   .map(historikk -> UdiAlias.builder().fnr(historikk).build())
+                    .collect(Collectors.toList());
+        }
+        else if (nonNull(request)) {
             request.setEnvironments(environments);
             ResponseEntity<RsAliasResponse> response = tpsfService.createAliases(request);
             return response.hasBody() ?

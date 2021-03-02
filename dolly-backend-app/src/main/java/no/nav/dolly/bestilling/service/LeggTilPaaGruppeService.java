@@ -94,7 +94,7 @@ public class LeggTilPaaGruppeService extends DollyBestillingService {
 
                                 } else  {
                                     PdlPerson pdlPerson = objectMapper.readValue(
-                                            pdlPersonConsumer.getPdlPerson(testident.getIdent()).asText(), PdlPerson.class);
+                                            pdlPersonConsumer.getPdlPerson(testident.getIdent()).toString(), PdlPerson.class);
                                     dollyPerson = dollyPersonCache.preparePdlPersoner(pdlPerson);
                                 }
 

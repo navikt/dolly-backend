@@ -38,7 +38,8 @@ public class UdiStubClient implements ClientRegister {
                 UdiPersonWrapper wrapper = udiMergeService.merge(bestilling.getUdistub(), eksisterendeUdiPerson,
                         isOpprettEndre, dollyPerson);
 
-                wrapper.getUdiPerson().setAliaser(udiMergeService.getAliaser(wrapper.getAliasRequest(), bestilling.getEnvironments()));
+                wrapper.getUdiPerson().setAliaser(udiMergeService.getAliaser(wrapper.getAliasRequest(),
+                        bestilling.getEnvironments(), dollyPerson));
 
                 sendUdiPerson(wrapper);
                 status.append("OK");

@@ -84,4 +84,8 @@ public class DollyPerson {
     public boolean isTpsfMaster() {
         return getMaster() == Testident.Master.TPSF;
     }
+
+    public boolean isPdlMaster() {
+        return getMaster() == Testident.Master.PDL;
+    }
 }
