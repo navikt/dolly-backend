@@ -68,7 +68,7 @@ public class PdlPerson {
         private List<Folkeregisteridentifikator> folkeregisteridentifikator;
         private List<Navn> navn;
         private List<Foedsel> foedsel;
-        private List<Kjoenn> kjoenn;
+        private List<PdlKjoenn> kjoenn;
         private List<ForelderBarnRelasjon> forelderBarnRelasjon;
         private List<Sivilstand> sivilstand;
         private List<Doedsfall> doedsfall;
@@ -123,7 +123,7 @@ public class PdlPerson {
             return folkeregisteridentifikator;
         }
 
-        public List<Kjoenn> getKjoenn() {
+        public List<PdlKjoenn> getKjoenn() {
             if (isNull(kjoenn)) {
                 kjoenn = new ArrayList<>();
             }
@@ -155,7 +155,7 @@ public class PdlPerson {
     @lombok.Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Kjoenn {
+    public static class PdlKjoenn {
 
         private String kjoenn;
         private Metadata metadata;

@@ -38,9 +38,7 @@ public class GjenopprettGruppeService extends DollyBestillingService {
 
     private BestillingService bestillingService;
     private ErrorStatusDecoder errorStatusDecoder;
-    private TpsfService tpsfService;
     private ExecutorService dollyForkJoinPool;
-    private DollyPersonCache dollyPersonCache;
     private List<ClientRegister> clientRegisters;
     private IdentService identService;
 
@@ -54,9 +52,7 @@ public class GjenopprettGruppeService extends DollyBestillingService {
 
         this.bestillingService = bestillingService;
         this.errorStatusDecoder = errorStatusDecoder;
-        this.tpsfService = tpsfService;
         this.dollyForkJoinPool = dollyForkJoinPool;
-        this.dollyPersonCache = dollyPersonCache;
         this.clientRegisters = clientRegisters;
         this.identService = identService;
     }

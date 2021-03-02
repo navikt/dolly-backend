@@ -11,11 +11,9 @@ import no.nav.dolly.domain.resultset.tpsf.Person;
 import no.nav.dolly.mapper.MappingStrategy;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
+import static java.util.Objects.nonNull;
 
 @Component
 public final class PdlPersonStrategyMapper implements MappingStrategy {
@@ -27,11 +25,12 @@ public final class PdlPersonStrategyMapper implements MappingStrategy {
                     @Override
                     public void mapAtoB(PdlPersonBolk.PersonBolk personBolk, Person person, MappingContext context) {
 
-                        Optional<PdlPerson.Navn> navn = personBolk.getPerson().getNavn().stream()
+                        PdlPerson.Navn navn = personBolk.getPerson().getNavn().stream()
                                 .filter(personNavn -> !personNavn.getMetadata().isHistorisk())
-                                .findFirst();
-                        if (navn.isPresent()) {
-                            mapperFacade.map(navn.get(), person);
+                                .findFirst().orElse(null);
+
+                        if (nonNull(navn)) {
+                            mapperFacade.map(navn, person);
                         }
 
                         person.setIdenttype(personBolk.getPerson().getFolkeregisteridentifikator().stream()
@@ -39,36 +38,37 @@ public final class PdlPersonStrategyMapper implements MappingStrategy {
                                 .map(PdlPerson.Folkeregisteridentifikator::getType)
                                 .findFirst().orElse(null));
 
-                        Optional<String> gender = personBolk.getPerson().getKjoenn().stream()
+                        person.setKjonn(personBolk.getPerson().getKjoenn().stream()
+                                        .anyMatch(kjoenn -> !kjoenn.getMetadata().isHistorisk()) ?
+                                personBolk.getPerson().getKjoenn().stream()
                                 .filter(kjoenn -> !kjoenn.getMetadata().isHistorisk())
-                                .map(PdlPerson.Kjoenn::getKjoenn)
-                                .findFirst();
-                        person.setKjonn(gender.isPresent() ? gender.get().substring(0, 1) : null);
+                                .map(PdlPerson.PdlKjoenn::getKjoenn)
+                                .findFirst().get().substring(0, 1) : null);
 
-                        Optional<LocalDate> foedselsdag = personBolk.getPerson().getFoedsel().stream()
+                        person.setFoedselsdato(personBolk.getPerson().getFoedsel().stream()
+                                .anyMatch(foedsel -> !foedsel.getMetadata().isHistorisk()) ?
+                                personBolk.getPerson().getFoedsel().stream()
                                 .filter(foedsel -> !foedsel.getMetadata().isHistorisk())
                                 .map(PdlPerson.Foedsel::getFoedselsdato)
-                                .findFirst();
-                        person.setFoedselsdato(foedselsdag.isPresent() ?
-                                foedselsdag.get().atStartOfDay() : null);
+                                .findFirst().get().atStartOfDay() : null);
 
-                        Optional<LocalDate> doedsdato = personBolk.getPerson().getDoedsfall().stream()
-                                .filter(doedsfall -> !doedsfall.getMetadata().isHistorisk())
-                                .map(PdlPerson.Doedsfall::getDoedsdato)
-                                .findFirst();
-                        person.setDoedsdato(doedsdato.isPresent() ? doedsdato.get().atStartOfDay() : null);
+                        person.setDoedsdato(personBolk.getPerson().getDoedsfall().stream()
+                                .anyMatch(doedsfall -> !doedsfall.getMetadata().isHistorisk()) ?
+                                personBolk.getPerson().getDoedsfall().stream()
+                                        .filter(doedsfall -> !doedsfall.getMetadata().isHistorisk())
+                                        .map(PdlPerson.Doedsfall::getDoedsdato)
+                                        .findFirst().get().atStartOfDay() : null);
 
-                        Optional<PdlPerson.UtflyttingFraNorge> utvandret =
+                        person.getInnvandretUtvandret().addAll(
                                 personBolk.getPerson().getUtflyttingFraNorge().stream()
                                         .filter(utflytting -> !utflytting.getMetadata().isHistorisk())
-                                        .findFirst();
-                        person.getInnvandretUtvandret().addAll(
-                                utvandret.isPresent() ? singletonList(InnvandretUtvandret.builder()
-                                        .innutvandret(InnUtvandret.UTVANDRET)
-                                        .landkode(utvandret.get().getTilflyttingsland())
-                                        .flyttedato(utvandret.get().getFolkeregistermetadata()
-                                                .getGyldighetstidspunkt().atStartOfDay())
-                                        .build()) : emptyList());
+                                        .map(utflytting -> InnvandretUtvandret.builder()
+                                                .innutvandret(InnUtvandret.UTVANDRET)
+                                                .landkode(utflytting.getTilflyttingsland())
+                                                .flyttedato(utflytting.getFolkeregistermetadata()
+                                                        .getGyldighetstidspunkt().atStartOfDay())
+                                                .build())
+                                        .collect(Collectors.toList()));
                     }
                 })
                 .byDefault()

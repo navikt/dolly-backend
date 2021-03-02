@@ -180,7 +180,7 @@ public class DollyPersonCache {
                 .hovedperson(pdlPerson.getData().getHentPerson().getFolkeregisteridentifikator().stream()
                         .filter(ident -> !ident.getMetadata().isHistorisk())
                         .map(PdlPerson.Folkeregisteridentifikator::getIdentifikasjonsnummer)
-                        .findFirst().get())
+                        .findFirst().orElse(null))
                 .partnere(pdlPerson.getData().getHentPerson().getSivilstand().stream()
                         .filter(sivilstand -> !sivilstand.getMetadata().isHistorisk() &&
                                 nonNull(sivilstand.getRelatertVedSivilstand()))

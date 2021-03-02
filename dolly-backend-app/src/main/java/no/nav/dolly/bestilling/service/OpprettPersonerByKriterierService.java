@@ -40,6 +40,7 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
     private MapperFacade mapperFacade;
     private TpsfService tpsfService;
     private ExecutorService dollyForkJoinPool;
+    private DollyPersonCache dollyPersonCache;
 
     public OpprettPersonerByKriterierService(TpsfResponseHandler tpsfResponseHandler, TpsfService tpsfService,
                                              DollyPersonCache dollyPersonCache, IdentService identService,
@@ -58,6 +59,7 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
         this.mapperFacade = mapperFacade;
         this.tpsfService = tpsfService;
         this.dollyForkJoinPool = dollyForkJoinPool;
+        this.dollyPersonCache = dollyPersonCache;
     }
 
     @Async
@@ -80,7 +82,10 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
                             try {
                                 List<String> leverteIdenter = tpsfService.opprettIdenterTpsf(tpsfBestilling);
 
-                                DollyPerson dollyPerson = buildTpsPerson(bestilling, leverteIdenter, null);
+                                DollyPerson dollyPerson = DollyPerson.builder()
+                                        .hovedperson(leverteIdenter.get(0))
+                                        .master(Testident.Master.TPSF)
+                                        .build();
                                 progress = new BestillingProgress(bestilling.getId(), dollyPerson.getHovedperson(), Testident.Master.TPSF);
 
                                 sendIdenterTilTPS(new ArrayList<>(List.of(bestilling.getMiljoer().split(","))),

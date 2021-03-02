@@ -33,10 +33,8 @@ public class GjenopprettBestillingService extends DollyBestillingService {
 
     private BestillingService bestillingService;
     private ErrorStatusDecoder errorStatusDecoder;
-    private TpsfService tpsfService;
     private BestillingProgressService bestillingProgressService;
     private ExecutorService dollyForkJoinPool;
-    private DollyPersonCache dollyPersonCache;
 
     public GjenopprettBestillingService(TpsfResponseHandler tpsfResponseHandler, TpsfService tpsfService, DollyPersonCache dollyPersonCache,
                                         IdentService identService, BestillingProgressService bestillingProgressService,
@@ -49,10 +47,8 @@ public class GjenopprettBestillingService extends DollyBestillingService {
 
         this.bestillingService = bestillingService;
         this.errorStatusDecoder = errorStatusDecoder;
-        this.tpsfService = tpsfService;
         this.bestillingProgressService = bestillingProgressService;
         this.dollyForkJoinPool = dollyForkJoinPool;
-        this.dollyPersonCache = dollyPersonCache;
     }
 
     @Async

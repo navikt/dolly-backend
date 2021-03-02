@@ -38,10 +38,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -282,40 +280,6 @@ public class DollyBestillingService {
                     return true;
                 })
                 .collect(Collectors.toList());
-    }
-
-    protected DollyPerson buildTpsPerson(Bestilling bestilling, List<String> leverteIdenter, List<Person> personer) {
-
-        Iterator<String> leverteIdenterIterator = leverteIdenter.iterator();
-
-        DollyPerson dollyPerson = DollyPerson.builder()
-                .hovedperson(leverteIdenterIterator.next())
-                .persondetaljer(personer)
-                .master(TPSF)
-                .build();
-
-        if (nonNull(bestilling.getTpsfKriterier())) {
-            try {
-                TpsfBestilling tpsfBestilling = objectMapper.readValue(bestilling.getTpsfKriterier(), TpsfBestilling.class);
-
-                if (nonNull(tpsfBestilling.getRelasjoner())) {
-                    if (nonNull(tpsfBestilling.getRelasjoner().getPartner())) {
-                        dollyPerson.getPartnere().add(leverteIdenterIterator.next());
-                    } else {
-                        for (int i = 0; i < tpsfBestilling.getRelasjoner().getPartnere().size(); i++) {
-                            dollyPerson.getPartnere().add(leverteIdenterIterator.next());
-                        }
-                    }
-                    while (leverteIdenterIterator.hasNext()) {
-                        dollyPerson.getBarn().add(leverteIdenterIterator.next());
-                    }
-                }
-            } catch (IOException e) {
-                log.error("Feilet å hente tpsfKriterier", e);
-            }
-        }
-
-        return dollyPerson;
     }
 
     protected void oppdaterBestillingFerdig(Bestilling bestilling) {

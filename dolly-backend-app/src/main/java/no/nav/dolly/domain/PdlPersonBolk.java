@@ -44,7 +44,7 @@ public class PdlPersonBolk {
         private List<PdlPerson.Sivilstand> sivilstand;
         private List<PdlPerson.Doedsfall> doedsfall;
         private List<PdlPerson.UtflyttingFraNorge> utflyttingFraNorge;
-        private List<PdlPerson.Kjoenn> kjoenn;
+        private List<PdlPerson.PdlKjoenn> kjoenn;
         private List<PdlPerson.Folkeregisteridentifikator> folkeregisteridentifikator;
 
         public List<PdlPerson.Navn> getNavn() {
@@ -89,7 +89,7 @@ public class PdlPersonBolk {
             return utflyttingFraNorge;
         }
 
-        public List<PdlPerson.Kjoenn> getKjoenn() {
+        public List<PdlPerson.PdlKjoenn> getKjoenn() {
             if (isNull(kjoenn)) {
                 kjoenn = new ArrayList<>();
             }

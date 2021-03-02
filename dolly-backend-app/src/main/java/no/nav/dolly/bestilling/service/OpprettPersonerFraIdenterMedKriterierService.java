@@ -84,7 +84,10 @@ public class OpprettPersonerFraIdenterMedKriterierService extends DollyBestillin
                                     sendIdenterTilTPS(new ArrayList<>(List.of(bestilling.getMiljoer().split(","))),
                                             leverteIdenter, bestilling.getGruppe(), progress);
 
-                                    DollyPerson dollyPerson = buildTpsPerson(bestilling, leverteIdenter, null);
+                                    DollyPerson dollyPerson = DollyPerson.builder()
+                                            .hovedperson(leverteIdenter.get(0))
+                                            .master(Testident.Master.TPSF)
+                                            .build();
                                     gjenopprettNonTpsf(dollyPerson, bestKriterier, progress, false);
                                 } else {
                                     progress.setFeil("NA:Feil= Ident er ikke tilgjengelig; " + identStatus.getStatus());
