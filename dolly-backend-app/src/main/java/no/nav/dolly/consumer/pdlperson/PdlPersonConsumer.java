@@ -59,7 +59,6 @@ public class PdlPersonConsumer {
     }
 
     @Timed(name = "providers", tags = {"operation", "pdl_getPerson"})
-
     public JsonNode getPdlPerson(String ident) {
 
         return webClient

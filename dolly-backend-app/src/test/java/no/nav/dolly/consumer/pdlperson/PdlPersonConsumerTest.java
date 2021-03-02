@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import no.nav.dolly.properties.ProvidersProps;
 import no.nav.dolly.security.sts.StsOidcService;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +55,6 @@ public class PdlPersonConsumerTest {
     }
 
     @Test
-    @Ignore
     public void getPdlPersonOk() {
 
         server.expect(requestTo("https://pdl-api.nais.preprod.local/graphql"))

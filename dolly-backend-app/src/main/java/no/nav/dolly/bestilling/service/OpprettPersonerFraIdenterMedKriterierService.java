@@ -5,8 +5,10 @@ import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.bestilling.ClientRegister;
 import no.nav.dolly.bestilling.tpsf.TpsfResponseHandler;
 import no.nav.dolly.bestilling.tpsf.TpsfService;
+import no.nav.dolly.consumer.pdlperson.PdlPersonConsumer;
 import no.nav.dolly.domain.jpa.Bestilling;
 import no.nav.dolly.domain.jpa.BestillingProgress;
+import no.nav.dolly.domain.jpa.Testident;
 import no.nav.dolly.domain.resultset.RsDollyBestillingRequest;
 import no.nav.dolly.domain.resultset.tpsf.CheckStatusResponse;
 import no.nav.dolly.domain.resultset.tpsf.DollyPerson;
@@ -38,12 +40,15 @@ public class OpprettPersonerFraIdenterMedKriterierService extends DollyBestillin
     private ExecutorService dollyForkJoinPool;
 
     public OpprettPersonerFraIdenterMedKriterierService(TpsfResponseHandler tpsfResponseHandler, TpsfService tpsfService,
-                                                        DollyPersonCache dollyPersonCache, IdentService identService, BestillingProgressService bestillingProgressService,
-                                                        BestillingService bestillingService, MapperFacade mapperFacade, CacheManager cacheManager,
-                                                        ObjectMapper objectMapper, List<ClientRegister> clientRegisters, CounterCustomRegistry counterCustomRegistry,
-                                                        ErrorStatusDecoder errorStatusDecoder, ExecutorService dollyForkJoinPool) {
+                                                        DollyPersonCache dollyPersonCache, IdentService identService,
+                                                        BestillingProgressService bestillingProgressService,
+                                                        BestillingService bestillingService, MapperFacade mapperFacade,
+                                                        CacheManager cacheManager, ObjectMapper objectMapper,
+                                                        List<ClientRegister> clientRegisters, CounterCustomRegistry counterCustomRegistry,
+                                                        ErrorStatusDecoder errorStatusDecoder, ExecutorService dollyForkJoinPool,
+                                                        PdlPersonConsumer pdlPersonConsumer) {
         super(tpsfResponseHandler, tpsfService, dollyPersonCache, identService, bestillingProgressService, bestillingService,
-                mapperFacade, cacheManager, objectMapper, clientRegisters, counterCustomRegistry);
+                mapperFacade, cacheManager, objectMapper, clientRegisters, counterCustomRegistry, pdlPersonConsumer);
 
         this.bestillingService = bestillingService;
         this.errorStatusDecoder = errorStatusDecoder;
@@ -67,7 +72,7 @@ public class OpprettPersonerFraIdenterMedKriterierService extends DollyBestillin
                         .filter(ident -> !bestillingService.isStoppet(bestilling.getId()))
                         .map(identStatus -> {
 
-                            BestillingProgress progress = new BestillingProgress(bestilling.getId(), identStatus.getIdent());
+                            BestillingProgress progress = new BestillingProgress(bestilling.getId(), identStatus.getIdent(), Testident.Master.TPSF);
                             try {
                                 if (identStatus.isAvailable()) {
 

@@ -6,17 +6,18 @@ import no.nav.dolly.bestilling.ClientRegister;
 import no.nav.dolly.bestilling.tpsf.TpsfImportPersonRequest;
 import no.nav.dolly.bestilling.tpsf.TpsfResponseHandler;
 import no.nav.dolly.bestilling.tpsf.TpsfService;
+import no.nav.dolly.consumer.pdlperson.PdlPersonConsumer;
 import no.nav.dolly.domain.jpa.Bestilling;
 import no.nav.dolly.domain.jpa.BestillingProgress;
 import no.nav.dolly.domain.resultset.RsDollyBestillingRequest;
-import no.nav.dolly.domain.resultset.tpsf.Person;
 import no.nav.dolly.domain.resultset.tpsf.DollyPerson;
+import no.nav.dolly.domain.resultset.tpsf.Person;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
 import no.nav.dolly.metrics.CounterCustomRegistry;
 import no.nav.dolly.service.BestillingProgressService;
 import no.nav.dolly.service.BestillingService;
-import no.nav.dolly.service.IdentService;
 import no.nav.dolly.service.DollyPersonCache;
+import no.nav.dolly.service.IdentService;
 import org.springframework.cache.CacheManager;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
+import static no.nav.dolly.domain.jpa.Testident.Master.TPSF;
 
 @Service
 public class ImportAvPersonerFraTpsService extends DollyBestillingService {
@@ -37,13 +39,16 @@ public class ImportAvPersonerFraTpsService extends DollyBestillingService {
     private ErrorStatusDecoder errorStatusDecoder;
     private ExecutorService dollyForkJoinPool;
 
-    public ImportAvPersonerFraTpsService(TpsfResponseHandler tpsfResponseHandler, TpsfService tpsfService, DollyPersonCache dollyPersonCache,
-                                         IdentService identService, BestillingProgressService bestillingProgressService,
-                                         BestillingService bestillingService, MapperFacade mapperFacade, CacheManager cacheManager,
-                                         ObjectMapper objectMapper, List<ClientRegister> clientRegisters, CounterCustomRegistry counterCustomRegistry,
-                                         ErrorStatusDecoder errorStatusDecoder, ExecutorService dollyForkJoinPool) {
+    public ImportAvPersonerFraTpsService(TpsfResponseHandler tpsfResponseHandler, TpsfService tpsfService,
+                                         DollyPersonCache dollyPersonCache, IdentService identService,
+                                         BestillingProgressService bestillingProgressService,
+                                         BestillingService bestillingService, MapperFacade mapperFacade,
+                                         CacheManager cacheManager, ObjectMapper objectMapper,
+                                         List<ClientRegister> clientRegisters, CounterCustomRegistry counterCustomRegistry,
+                                         ErrorStatusDecoder errorStatusDecoder, ExecutorService dollyForkJoinPool,
+                                         PdlPersonConsumer pdlPersonConsumer) {
         super(tpsfResponseHandler, tpsfService, dollyPersonCache, identService, bestillingProgressService, bestillingService,
-                mapperFacade, cacheManager, objectMapper, clientRegisters, counterCustomRegistry);
+                mapperFacade, cacheManager, objectMapper, clientRegisters, counterCustomRegistry, pdlPersonConsumer);
 
         this.tpsfService = tpsfService;
         this.dollyPersonCache = dollyPersonCache;
@@ -62,7 +67,7 @@ public class ImportAvPersonerFraTpsService extends DollyBestillingService {
                 asList(bestilling.getTpsImport().split(",")).parallelStream()
                         .filter(ident -> !bestilling.isStoppet())
                         .map(ident -> {
-                            BestillingProgress progress = new BestillingProgress(bestilling.getId(), ident);
+                            BestillingProgress progress = new BestillingProgress(bestilling.getId(), ident, TPSF);
                             try {
                                 Person person = tpsfService.importerPersonFraTps(TpsfImportPersonRequest.builder()
                                         .miljoe(bestilling.getKildeMiljoe())

@@ -47,7 +47,7 @@ public class ImportAvPersonerFraPdlService extends DollyBestillingService {
                                          ErrorStatusDecoder errorStatusDecoder, ExecutorService dollyForkJoinPool,
                                          PdlPersonConsumer pdlPersonConsumer) {
         super(tpsfResponseHandler, tpsfService, dollyPersonCache, identService, bestillingProgressService, bestillingService,
-                mapperFacade, cacheManager, objectMapper, clientRegisters, counterCustomRegistry);
+                mapperFacade, cacheManager, objectMapper, clientRegisters, counterCustomRegistry, pdlPersonConsumer);
 
         this.dollyPersonCache = dollyPersonCache;
         this.errorStatusDecoder = errorStatusDecoder;
@@ -68,7 +68,7 @@ public class ImportAvPersonerFraPdlService extends DollyBestillingService {
                 asList(bestilling.getPdlImport().split(",")).parallelStream()
                         .filter(ident -> !bestilling.isStoppet())
                         .map(ident -> {
-                            BestillingProgress progress = new BestillingProgress(bestilling.getId(), ident);
+                            BestillingProgress progress = new BestillingProgress(bestilling.getId(), ident, PDL);
                             try {
 
                                 PdlPerson pdlPerson = objectMapper.readValue(pdlPersonConsumer.getPdlPerson(ident).toString(), PdlPerson.class);

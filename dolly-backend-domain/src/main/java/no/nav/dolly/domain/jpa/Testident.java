@@ -1,5 +1,6 @@
 package no.nav.dolly.domain.jpa;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -56,5 +57,15 @@ public class Testident {
             bestillingProgress = new ArrayList<>();
         }
         return bestillingProgress;
+    }
+
+    @JsonIgnore
+    public boolean isTpsf() {
+        return getMaster() == Master.TPSF;
+    }
+
+    @JsonIgnore
+    public boolean isPdl() {
+        return getMaster() == Master.PDL;
     }
 }

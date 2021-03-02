@@ -92,4 +92,9 @@ public class IdentService {
 
         return identRepository.getBestillingerFromGruppe(gruppe);
     }
+
+    public Testident getTestIdent(String ident) {
+
+        return identRepository.findByIdent(ident);
+    }
 }
