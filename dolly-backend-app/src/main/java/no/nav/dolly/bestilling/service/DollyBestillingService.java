@@ -47,12 +47,12 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.time.LocalDateTime.now;
+import static java.util.Arrays.asList;
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
@@ -275,11 +275,8 @@ public class DollyBestillingService {
         counterCustomRegistry.invoke(bestKriterier);
         clientRegisters.stream()
                 .filter(clientRegister -> clientRegister.isTestnorgeRelevant() || dollyPerson.isTpsfMaster())
-                .map(clientRegister -> {
-                    clientRegister.gjenopprett(bestKriterier, dollyPerson, progress, isOpprettEndre);
-                    return true;
-                })
-                .collect(Collectors.toList());
+                .forEach(clientRegister ->
+                    clientRegister.gjenopprett(bestKriterier, dollyPerson, progress, isOpprettEndre));
     }
 
     protected void oppdaterBestillingFerdig(Bestilling bestilling) {
@@ -350,7 +347,7 @@ public class DollyBestillingService {
             List<Person> personer = tpsfService.hentTestpersoner(List.of(progress.getIdent()));
             if (!personer.isEmpty()) {
                 dollyPerson = dollyPersonCache.prepareTpsPersoner(personer.get(0));
-                sendIdenterTilTPS(Stream.of(bestilling.getMiljoer().split(",")).collect(Collectors.toList()),
+                sendIdenterTilTPS(asList(bestilling.getMiljoer().split(",")),
                         Stream.of(List.of(dollyPerson.getHovedperson()), dollyPerson.getPartnere(), dollyPerson.getBarn())
                                 .flatMap(Collection::stream)
                                 .collect(toList()),
