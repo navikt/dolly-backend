@@ -40,33 +40,36 @@ public class DollyPersonCache {
     @SneakyThrows
     public DollyPerson fetchIfEmpty(DollyPerson dollyPerson) {
 
-        if (dollyPerson.isTpsfMaster() && isNull(dollyPerson.getPerson(dollyPerson.getHovedperson()))) {
-            dollyPerson.getPersondetaljer().addAll(tpsfService.hentTestpersoner(List.of(dollyPerson.getHovedperson())));
-        }
+        if (dollyPerson.isTpsfMaster()) {
 
-        Person person = dollyPerson.getPerson(dollyPerson.getHovedperson());
-        dollyPerson.setPartnere(person.getRelasjoner().stream()
-                .filter(Relasjon::isPartner)
-                .map(Relasjon::getPersonRelasjonMed)
-                .map(Person::getIdent)
-                .collect(Collectors.toList()));
-        dollyPerson.setBarn(person.getRelasjoner().stream()
-                .filter(Relasjon::isBarn)
-                .map(Relasjon::getPersonRelasjonMed)
-                .map(Person::getIdent)
-                .collect(Collectors.toList()));
-        dollyPerson.setIdenthistorikk(person.getIdentHistorikk().stream()
-                .map(IdentHistorikk::getAliasPerson)
-                .map(Person::getIdent)
-                .collect(Collectors.toList()));
-        dollyPerson.setVerger(person.getVergemaal().stream()
-                .map(RsVergemaal::getVerge)
-                .map(RsSimplePerson::getIdent)
-                .collect(Collectors.toList()));
-        dollyPerson.setFullmektige(person.getFullmakt().stream()
-                .map(RsFullmakt::getFullmektig)
-                .map(RsSimplePerson::getIdent)
-                .collect(Collectors.toList()));
+            if (isNull(dollyPerson.getPerson(dollyPerson.getHovedperson()))) {
+                dollyPerson.getPersondetaljer().addAll(tpsfService.hentTestpersoner(List.of(dollyPerson.getHovedperson())));
+            }
+
+            Person person = dollyPerson.getPerson(dollyPerson.getHovedperson());
+            dollyPerson.setPartnere(person.getRelasjoner().stream()
+                    .filter(Relasjon::isPartner)
+                    .map(Relasjon::getPersonRelasjonMed)
+                    .map(Person::getIdent)
+                    .collect(Collectors.toList()));
+            dollyPerson.setBarn(person.getRelasjoner().stream()
+                    .filter(Relasjon::isBarn)
+                    .map(Relasjon::getPersonRelasjonMed)
+                    .map(Person::getIdent)
+                    .collect(Collectors.toList()));
+            dollyPerson.setIdenthistorikk(person.getIdentHistorikk().stream()
+                    .map(IdentHistorikk::getAliasPerson)
+                    .map(Person::getIdent)
+                    .collect(Collectors.toList()));
+            dollyPerson.setVerger(person.getVergemaal().stream()
+                    .map(RsVergemaal::getVerge)
+                    .map(RsSimplePerson::getIdent)
+                    .collect(Collectors.toList()));
+            dollyPerson.setFullmektige(person.getFullmakt().stream()
+                    .map(RsFullmakt::getFullmektig)
+                    .map(RsSimplePerson::getIdent)
+                    .collect(Collectors.toList()));
+        }
 
         Set<String> identer =
                 Stream.of(List.of(dollyPerson.getHovedperson()), dollyPerson.getPartnere(),
