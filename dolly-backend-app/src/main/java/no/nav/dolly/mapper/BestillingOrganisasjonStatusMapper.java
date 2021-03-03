@@ -34,8 +34,7 @@ public class BestillingOrganisasjonStatusMapper {
             }
             String message = environMsg[1]
                     .replace("ERROR", "FEIL")
-                    .replace("FEIL-TIDSAVBRUDD", "INFO-TIDSAVBRUDD")
-                    .replace("WARNING", "INFO");
+                    .replace("FEIL-Tidsavbrudd", "INFO-Tidsavbrudd");
             if (statusMap.containsKey(message)) {
                 List<String> envStatus = new ArrayList<>(statusMap.get(message));
                 envStatus.add(environMsg[0]);
