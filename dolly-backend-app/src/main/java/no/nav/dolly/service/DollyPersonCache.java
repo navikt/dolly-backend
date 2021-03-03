@@ -109,7 +109,7 @@ public class DollyPersonCache {
             Person person = personer.stream().findFirst().get();
             return DollyPerson.builder()
                     .persondetaljer(personer)
-                    .hovedperson(identer.getIdentTupler().stream().map(IdentTuple::getIdent).findFirst().get())
+                    .hovedperson(person.getIdent())
                     .partnere(person.getRelasjoner().stream()
                             .filter(Relasjon::isPartner)
                             .map(Relasjon::getPersonRelasjonMed)
