@@ -27,12 +27,12 @@ public class BestillingOrganisasjonStatusMapper {
 
         Map<String, List<String>> statusMap = new HashMap<>();
 
-        List.of(progress.getOrganisasjonsforvalterStatus().split(",[q,t,u]")).forEach(status -> {
+        List.of(progress.getOrganisasjonsforvalterStatus().split(",[qQtTuU]")).forEach(status -> {
             String[] environMsg = status.split(":", 2);
             if (environMsg.length < 2) {
                 return;
             }
-            String message = environMsg[1].toUpperCase()
+            String message = environMsg[1]
                     .replace("ERROR", "FEIL")
                     .replace("FEIL-TIDSAVBRUDD", "INFO-TIDSAVBRUDD")
                     .replace("WARNING", "INFO");
