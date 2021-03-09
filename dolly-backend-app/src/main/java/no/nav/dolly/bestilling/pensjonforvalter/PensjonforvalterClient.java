@@ -53,6 +53,7 @@ public class PensjonforvalterClient implements ClientRegister {
                 opprettPerson(dollyPerson, bestilteMiljoer, status);
                 lagreInntekt(bestilling.getPensjonforvalter(), dollyPerson, bestilteMiljoer, status);
 
+            } else {
                 status.append('$')
                         .append(PENSJON_FORVALTER)
                         .append("#Feil= Bestilling ble ikke sendt til Pensjonsforvalter (PEN) da tilgjengelig(e) miljø(er) [")
