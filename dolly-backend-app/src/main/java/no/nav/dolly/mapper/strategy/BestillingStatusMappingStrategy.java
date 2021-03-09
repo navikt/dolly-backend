@@ -33,7 +33,7 @@ import static no.nav.dolly.mapper.BestillingSkjermingsRegisterStatusMapper.build
 import static no.nav.dolly.mapper.BestillingSykemeldingStatusMapper.buildSykemeldingStatusMap;
 import static no.nav.dolly.mapper.BestillingTpsfStatusMapper.buildTpsfStatusMap;
 import static no.nav.dolly.mapper.BestillingUdiStubStatusMapper.buildUdiStubStatusMap;
-import static org.apache.logging.log4j.util.Strings.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Slf4j
 @Component
@@ -41,6 +41,10 @@ import static org.apache.logging.log4j.util.Strings.isNotBlank;
 public class BestillingStatusMappingStrategy implements MappingStrategy {
 
     private final JsonBestillingMapper jsonBestillingMapper;
+
+    private static List<String> mapIdents(String idents) {
+        return isNotBlank(idents) ? Arrays.asList(idents.split(",")) : Collections.emptyList();
+    }
 
     @Override
     public void register(MapperFactory factory) {
@@ -88,6 +92,7 @@ public class BestillingStatusMappingStrategy implements MappingStrategy {
                                 .importFraTps(mapIdents(bestilling.getTpsImport()))
                                 .importFraPdl(mapIdents(bestilling.getPdlImport()))
                                 .kildeMiljoe(bestilling.getKildeMiljoe())
+                                .navSyntetiskIdent(bestilling.getNavSyntetiskIdent())
                                 .build());
                         bestillingStatus.setBruker(mapperFacade.map(bestilling.getBruker(), RsBrukerUtenFavoritter.class));
                     }
@@ -95,9 +100,5 @@ public class BestillingStatusMappingStrategy implements MappingStrategy {
                 .exclude("bruker")
                 .byDefault()
                 .register();
-    }
-
-    private static List<String> mapIdents(String idents) {
-        return isNotBlank(idents) ? Arrays.asList(idents.split(",")) : Collections.emptyList();
     }
 }

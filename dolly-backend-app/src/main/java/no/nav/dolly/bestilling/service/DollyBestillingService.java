@@ -183,6 +183,7 @@ public class DollyBestillingService {
             BestillingProgress progress = new BestillingProgress(bestilling.getId(), bestilling.getIdent(), testident.getMaster());
             TpsfBestilling tpsfBestilling = nonNull(request.getTpsf()) ? mapperFacade.map(request.getTpsf(), TpsfBestilling.class) : new TpsfBestilling();
             tpsfBestilling.setAntall(1);
+            tpsfBestilling.setNavSyntetiskIdent(bestilling.getNavSyntetiskIdent());
 
             AtomicReference<DollyPerson> dollyPerson = new AtomicReference<>(null);
             if (testident.isTpsf()) {

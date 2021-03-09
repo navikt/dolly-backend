@@ -40,29 +40,29 @@ public class PensjonforvalterClient implements ClientRegister {
     @Override
     public void gjenopprett(RsDollyUtvidetBestilling bestilling, DollyPerson dollyPerson, BestillingProgress progress, boolean isOpprettEndre) {
 
-        StringBuilder status = new StringBuilder();
+        if (nonNull(bestilling.getPensjonforvalter())) {
 
-        Set<String> bestilteMiljoer = new HashSet<>(bestilling.getEnvironments());
-        Set<String> tilgjengeligeMiljoer = pensjonforvalterConsumer.getMiljoer();
-        bestilteMiljoer.retainAll(tilgjengeligeMiljoer);
-        if (!bestilteMiljoer.isEmpty()) {
+            Set<String> bestilteMiljoer = new HashSet<>(bestilling.getEnvironments());
+            Set<String> tilgjengeligeMiljoer = pensjonforvalterConsumer.getMiljoer();
+            bestilteMiljoer.retainAll(tilgjengeligeMiljoer);
 
-            opprettPerson(dollyPerson, bestilteMiljoer, status);
+            StringBuilder status = new StringBuilder();
 
-            if (nonNull(bestilling.getPensjonforvalter())) {
+            if (!bestilteMiljoer.isEmpty()) {
+
+                opprettPerson(dollyPerson, bestilteMiljoer, status);
                 lagreInntekt(bestilling.getPensjonforvalter(), dollyPerson, bestilteMiljoer, status);
+
+                status.append('$')
+                        .append(PENSJON_FORVALTER)
+                        .append("#Feil= Bestilling ble ikke sendt til Pensjonsforvalter (PEN) da tilgjengelig(e) miljø(er) [")
+                        .append(tilgjengeligeMiljoer.stream().collect(joining(",")))
+                        .append("] ikke er valgt");
             }
 
-        } else if (nonNull(bestilling.getPensjonforvalter())) {
-            status.append('$')
-                    .append(PENSJON_FORVALTER)
-                    .append("#Feil= Bestilling ble ikke sendt til Pensjonsforvalter (PEN) da tilgjengelig(e) miljø(er) [")
-                    .append(tilgjengeligeMiljoer.stream().collect(joining(",")))
-                    .append("] ikke er valgt");
-        }
-
-        if (status.length() > 1) {
-            progress.setPensjonforvalterStatus(status.substring(1));
+            if (status.length() > 1) {
+                progress.setPensjonforvalterStatus(status.substring(1));
+            }
         }
     }
 
