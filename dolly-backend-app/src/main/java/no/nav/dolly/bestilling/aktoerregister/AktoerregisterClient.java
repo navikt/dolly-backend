@@ -42,7 +42,7 @@ public class AktoerregisterClient implements ClientRegister {
                 Thread.currentThread().interrupt();
 
             } catch (RuntimeException e) {
-                log.error("Feilet å lese id fra AKtørregister for ident {}.", dollyPerson.getHovedperson(), e);
+                log.error("Feilet å lese id fra Aktørregister for ident {}.", dollyPerson.getHovedperson(), e);
             }
 
             if (count < MAX_COUNT) {
