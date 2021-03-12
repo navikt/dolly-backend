@@ -20,7 +20,7 @@ public class RsForeldreRelasjonRequest {
 
     private RsForeldreRequest.ForeldreType foreldreType;
 
-    @Schema(description = "Når true får forelder samme adresse som den andre av foreldere.")
+    @Schema(description = "Når true får foreldre felles adresse med hverandre.")
     private Boolean harFellesAdresse;
 }
 
