@@ -2,7 +2,7 @@ name: Deploy dev
 
 on:
   push:
-    branches: master
+    branches: feature/legge_til_foreldre_paa_relasjon
 
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/dolly-backend:${{ github.sha }}
