@@ -59,7 +59,7 @@ public class TestgruppeService {
 
     public Page<Testgruppe> getAllTestgrupper(Integer pageNo, Integer pageSize) {
 
-        return testgruppeRepository.findAllByOrderByNavn(PageRequest.of(pageNo, pageSize));
+        return testgruppeRepository.findAllByOrderByIdDesc(PageRequest.of(pageNo, pageSize));
     }
 
     public List<Testgruppe> fetchGrupperByIdsIn(Collection<Long> grupperIDer) {
