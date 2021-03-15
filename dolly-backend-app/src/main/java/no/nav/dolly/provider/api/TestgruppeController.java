@@ -109,9 +109,9 @@ public class TestgruppeController {
     @Cacheable(CACHE_GRUPPE)
     @GetMapping("/page/{pageNo}")
     @Operation(description = "Hent testgrupper")
-    public RsTestgruppePage getTestgrupper(@PathVariable(value = "pageNo") Integer pageNo) {
+    public RsTestgruppePage getTestgrupper(@PathVariable(value = "pageNo") Integer pageNo, @RequestParam(value = "pageSize") Integer pageSize) {
 
-        Page<Testgruppe> page = testgruppeService.getAllTestgrupper(pageNo);
+        Page<Testgruppe> page = testgruppeService.getAllTestgrupper(pageNo, pageSize);
         return RsTestgruppePage.builder()
                 .pageNo(page.getNumber())
                 .antallPages(page.getTotalPages())
