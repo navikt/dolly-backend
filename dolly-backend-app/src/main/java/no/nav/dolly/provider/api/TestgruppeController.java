@@ -93,7 +93,7 @@ public class TestgruppeController {
 
     @Cacheable(CACHE_GRUPPE)
     @GetMapping("/{gruppeId}")
-    @Operation(description = "Hent testgruppe")
+    @Operation(description = "Hent paginert testgruppe")
     public RsTestgruppeMedBestillingId getTestgruppe(@PathVariable("gruppeId") Long gruppeId) {
         return mapperFacade.map(testgruppeService.fetchTestgruppeById(gruppeId), RsTestgruppeMedBestillingId.class);
     }
