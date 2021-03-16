@@ -176,9 +176,7 @@ public class DollyBestillingService {
     public void oppdaterPersonAsync(RsDollyUpdateRequest request, Bestilling bestilling) {
 
         try {
-            log.info("Gjeldende ident er: " + bestilling.getIdent());
             Testident testident = identService.getTestIdent(bestilling.getIdent());
-            log.info("Testident er: " + testident.getIdent());
             if (testident.isPdl() && nonNull(request.getTpsf())) {
                 throw new DollyFunctionalException("Importert person fra TESTNORGE kan ikke endres.");
             }
