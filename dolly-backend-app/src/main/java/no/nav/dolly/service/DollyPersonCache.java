@@ -3,6 +3,7 @@ package no.nav.dolly.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.bestilling.tpsf.TpsfService;
 import no.nav.dolly.consumer.pdlperson.PdlPersonConsumer;
@@ -30,6 +31,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class DollyPersonCache {
 
@@ -46,6 +48,7 @@ public class DollyPersonCache {
             if (isNull(dollyPerson.getPerson(dollyPerson.getHovedperson()))) {
                 dollyPerson.getPersondetaljer().addAll(tpsfService.hentTestpersoner(List.of(dollyPerson.getHovedperson())));
             }
+            log.info("fetchIfEmpty - Hovedperson er: " + dollyPerson.getHovedperson());
 
             Person person = dollyPerson.getPerson(dollyPerson.getHovedperson());
             dollyPerson.setPartnere(person.getRelasjoner().stream()
@@ -112,6 +115,7 @@ public class DollyPersonCache {
 
         if (!personer.isEmpty()) {
             Person person = personer.stream().findFirst().get();
+            log.info("prepareTps Collection - Hovedperson er: " + person.getIdent());
             return DollyPerson.builder()
                     .persondetaljer(personer)
                     .hovedperson(person.getIdent())
@@ -155,6 +159,7 @@ public class DollyPersonCache {
 
     public DollyPerson prepareTpsPersoner(Person person) {
 
+        log.info("prepareTps single - Hovedperson er: " + person.getIdent());
         return fetchIfEmpty(DollyPerson.builder()
                 .hovedperson(person.getIdent())
                 .partnere(person.getRelasjoner().stream()

@@ -2,7 +2,7 @@ name: Deploy dev
 
 on:
   push:
-    branches: master
+    branches: bugfix/transaksjonsid-missing-return-fiks
 
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/dolly-backend:${{ github.sha }}
