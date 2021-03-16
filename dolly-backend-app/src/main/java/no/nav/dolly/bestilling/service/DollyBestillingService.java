@@ -195,7 +195,7 @@ public class DollyBestillingService {
                         oppdaterPersonResponse.getIdentTupler().stream()
                                 .map(RsOppdaterPersonResponse.IdentTuple::getIdent).collect(toList()), null, progress);
 
-                dollyPerson.set(dollyPersonCache.prepareTpsPersoner(oppdaterPersonResponse));
+                dollyPerson.set(dollyPersonCache.prepareTpsPersoner(oppdaterPersonResponse, bestilling.getIdent()));
 
             } else {
                 PdlPerson pdlPerson = objectMapper.readValue(pdlPersonConsumer.getPdlPerson(progress.getIdent()).toString(), PdlPerson.class);
@@ -232,7 +232,7 @@ public class DollyBestillingService {
 
             RsDollyBestillingRequest utvidetBestilling = getDollyBestillingRequest(bestilling);
 
-            DollyPerson dollyPerson = dollyPersonCache.prepareTpsPersoner(getIdentResponse(identer));
+            DollyPerson dollyPerson = dollyPersonCache.prepareTpsPersoner(getIdentResponse(identer), bestilling.getIdent());
             gjenopprettNonTpsf(dollyPerson, utvidetBestilling, progress, true);
 
             oppdaterProgress(bestilling, progress);

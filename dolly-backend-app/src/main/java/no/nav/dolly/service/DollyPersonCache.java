@@ -107,14 +107,14 @@ public class DollyPersonCache {
         return dollyPerson;
     }
 
-    public DollyPerson prepareTpsPersoner(RsOppdaterPersonResponse identer) {
+    public DollyPerson prepareTpsPersoner(RsOppdaterPersonResponse identer, String hovedperson) {
 
         List<Person> personer = tpsfService.hentTestpersoner(identer.getIdentTupler().stream()
                 .map(IdentTuple::getIdent)
                 .collect(Collectors.toList()));
 
         if (!personer.isEmpty()) {
-            Person person = personer.stream().findFirst().get();
+            Person person = personer.stream().filter(ident -> hovedperson.equals(ident.getIdent())).findFirst().orElse(personer.get(0));
             log.info("prepareTps Collection - Hovedperson er: " + person.getIdent());
             return DollyPerson.builder()
                     .persondetaljer(personer)

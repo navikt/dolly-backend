@@ -87,7 +87,7 @@ public class LeggTilPaaGruppeService extends DollyBestillingService {
                                         sendIdenterTilTPS(new ArrayList<>(List.of(bestilling.getMiljoer().split(","))),
                                                 oppdaterPersonResponse.getIdentTupler().stream()
                                                         .map(RsOppdaterPersonResponse.IdentTuple::getIdent).collect(toList()), null, progress);
-                                        dollyPerson = dollyPersonCache.prepareTpsPersoner(oppdaterPersonResponse);
+                                        dollyPerson = dollyPersonCache.prepareTpsPersoner(oppdaterPersonResponse, bestilling.getIdent());
 
                                     } else {
                                         progress.setFeil("NA:Feil= Ident finnes ikke i database");
