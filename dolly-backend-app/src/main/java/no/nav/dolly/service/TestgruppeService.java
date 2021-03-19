@@ -52,6 +52,12 @@ public class TestgruppeService {
         );
     }
 
+    public Testgruppe fetchPaginertTestgruppeById(Long gruppeId, Integer pageNo, Integer pageSize) {
+        Testgruppe testgruppe = fetchTestgruppeById(gruppeId);
+        testgruppe.setTestidenter(identService.getBestillingerFromGruppePaginert(gruppeId, pageNo, pageSize));
+        return testgruppe;
+    }
+
     public Testgruppe fetchTestgruppeById(Long gruppeId) {
         return testgruppeRepository.findById(gruppeId).orElseThrow(() ->
                 new NotFoundException(format("Gruppe med id %s ble ikke funnet.", gruppeId)));
