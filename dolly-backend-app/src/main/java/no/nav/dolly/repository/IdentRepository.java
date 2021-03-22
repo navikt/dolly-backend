@@ -40,7 +40,8 @@ public interface IdentRepository extends CrudRepository<Testident, String> {
             "and ti.testgruppe.id = :gruppe " +
             "join Bestilling b on b.id = bp.bestillingId " +
             "and b.bestKriterier is not null and b.bestKriterier <> '{}' " +
-            "and bp.ident is not null and length(bp.ident) = 11 " +
+            "and ti.ident is not null and length(ti.ident) = 11 " +
+            "group by ti.ident, b.sistOppdatert " +
             "order by b.sistOppdatert desc")
     Page<Testident> getBestillingerFromGruppePaginert(@Param(value = "gruppe") Long gruppeId, Pageable pageable);
 
