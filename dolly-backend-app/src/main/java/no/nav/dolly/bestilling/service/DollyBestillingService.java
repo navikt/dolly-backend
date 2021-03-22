@@ -183,6 +183,7 @@ public class DollyBestillingService {
             TpsfBestilling tpsfBestilling = nonNull(request.getTpsf()) ? mapperFacade.map(request.getTpsf(), TpsfBestilling.class) : new TpsfBestilling();
             tpsfBestilling.setAntall(1);
             tpsfBestilling.setNavSyntetiskIdent(bestilling.getNavSyntetiskIdent());
+            request.setNavSyntetiskIdent(bestilling.getNavSyntetiskIdent());
 
             AtomicReference<DollyPerson> dollyPerson = new AtomicReference<>(null);
             if (testident.isTpsf()) {
@@ -259,6 +260,7 @@ public class DollyBestillingService {
             RsDollyBestillingRequest bestKriterier = objectMapper.readValue(bestilling.getBestKriterier(), RsDollyBestillingRequest.class);
             if (nonNull(bestilling.getTpsfKriterier())) {
                 bestKriterier.setTpsf(objectMapper.readValue(bestilling.getTpsfKriterier(), RsTpsfUtvidetBestilling.class));
+                bestKriterier.setNavSyntetiskIdent(bestilling.getNavSyntetiskIdent());
             }
             bestKriterier.setEnvironments(new ArrayList<>(List.of(bestilling.getMiljoer().split(","))));
             return bestKriterier;

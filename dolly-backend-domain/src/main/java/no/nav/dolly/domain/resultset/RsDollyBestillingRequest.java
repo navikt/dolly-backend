@@ -17,4 +17,12 @@ public class RsDollyBestillingRequest extends RsDollyUtvidetBestilling {
             description = "Antall testpersoner som bestilles"
     )
     private int antall;
+
+    @Schema(
+            required = true,
+            description = "Nav syntetisk ident"
+    )
+    private boolean navSyntetiskIdent;
+
+
 }

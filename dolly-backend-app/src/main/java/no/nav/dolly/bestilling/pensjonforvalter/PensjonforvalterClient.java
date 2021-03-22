@@ -20,11 +20,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.joining;
 import static no.nav.dolly.errorhandling.ErrorStatusDecoder.encodeStatus;
-import static org.apache.commons.lang3.BooleanUtils.isFalse;
+import static org.apache.commons.lang3.BooleanUtils.isNotTrue;
 
 @Slf4j
 @Service
@@ -42,7 +41,7 @@ public class PensjonforvalterClient implements ClientRegister {
     @Override
     public void gjenopprett(RsDollyUtvidetBestilling bestilling, DollyPerson dollyPerson, BestillingProgress progress, boolean isOpprettEndre) {
 
-        if (nonNull(bestilling.getPensjonforvalter()) || isNull(bestilling.getNavSyntetiskIdent()) || isFalse(bestilling.getNavSyntetiskIdent())) {
+        if (nonNull(bestilling.getPensjonforvalter()) || isNotTrue(bestilling.getNavSyntetiskIdent())) {
 
             Set<String> bestilteMiljoer = new HashSet<>(bestilling.getEnvironments());
             Set<String> tilgjengeligeMiljoer = pensjonforvalterConsumer.getMiljoer();
