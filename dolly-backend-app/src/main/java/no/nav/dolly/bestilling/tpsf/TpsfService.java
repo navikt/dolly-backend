@@ -53,6 +53,7 @@ public class TpsfService {
     private static final String TPSF_GET_ENVIRONMENTS = "/api/v1/environments";
     private static final String TPSF_PERSON_RELASJON = TPSF_BASE_URL + "/relasjonperson?ident=";
     private static final String TPSF_IMPORTER_PERSON = TPSF_BASE_URL + "/import/lagre";
+    private static final String CONCAT_VALUES = "%s%s%s";
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
@@ -66,9 +67,9 @@ public class TpsfService {
     }
 
     @Timed(name = "providers", tags = { "operation", "tpsf_deletePersons" })
-    public ResponseEntity deletePerson(String ident) {
+    public ResponseEntity<Object> deletePerson(String ident) {
         return restTemplate.exchange(
-                RequestEntity.delete(URI.create(format("%s%s%s", providersProps.getTpsf().getUrl(), TPSF_DELETE_PERSON_URL, ident)))
+                RequestEntity.delete(URI.create(format(CONCAT_VALUES, providersProps.getTpsf().getUrl(), TPSF_DELETE_PERSON_URL, ident)))
                         .build(), Object.class);
     }
 
@@ -111,7 +112,7 @@ public class TpsfService {
     public RsOppdaterPersonResponse endreLeggTilPaaPerson(String ident, TpsfBestilling tpsfBestilling) {
 
         return restTemplate.exchange(RequestEntity.post(
-                URI.create(format("%s%s%s", providersProps.getTpsf().getUrl(), TPSF_UPDATE_PERSON_URL, ident)))
+                URI.create(format(CONCAT_VALUES, providersProps.getTpsf().getUrl(), TPSF_UPDATE_PERSON_URL, ident)))
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(tpsfBestilling), RsOppdaterPersonResponse.class).getBody();
     }
@@ -120,7 +121,7 @@ public class TpsfService {
     public List<String> relasjonPerson(String ident, TpsfRelasjonRequest tpsfBestilling) {
 
         return restTemplate.exchange(RequestEntity.post(
-                URI.create(format("%s%s%s", providersProps.getTpsf().getUrl(), TPSF_PERSON_RELASJON, ident)))
+                URI.create(format(CONCAT_VALUES, providersProps.getTpsf().getUrl(), TPSF_PERSON_RELASJON, ident)))
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(tpsfBestilling), List.class).getBody();
     }
@@ -135,7 +136,7 @@ public class TpsfService {
     }
 
     private ResponseEntity<Object> postToTpsf(String addtionalUrl, Object request) {
-        String url = format("%s%s%s", providersProps.getTpsf().getUrl(), TPSF_BASE_URL, addtionalUrl);
+        String url = format(CONCAT_VALUES, providersProps.getTpsf().getUrl(), TPSF_BASE_URL, addtionalUrl);
 
         try {
             ResponseEntity<Object> response = restTemplate.exchange(
