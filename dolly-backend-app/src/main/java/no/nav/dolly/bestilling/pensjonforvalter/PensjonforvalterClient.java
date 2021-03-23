@@ -43,6 +43,7 @@ public class PensjonforvalterClient implements ClientRegister {
 
         if (nonNull(bestilling.getPensjonforvalter()) || isNotTrue(bestilling.getNavSyntetiskIdent())) {
 
+            log.info("Syntetisk ident? {}, sender ident til Pensjon", bestilling.getNavSyntetiskIdent());
             Set<String> bestilteMiljoer = new HashSet<>(bestilling.getEnvironments());
             Set<String> tilgjengeligeMiljoer = pensjonforvalterConsumer.getMiljoer();
             bestilteMiljoer.retainAll(tilgjengeligeMiljoer);
