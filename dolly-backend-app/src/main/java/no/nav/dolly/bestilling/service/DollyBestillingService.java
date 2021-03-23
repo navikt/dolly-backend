@@ -260,8 +260,8 @@ public class DollyBestillingService {
             RsDollyBestillingRequest bestKriterier = objectMapper.readValue(bestilling.getBestKriterier(), RsDollyBestillingRequest.class);
             if (nonNull(bestilling.getTpsfKriterier())) {
                 bestKriterier.setTpsf(objectMapper.readValue(bestilling.getTpsfKriterier(), RsTpsfUtvidetBestilling.class));
-                bestKriterier.setNavSyntetiskIdent(bestilling.getNavSyntetiskIdent());
             }
+            bestKriterier.setNavSyntetiskIdent(bestilling.getNavSyntetiskIdent());
             bestKriterier.setEnvironments(new ArrayList<>(List.of(bestilling.getMiljoer().split(","))));
             return bestKriterier;
 
@@ -278,7 +278,7 @@ public class DollyBestillingService {
         clientRegisters.stream()
                 .filter(clientRegister -> clientRegister.isTestnorgeRelevant() || dollyPerson.isTpsfMaster())
                 .forEach(clientRegister ->
-                    clientRegister.gjenopprett(bestKriterier, dollyPerson, progress, isOpprettEndre));
+                        clientRegister.gjenopprett(bestKriterier, dollyPerson, progress, isOpprettEndre));
     }
 
     protected void oppdaterBestillingFerdig(Bestilling bestilling) {
@@ -342,7 +342,7 @@ public class DollyBestillingService {
     }
 
     protected Optional<DollyPerson> prepareDollyPersonTpsf(Bestilling bestilling,
-                                                         BestillingProgress progress) throws JsonProcessingException {
+                                                           BestillingProgress progress) throws JsonProcessingException {
 
         DollyPerson dollyPerson = null;
         if (progress.isTpsf()) {
