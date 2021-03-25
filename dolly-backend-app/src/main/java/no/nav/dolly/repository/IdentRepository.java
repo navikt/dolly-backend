@@ -35,12 +35,12 @@ public interface IdentRepository extends CrudRepository<Testident, String> {
             "and bp.ident is not null and length(bp.ident) = 11")
     List<GruppeBestillingIdent> getBestillingerFromGruppe(@Param(value = "gruppe") Testgruppe testgruppe);
 
-    @Query("select distinct ti " +
+    @Query("select ti " +
             "from Testident ti " +
             "join BestillingProgress bp on bp.ident = ti.ident " +
             "join Bestilling b on b.id = bp.bestillingId " +
             "where b.gruppe.id = :gruppe_id " +
-            "order by b.sistOppdatert, ti.ident")
+            "order by b.sistOppdatert")
     Page<Testident> getBestillingerFromGruppePaginert(@Param(value = "gruppe_id") Long gruppeId, Pageable pageable);
 
     interface GruppeBestillingIdent {
