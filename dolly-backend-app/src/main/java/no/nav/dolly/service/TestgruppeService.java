@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -85,7 +86,7 @@ public class TestgruppeService {
         Set<Testgruppe> favoritter = eidAvBruker.stream().map(Bruker::getFavoritter).flatMap(Collection::stream).collect(Collectors.toSet());
         testgrupper.addAll(favoritter);
 
-        return testgrupper.stream().collect(Collectors.toList());
+        return new ArrayList<>(testgrupper);
     }
 
     public Testgruppe saveGruppeTilDB(Testgruppe testgruppe) {
