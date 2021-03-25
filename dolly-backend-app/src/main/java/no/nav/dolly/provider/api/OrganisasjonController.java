@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import no.nav.dolly.bestilling.organisasjonforvalter.OrganisasjonClient;
 import no.nav.dolly.bestilling.organisasjonforvalter.OrganisasjonConsumer;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployRequest;
-import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonDetaljer;
 import no.nav.dolly.domain.jpa.OrganisasjonBestilling;
 import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling;
 import no.nav.dolly.domain.resultset.entity.bestilling.RsOrganisasjonBestillingStatus;
@@ -83,15 +82,6 @@ public class OrganisasjonController {
             @Parameter(description = "ID på bestilling av organisasjon", example = "123") @RequestParam Long bestillingId) {
 
         return bestillingService.fetchBestillingStatusById(bestillingId);
-    }
-
-    @GetMapping("/orgnumre/{orgnumre}")
-    @Cacheable(value = CACHE_ORG_BESTILLING)
-    @Operation(description = "Hent organisasjoner fra forvalter basert på orgnumre")
-    public OrganisasjonDetaljer hentOrganisasjoner(
-            @PathVariable("orgnumre") List<String> orgnumre) {
-
-        return organisasjonConsumer.hentOrganisasjon(orgnumre);
     }
 
     @GetMapping("/bestillingsstatus")
