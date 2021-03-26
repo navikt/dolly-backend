@@ -1,11 +1,13 @@
 package no.nav.dolly.service;
 
 import lombok.RequiredArgsConstructor;
+import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.domain.jpa.Bruker;
 import no.nav.dolly.domain.jpa.Testgruppe;
 import no.nav.dolly.domain.jpa.Testident;
 import no.nav.dolly.domain.resultset.entity.testgruppe.RsLockTestgruppe;
 import no.nav.dolly.domain.resultset.entity.testgruppe.RsOpprettEndreTestgruppe;
+import no.nav.dolly.domain.resultset.entity.testgruppe.RsTestgruppeMedBestillingId;
 import no.nav.dolly.exceptions.ConstraintViolationException;
 import no.nav.dolly.exceptions.DollyFunctionalException;
 import no.nav.dolly.exceptions.NotFoundException;
@@ -33,6 +35,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @RequiredArgsConstructor
 public class TestgruppeService {
 
+    private final MapperFacade mapperFacade;
     private final TestgruppeRepository testgruppeRepository;
     private final TransaksjonMappingRepository transaksjonMappingRepository;
     private final BrukerService brukerService;
@@ -53,10 +56,13 @@ public class TestgruppeService {
         );
     }
 
-    public Testgruppe fetchPaginertTestgruppeById(Long gruppeId, Integer pageNo, Integer pageSize) {
+    public RsTestgruppeMedBestillingId fetchPaginertTestgruppeById(Long gruppeId, Integer pageNo, Integer pageSize) {
         Testgruppe testgruppe = fetchTestgruppeById(gruppeId);
-        testgruppe.setTestidenter(identService.getBestillingerFromGruppePaginert(gruppeId, pageNo, pageSize));
-        return testgruppe;
+        Page<Testident> testidentPage = identService.getBestillingerFromGruppePaginert(gruppeId, pageNo, pageSize);
+        testgruppe.setTestidenter(testidentPage.toSet());
+        RsTestgruppeMedBestillingId rsTestgruppe = mapperFacade.map(testgruppe, RsTestgruppeMedBestillingId.class);
+        rsTestgruppe.setAntallIdenter(testidentPage.getNumberOfElements());
+        return rsTestgruppe;
     }
 
     public Testgruppe fetchTestgruppeById(Long gruppeId) {

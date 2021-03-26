@@ -98,7 +98,7 @@ public class TestgruppeController {
                                                              @PathVariable("pageNo") Integer pageNo,
                                                              @RequestParam Integer pageSize) {
 
-        return mapperFacade.map(testgruppeService.fetchPaginertTestgruppeById(gruppeId, pageNo, pageSize), RsTestgruppeMedBestillingId.class);
+        return testgruppeService.fetchPaginertTestgruppeById(gruppeId, pageNo, pageSize);
     }
 
     @Cacheable(CACHE_GRUPPE)
