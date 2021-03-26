@@ -3,6 +3,7 @@ package no.nav.dolly.mapper.strategy;
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
+import no.nav.dolly.domain.jpa.Bestilling;
 import no.nav.dolly.domain.jpa.BestillingProgress;
 import no.nav.dolly.domain.jpa.Testgruppe;
 import no.nav.dolly.domain.resultset.entity.testgruppe.RsTestgruppeMedBestillingId;
@@ -17,9 +18,10 @@ import static org.apache.commons.lang3.BooleanUtils.isTrue;
 @Component
 public class TestgruppeMedBestillingIdMappingStrategy implements MappingStrategy {
 
-    @Override public void register(MapperFactory factory) {
+    @Override
+    public void register(MapperFactory factory) {
         factory.classMap(Testgruppe.class, RsTestgruppeMedBestillingId.class)
-                .customize(new CustomMapper<Testgruppe, RsTestgruppeMedBestillingId>() {
+                .customize(new CustomMapper<>() {
                     @Override
                     public void mapAtoB(Testgruppe testgruppe, RsTestgruppeMedBestillingId testgruppeMedBestillingId, MappingContext context) {
                         testgruppeMedBestillingId.setIdenter(testgruppe.getTestidenter().stream()
@@ -29,6 +31,10 @@ public class TestgruppeMedBestillingIdMappingStrategy implements MappingStrategy
                                         .beskrivelse(testident.getBeskrivelse())
                                         .bestillingId(testident.getBestillingProgress().stream()
                                                 .map(BestillingProgress::getBestillingId)
+                                                .filter(bestillingId -> testgruppe.getBestillinger()
+                                                        .stream()
+                                                        .map(Bestilling::getId)
+                                                        .anyMatch(id -> id.equals(bestillingId)))
                                                 .sorted(Comparator.reverseOrder())
                                                 .collect(Collectors.toList()))
                                         .master(testident.getMaster())
