@@ -90,6 +90,11 @@ public class IdentService {
         }
     }
 
+    @Transactional
+    public void swapIdent(String oldIdent, String newIdent) {
+        identRepository.swapIdent(oldIdent, newIdent);
+    }
+
     public List<GruppeBestillingIdent> getBestillingerFromGruppe(Testgruppe gruppe) {
 
         return identRepository.getBestillingerFromGruppe(gruppe);

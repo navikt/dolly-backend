@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
+import no.nav.dolly.bestilling.pdlforvalter.domain.PdlAdresse.Master;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlKontaktadresse;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlKontaktadresse.PostadresseIFrittFormat;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlKontaktadresse.Postboksadresse;
@@ -78,6 +79,9 @@ public class PdlKontaktadresseMappingStrategy implements MappingStrategy {
                                                     kontaktadresse.setPostadresseIFrittFormat(mapperFacade.map(
                                                             postadresse, PostadresseIFrittFormat.class));
                                                     kontaktadresse.setKilde(CONSUMER);
+                                                    kontaktadresse.setMaster(Master.PDL);
+                                                    kontaktadresse.setGyldigFraOgMed(LocalDate.now().minusYears(1));
+                                                    kontaktadresse.setGyldigTilOgMed(LocalDate.now().plusYears(10));
                                                     return kontaktadresse;
                                                 })
                                                 .collect(Collectors.toList()),
