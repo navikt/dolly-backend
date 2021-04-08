@@ -58,8 +58,8 @@ public class PdlFoedselsmeldingMappingStrategy implements MappingStrategy {
                                             .reduce((first, second) -> second)
                                             .get());
                         } else {
-                            var size = kodeverkConsumer.getKodeverkByName(KOMMUNER).size();
-                            return kodeverkConsumer.getKodeverkByName(KOMMUNER).get(Math.floor(secureRandom.nextFloat() * size));
+                            return kodeverkConsumer.getKodeverkByName(KOMMUNER).get(Math.floor(secureRandom.nextFloat() *
+                                    kodeverkConsumer.getKodeverkByName(KOMMUNER).size()));
                         }
                     }
 
