@@ -45,7 +45,7 @@ public class KodeverkConsumer {
     @Timed(name = "providers", tags = {"operation", "hentKodeverk"})
     public KodeverkBetydningerResponse fetchKodeverkByName(String kodeverk) {
 
-        ResponseEntity<KodeverkBetydningerResponse> kodeverkResponse = getKodeverk(kodeverk);
+        var kodeverkResponse = getKodeverk(kodeverk);
         return kodeverkResponse.hasBody() ? kodeverkResponse.getBody() : KodeverkBetydningerResponse.builder().build();
     }
 
@@ -53,26 +53,24 @@ public class KodeverkConsumer {
     @Timed(name = "providers", tags = {"operation", "hentKodeverk"})
     public Map<String, String> getKodeverkByName(String kodeverk) {
 
-        try {
-            var kodeverkResponse = getKodeverk(kodeverk);
-
-            return kodeverkResponse.hasBody() ? kodeverkResponse.getBody().getBetydninger().entrySet().stream()
-                    .filter(entry -> !entry.getValue().isEmpty())
-                    .collect(Collectors.toMap(Entry::getKey, KodeverkConsumer::getNorskBokmaal)) :
-                    Collections.emptyMap();
-
-        } catch (HttpClientErrorException e) {
-
-            throw new DollyFunctionalException(e.getMessage(), e);
-        }
+        var kodeverkResponse = getKodeverk(kodeverk);
+        return kodeverkResponse.hasBody() ? kodeverkResponse.getBody().getBetydninger().entrySet().stream()
+                .filter(entry -> !entry.getValue().isEmpty())
+                .collect(Collectors.toMap(Entry::getKey, KodeverkConsumer::getNorskBokmaal)) :
+                Collections.emptyMap();
     }
 
     private ResponseEntity<KodeverkBetydningerResponse> getKodeverk(String kodeverk) {
 
-        return restTemplate.exchange(RequestEntity.get(
-                URI.create(providersProps.getKodeverk().getUrl() + getKodeverksnavnUrl(kodeverk.replace(" ", "%20"))))
-                .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .header(HEADER_NAV_CALL_ID, generateCallId())
-                .build(), KodeverkBetydningerResponse.class);
+        try {
+            return restTemplate.exchange(RequestEntity.get(
+                    URI.create(providersProps.getKodeverk().getUrl() + getKodeverksnavnUrl(kodeverk.replace(" ", "%20"))))
+                    .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
+                    .header(HEADER_NAV_CALL_ID, generateCallId())
+                    .build(), KodeverkBetydningerResponse.class);
+
+        } catch (HttpClientErrorException e) {
+            throw new DollyFunctionalException(e.getMessage(), e);
+        }
     }
 }
