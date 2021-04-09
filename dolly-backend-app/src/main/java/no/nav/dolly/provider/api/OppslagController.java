@@ -73,7 +73,7 @@ public class OppslagController {
 
     @GetMapping("/kodeverk")
     @Operation(description = "Hent kodeverk, returnerer map")
-    public Map<String, String> fetchKommuner(@RequestParam String kodeverk) {
+    public Map<String, String> fetchKodeverk(@RequestParam String kodeverk) {
 
         return kodeverkConsumer.getKodeverkByName(kodeverk);
     }
