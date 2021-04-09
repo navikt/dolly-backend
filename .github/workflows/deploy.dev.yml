@@ -2,7 +2,7 @@ name: Deploy dev
 
 on:
   push:
-    branches: feature/pdl_foedsel_legg_til_defaultverdier
+    branches: master
 
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/dolly-backend:${{ github.sha }}
