@@ -8,8 +8,6 @@ import no.nav.dolly.domain.jpa.Testgruppe;
 import no.nav.dolly.domain.resultset.RsDollyBestilling;
 import no.nav.dolly.domain.resultset.RsDollyBestillingRequest;
 import no.nav.dolly.domain.resultset.entity.testgruppe.RsOpprettEndreTestgruppe;
-import no.nav.dolly.domain.resultset.entity.testgruppe.RsTestgruppe;
-import no.nav.dolly.domain.resultset.entity.testgruppe.RsTestgruppeMedBestillingId;
 import no.nav.dolly.domain.resultset.tpsf.RsTpsfUtvidetBestilling;
 import no.nav.dolly.provider.api.TestgruppeController;
 import no.nav.dolly.service.BestillingService;
@@ -24,9 +22,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -80,21 +75,6 @@ public class TestgruppeControllerTest {
         testgruppeController.oppdaterTestgruppe(GRUPPE_ID, gruppe);
 
         verify(testgruppeService).oppdaterTestgruppe(GRUPPE_ID, gruppe);
-    }
-
-    @Test
-    public void getTestgruppe() {
-        RsTestgruppeMedBestillingId testgruppeMedBestillingId = new RsTestgruppeMedBestillingId();
-        testgruppeMedBestillingId.setId(GRUPPE_ID);
-        when(testgruppeService.fetchTestgruppeById(GRUPPE_ID)).thenReturn(new Testgruppe());
-        when(mapperFacade.map(any(Testgruppe.class), eq(RsTestgruppeMedBestillingId.class))).thenReturn(testgruppeMedBestillingId);
-
-        RsTestgruppe result = testgruppeController.getTestgruppe(GRUPPE_ID);
-
-        assertThat(result.getId(), is(equalTo(GRUPPE_ID)));
-
-        verify(testgruppeService).fetchTestgruppeById(GRUPPE_ID);
-        verify(mapperFacade).map(any(Testgruppe.class), eq(RsTestgruppeMedBestillingId.class));
     }
 
     @Test
