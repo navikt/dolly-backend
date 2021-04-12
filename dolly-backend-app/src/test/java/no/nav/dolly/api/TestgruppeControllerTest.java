@@ -1,7 +1,6 @@
 package no.nav.dolly.api;
 
 import ma.glasnost.orika.MapperFacade;
-import no.nav.dolly.bestilling.service.DollyBestillingService;
 import no.nav.dolly.bestilling.service.OpprettPersonerByKriterierService;
 import no.nav.dolly.domain.jpa.Bestilling;
 import no.nav.dolly.domain.jpa.Testgruppe;
@@ -11,7 +10,6 @@ import no.nav.dolly.domain.resultset.entity.testgruppe.RsOpprettEndreTestgruppe;
 import no.nav.dolly.domain.resultset.tpsf.RsTpsfUtvidetBestilling;
 import no.nav.dolly.provider.api.TestgruppeController;
 import no.nav.dolly.service.BestillingService;
-import no.nav.dolly.service.PersonService;
 import no.nav.dolly.service.TestgruppeService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +28,6 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class TestgruppeControllerTest {
 
-    private static final String IDENT = "12345678901";
     private static final Long GRUPPE_ID = 1L;
     private static final Long BESTILLING_ID = 1L;
 
@@ -41,13 +38,7 @@ public class TestgruppeControllerTest {
     private MapperFacade mapperFacade;
 
     @Mock
-    private DollyBestillingService dollyBestillingService;
-
-    @Mock
     private BestillingService bestillingService;
-
-    @Mock
-    private PersonService personService;
 
     @Mock
     private OpprettPersonerByKriterierService opprettPersonerByKriterierService;
