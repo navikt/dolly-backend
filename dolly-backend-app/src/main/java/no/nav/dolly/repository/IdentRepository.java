@@ -44,7 +44,7 @@ public interface IdentRepository extends PagingAndSortingRepository<Testident, S
             "and ti.testgruppe.id = :gruppeId " +
             "and bp.id = (select max(bps.id) from BestillingProgress bps where bps.ident = ti.ident) " +
             "order by bp.id desc")
-    Page<Testident> getTestidentByTestgruppeIdOrderByBestillingProgressDesc(@Param(value = "gruppeId") Long gruppeId, Pageable pageable);
+    Page<Testident> getTestidentByTestgruppeIdOrderByBestillingProgressIdDesc(@Param(value = "gruppeId") Long gruppeId, Pageable pageable);
 
     interface GruppeBestillingIdent {
 
