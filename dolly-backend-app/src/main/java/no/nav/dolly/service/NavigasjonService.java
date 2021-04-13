@@ -41,13 +41,13 @@ public class NavigasjonService {
             Page<Testident> bestillingerFromGruppePaginert = identService.getBestillingerFromGruppePaginert(identsFound.get(0).getTestgruppe().getId(), 0, 5000);
 
             Optional<Testident> first = bestillingerFromGruppePaginert.stream().filter(testident -> testident.getIdent().equals(identsFound.get(0).getIdent())).findFirst();
-            int i = bestillingerFromGruppePaginert.toList().indexOf(first.orElse(null));
+            Optional<Integer> identIndex = Optional.of(bestillingerFromGruppePaginert.toList().indexOf(first.orElse(null)));
 
             return RsWhereAmI.builder()
                     .gruppe(mapperFacade.map(identsFound.get(0).getTestgruppe(), RsTestgruppe.class))
                     .identHovedperson(identsFound.get(0).getIdent())
                     .identNavigerTil(ident)
-                    .sidetall(Math.floorDiv(i, 10))
+                    .sidetall(Math.floorDiv(identIndex.orElse(0), 10))
                     .build();
         } else {
 
