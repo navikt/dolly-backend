@@ -39,12 +39,12 @@ public interface IdentRepository extends PagingAndSortingRepository<Testident, S
             "and bp.ident is not null and length(bp.ident) = 11")
     List<GruppeBestillingIdent> getBestillingerFromGruppe(@Param(value = "gruppe") Testgruppe testgruppe);
 
-//    @Query("select ti from Testident ti " +
-//            "join BestillingProgress bp on bp.ident = ti.ident " +
-//            "join Bestilling b on b.id = bp.bestilling.id " +
-//            "and ti.testgruppe.id = b.gruppe.id " +
-//            "order by b.sistOppdatert desc")
-    Page<Testident> getTestidentByTestgruppeIdOrderByBestillingProgressDesc(@Param(value = "gruppe_id") Long gruppeId, Pageable pageable);
+    @Query("select ti from Testident ti " +
+            "join BestillingProgress bp on bp.ident = ti.ident " +
+            "and ti.testgruppe.id = :gruppeId " +
+            "and bp.id = (select max(bps.id) from BestillingProgress bps where bps.ident = ti.ident) " +
+            "order by bp.id desc")
+    Page<Testident> getTestidentByTestgruppeIdOrderByBestillingProgressDesc(@Param(value = "gruppeId") Long gruppeId, Pageable pageable);
 
     interface GruppeBestillingIdent {
 
