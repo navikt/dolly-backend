@@ -10,12 +10,10 @@ import no.nav.dolly.domain.resultset.tpsf.Person;
 import no.nav.dolly.domain.resultset.tpsf.Relasjon;
 import no.nav.dolly.exceptions.NotFoundException;
 import no.nav.dolly.repository.IdentRepository;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,16 +36,14 @@ public class NavigasjonService {
 
         List<Testident> identsFound = identRepository.findByIdentIn(identer);
         if (!identsFound.isEmpty()) {
-            Page<Testident> bestillingerFromGruppePaginert = identService.getBestillingerFromGruppePaginert(identsFound.get(0).getTestgruppe().getId(), 0, 5000);
 
-            Optional<Testident> first = bestillingerFromGruppePaginert.stream().filter(testident -> testident.getIdent().equals(identsFound.get(0).getIdent())).findFirst();
-            Optional<Integer> identIndex = Optional.of(bestillingerFromGruppePaginert.toList().indexOf(first.orElse(null)));
-
+            Testident testident = identsFound.get(0);
             return RsWhereAmI.builder()
-                    .gruppe(mapperFacade.map(identsFound.get(0).getTestgruppe(), RsTestgruppe.class))
-                    .identHovedperson(identsFound.get(0).getIdent())
+                    .gruppe(mapperFacade.map(testident.getTestgruppe(), RsTestgruppe.class))
+                    .identHovedperson(testident.getIdent())
                     .identNavigerTil(ident)
-                    .sidetall(Math.floorDiv(identIndex.orElse(0), 10))
+                    .sidetall(Math.floorDiv(
+                            identService.getPaginertIdentIndex(testident.getIdent(), testident.getTestgruppe().getId()).orElse(0), 10))
                     .build();
         } else {
 
