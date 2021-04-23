@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 
 import static java.util.Objects.isNull;
+import static no.nav.dolly.bestilling.pdlforvalter.domain.PdlFamilierelasjon.ROLLE.FAR;
+import static no.nav.dolly.bestilling.pdlforvalter.domain.PdlFamilierelasjon.ROLLE.MOR;
 import static no.nav.dolly.bestilling.pdlforvalter.domain.PdlFamilierelasjon.decode;
 import static no.nav.dolly.bestilling.pdlforvalter.domain.PdlSivilstand.Sivilstand.ENKE_ELLER_ENKEMANN;
 import static no.nav.dolly.bestilling.pdlforvalter.domain.PdlSivilstand.Sivilstand.GIFT;
@@ -43,10 +45,14 @@ public class PdlRelasjonerMappingStrategy implements MappingStrategy {
                         familierelasjon.setRelatertPerson(relasjon.getPersonRelasjonMed().getIdent());
                         familierelasjon.setRelatertPersonsRolle(decode(relasjon.getRelasjonTypeNavn()));
                         familierelasjon.setMinRolleForPerson(decode(relasjon.getPersonRelasjonTil().getRelasjoner().stream()
-                            .filter(relasjon2 -> relasjon.getPersonRelasjonMed().getIdent().equals(relasjon2.getPerson().getIdent()))
+                                .filter(relasjon2 -> relasjon.getPersonRelasjonTil().getIdent().equals(relasjon2.getPerson().getIdent()))
                                 .map(Relasjon::getRelasjonTypeNavn)
                                 .findFirst().orElse(null)));
                         familierelasjon.setKilde(CONSUMER);
+
+                        if (familierelasjon.getMinRolleForPerson().equals(familierelasjon.getRelatertPersonsRolle())) {
+                            familierelasjon.setMinRolleForPerson(relasjon.getPerson().getKjonn().equals("K") ? MOR : FAR);
+                        }
                     }
                 })
                 .register();
@@ -91,27 +97,27 @@ public class PdlRelasjonerMappingStrategy implements MappingStrategy {
             return UOPPGITT;
         } else {
             switch (sivilstatus) {
-            case UGIF:
-                return UGIFT;
-            case GIFT:
-                return GIFT;
-            case ENKE:
-                return ENKE_ELLER_ENKEMANN;
-            case SKIL:
-                return SKILT;
-            case SEPR:
-                return SEPARERT_PARTNER;
-            case REPA:
-                return REGISTRERT_PARTNER;
-            case SEPA:
-                return SEPARERT;
-            case SKPA:
-                return SKILT_PARTNER;
-            case GJPA:
-                return GJENLEVENDE_PARTNER;
-            case SAMB:
-            default:
-                return UOPPGITT;
+                case UGIF:
+                    return UGIFT;
+                case GIFT:
+                    return GIFT;
+                case ENKE:
+                    return ENKE_ELLER_ENKEMANN;
+                case SKIL:
+                    return SKILT;
+                case SEPR:
+                    return SEPARERT_PARTNER;
+                case REPA:
+                    return REGISTRERT_PARTNER;
+                case SEPA:
+                    return SEPARERT;
+                case SKPA:
+                    return SKILT_PARTNER;
+                case GJPA:
+                    return GJENLEVENDE_PARTNER;
+                case SAMB:
+                default:
+                    return UOPPGITT;
             }
         }
     }
