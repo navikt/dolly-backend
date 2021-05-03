@@ -1,13 +1,5 @@
 package no.nav.dolly.bestilling.dokarkiv.mapper;
 
-import static java.util.Objects.isNull;
-import static no.nav.dolly.bestilling.dokarkiv.domain.DokarkivRequest.IdType.FNR;
-import static no.nav.dolly.bestilling.dokarkiv.mapper.PdfVedlegg.PDF_VEDLEGG;
-import static no.nav.dolly.domain.resultset.dokarkiv.RsDokarkiv.JournalPostType.INNGAAENDE;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
-import org.springframework.stereotype.Component;
-
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;
@@ -15,6 +7,13 @@ import ma.glasnost.orika.MappingContext;
 import no.nav.dolly.bestilling.dokarkiv.domain.DokarkivRequest;
 import no.nav.dolly.domain.resultset.dokarkiv.RsDokarkiv;
 import no.nav.dolly.mapper.MappingStrategy;
+import org.springframework.stereotype.Component;
+
+import static java.util.Objects.isNull;
+import static no.nav.dolly.bestilling.dokarkiv.domain.DokarkivRequest.IdType.FNR;
+import static no.nav.dolly.bestilling.dokarkiv.mapper.PdfVedlegg.PDF_VEDLEGG;
+import static no.nav.dolly.domain.resultset.dokarkiv.RsDokarkiv.JournalPostType.INNGAAENDE;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Slf4j
 @Component
@@ -52,29 +51,29 @@ public class DokarkivMappingStrategy implements MappingStrategy {
                         dokarkivRequest.setBruker(DokarkivRequest.Bruker.builder()
                                 .idType(FNR)
                                 .build());
-                        fyllDokarkivDokument(dokarkivRequest);
+                        fyllDokarkivDokument(dokarkiv, dokarkivRequest);
                     }
                 })
                 .byDefault()
                 .register();
     }
 
-    private void fyllDokarkivDokument(DokarkivRequest dokarkivRequest) {
+    private void fyllDokarkivDokument(RsDokarkiv rsDokarkiv, DokarkivRequest dokarkivRequest) {
 
-        if (dokarkivRequest.getDokumenter().isEmpty()) {
+        if (rsDokarkiv.getDokumenter().isEmpty()) {
             dokarkivRequest.getDokumenter().add(new DokarkivRequest.Dokument());
         }
-        if (dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().isEmpty()) {
+        if (rsDokarkiv.getDokumenter().get(0).getDokumentvarianter().isEmpty()) {
             dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().add(new DokarkivRequest.DokumentVariant());
         }
-        if (isBlank(dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().get(0).getFiltype())) {
+        if (isBlank(rsDokarkiv.getDokumenter().get(0).getDokumentvarianter().get(0).getFiltype())) {
             dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().get(0).setFiltype(PDFA);
         }
-        if (isBlank(dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().get(0).getVariantformat())) {
+        if (isBlank(rsDokarkiv.getDokumenter().get(0).getDokumentvarianter().get(0).getVariantformat())) {
             dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().get(0).setVariantformat(ARKIV);
         }
-        if (isBlank(dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().get(0).getFysiskDokument())) {
-                dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().get(0).setFysiskDokument(PDF_VEDLEGG);
+        if (isBlank(rsDokarkiv.getDokumenter().get(0).getDokumentvarianter().get(0).getFysiskDokument())) {
+            dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().get(0).setFysiskDokument(PDF_VEDLEGG);
         }
     }
 }
