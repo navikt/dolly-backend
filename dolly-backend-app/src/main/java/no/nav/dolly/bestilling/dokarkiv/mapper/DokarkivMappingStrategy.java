@@ -78,7 +78,7 @@ public class DokarkivMappingStrategy implements MappingStrategy {
         if (!rsDokarkiv.getDokumenter().isEmpty() && !rsDokarkiv.getDokumenter().get(0).getDokumentvarianter().isEmpty()) {
             dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().clear();
             rsDokarkiv.getDokumenter().get(0).getDokumentvarianter().forEach(dokumentVariant -> {
-                log.info("Sender dokumentvariant til dokarkiv med fysisk dokument som starter: {}", dokumentVariant.getFysiskDokument().substring(0, 25));
+                log.info("Sender fysisk dokument til dokarkiv som starter med: {}", dokumentVariant.getFysiskDokument().substring(0, 25));
                 dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().add(DokarkivRequest.DokumentVariant.builder()
                         .filtype(PDFA)
                         .variantformat(ARKIV)
