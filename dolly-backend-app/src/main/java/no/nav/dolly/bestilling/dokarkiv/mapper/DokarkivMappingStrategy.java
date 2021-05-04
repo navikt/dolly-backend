@@ -51,14 +51,14 @@ public class DokarkivMappingStrategy implements MappingStrategy {
                         dokarkivRequest.setBruker(DokarkivRequest.Bruker.builder()
                                 .idType(FNR)
                                 .build());
-                        fyllDokarkivDokument(dokarkiv, dokarkivRequest);
+                        fyllDokarkivDokument(dokarkivRequest);
                     }
                 })
                 .byDefault()
                 .register();
     }
 
-    private void fyllDokarkivDokument(RsDokarkiv rsDokarkiv, DokarkivRequest dokarkivRequest) {
+    private void fyllDokarkivDokument(DokarkivRequest dokarkivRequest) {
 
         if (dokarkivRequest.getDokumenter().isEmpty()) {
             dokarkivRequest.getDokumenter().add(new DokarkivRequest.Dokument());
@@ -74,17 +74,6 @@ public class DokarkivMappingStrategy implements MappingStrategy {
         }
         if (isBlank(dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().get(0).getFysiskDokument())) {
             dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().get(0).setFysiskDokument(PDF_VEDLEGG);
-        }
-        if (!rsDokarkiv.getDokumenter().isEmpty() && !rsDokarkiv.getDokumenter().get(0).getDokumentvarianter().isEmpty()) {
-            dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().clear();
-            rsDokarkiv.getDokumenter().get(0).getDokumentvarianter().forEach(dokumentVariant -> {
-                log.info("Sender fysisk dokument til dokarkiv som starter med: {}", dokumentVariant.getFysiskDokument().substring(0, 25));
-                dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().add(DokarkivRequest.DokumentVariant.builder()
-                        .filtype(PDFA)
-                        .variantformat(ARKIV)
-                        .fysiskDokument(dokumentVariant.getFysiskDokument())
-                        .build());
-            });
         }
     }
 }
