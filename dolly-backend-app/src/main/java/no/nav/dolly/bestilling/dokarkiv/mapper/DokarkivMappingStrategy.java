@@ -60,20 +60,29 @@ public class DokarkivMappingStrategy implements MappingStrategy {
 
     private void fyllDokarkivDokument(RsDokarkiv rsDokarkiv, DokarkivRequest dokarkivRequest) {
 
-        if (rsDokarkiv.getDokumenter().isEmpty()) {
+        if (dokarkivRequest.getDokumenter().isEmpty()) {
             dokarkivRequest.getDokumenter().add(new DokarkivRequest.Dokument());
         }
-        if (rsDokarkiv.getDokumenter().get(0).getDokumentvarianter().isEmpty()) {
+        if (dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().isEmpty()) {
             dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().add(new DokarkivRequest.DokumentVariant());
         }
-        if (isBlank(rsDokarkiv.getDokumenter().get(0).getDokumentvarianter().get(0).getFiltype())) {
+        if (isBlank(dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().get(0).getFiltype())) {
             dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().get(0).setFiltype(PDFA);
         }
-        if (isBlank(rsDokarkiv.getDokumenter().get(0).getDokumentvarianter().get(0).getVariantformat())) {
+        if (isBlank(dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().get(0).getVariantformat())) {
             dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().get(0).setVariantformat(ARKIV);
         }
-        if (isBlank(rsDokarkiv.getDokumenter().get(0).getDokumentvarianter().get(0).getFysiskDokument())) {
+        if (isBlank(dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().get(0).getFysiskDokument())) {
             dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().get(0).setFysiskDokument(PDF_VEDLEGG);
+        }
+        if (!rsDokarkiv.getDokumenter().isEmpty() && !rsDokarkiv.getDokumenter().get(0).getDokumentvarianter().isEmpty()) {
+            dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().clear();
+            rsDokarkiv.getDokumenter().get(0).getDokumentvarianter().forEach(dokumentVariant ->
+                    dokarkivRequest.getDokumenter().get(0).getDokumentvarianter().add(DokarkivRequest.DokumentVariant.builder()
+                            .filtype(PDFA)
+                            .variantformat(ARKIV)
+                            .fysiskDokument(dokumentVariant.getFysiskDokument())
+                            .build()));
         }
     }
 }
