@@ -51,11 +51,13 @@ public class DollyPersonCache {
                     .map(Relasjon::getPersonRelasjonMed)
                     .map(Person::getIdent)
                     .collect(Collectors.toList()));
-            dollyPerson.setBarn(person.getRelasjoner().stream()
+            dollyPerson.setBarn(Stream.of(person.getRelasjoner().stream()
                     .filter(Relasjon::isBarn)
                     .map(Relasjon::getPersonRelasjonMed)
-                    .map(Person::getIdent)
-                    .collect(Collectors.toList()));
+                    .map(Person::getIdent), person.getRelasjoner().stream()
+                    .filter(Relasjon::isPartner)
+                    .map(Relasjon::getPersonRelasjonMed)
+                    .map(Person::getIdent)).flatMap(Stream::distinct).collect(Collectors.toList()));
             dollyPerson.setForeldre(person.getRelasjoner().stream()
                     .filter(Relasjon::isForelder)
                     .map(Relasjon::getPersonRelasjonMed)
