@@ -55,7 +55,7 @@ public class DollyPersonCache {
 
             dollyPerson.getPersondetaljer().addAll(tpsfService.hentTestpersoner(
                     dollyPerson.getPartnere().stream()
-                            .filter(ident -> !dollyPerson.getPersondetaljer().contains(ident))
+                            .filter(ident -> nonNull(dollyPerson.getPerson(ident)))
                             .collect(Collectors.toList())));
 
             dollyPerson.setBarn(new ArrayList<>(Stream.of(
