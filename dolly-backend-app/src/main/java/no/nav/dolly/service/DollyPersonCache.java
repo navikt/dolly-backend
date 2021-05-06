@@ -46,18 +46,26 @@ public class DollyPersonCache {
             }
 
             Person person = dollyPerson.getPerson(dollyPerson.getHovedperson());
-            dollyPerson.setPartnere(person.getRelasjoner().stream()
+            List<String> partnereStrings = person.getRelasjoner().stream()
                     .filter(Relasjon::isPartner)
                     .map(Relasjon::getPersonRelasjonMed)
                     .map(Person::getIdent)
-                    .collect(Collectors.toList()));
-            dollyPerson.setBarn(Stream.of(person.getRelasjoner().stream()
-                    .filter(Relasjon::isBarn)
-                    .map(Relasjon::getPersonRelasjonMed)
-                    .map(Person::getIdent), person.getRelasjoner().stream()
-                    .filter(Relasjon::isPartner)
-                    .map(Relasjon::getPersonRelasjonMed)
-                    .map(Person::getIdent)).flatMap(Stream::distinct).collect(Collectors.toList()));
+                    .collect(Collectors.toList());
+
+            List<Person> partnere = partnereStrings.stream().map(dollyPerson::getPerson).collect(Collectors.toList());
+
+            dollyPerson.setPartnere(partnereStrings);
+            dollyPerson.setBarn(Stream.of(
+                    person.getRelasjoner().stream()
+                            .filter(Relasjon::isBarn)
+                            .map(Relasjon::getPersonRelasjonMed)
+                            .map(Person::getIdent),
+                    partnere.stream().map(Person::getRelasjoner)
+                            .flatMap(relasjon -> relasjon.stream().filter(Relasjon::isBarn)
+                                    .map(Relasjon::getPersonRelasjonMed)
+                                    .map(Person::getIdent))
+
+            ).flatMap(Stream::distinct).collect(Collectors.toList()));
             dollyPerson.setForeldre(person.getRelasjoner().stream()
                     .filter(Relasjon::isForelder)
                     .map(Relasjon::getPersonRelasjonMed)
