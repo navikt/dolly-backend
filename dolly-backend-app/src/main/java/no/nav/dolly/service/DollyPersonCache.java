@@ -18,6 +18,7 @@ import no.nav.dolly.domain.resultset.tpsf.RsVergemaal;
 import no.nav.dolly.domain.resultset.tpsf.adresse.IdentHistorikk;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -45,27 +46,35 @@ public class DollyPersonCache {
                 dollyPerson.getPersondetaljer().addAll(tpsfService.hentTestpersoner(List.of(dollyPerson.getHovedperson())));
             }
 
-            Person person = dollyPerson.getPerson(dollyPerson.getHovedperson());
-            List<String> partnereStrings = person.getRelasjoner().stream()
+            var person = dollyPerson.getPerson(dollyPerson.getHovedperson());
+            dollyPerson.setPartnere(person.getRelasjoner().stream()
                     .filter(Relasjon::isPartner)
                     .map(Relasjon::getPersonRelasjonMed)
                     .map(Person::getIdent)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList()));
 
-            List<Person> partnere = partnereStrings.stream().map(dollyPerson::getPerson).collect(Collectors.toList());
+            dollyPerson.getPersondetaljer().addAll(tpsfService.hentTestpersoner(
+                    dollyPerson.getPartnere().stream()
+                            .filter(ident -> !dollyPerson.getPersondetaljer().contains(ident))
+                            .collect(Collectors.toList())));
 
-            dollyPerson.setPartnere(partnereStrings);
-            dollyPerson.setBarn(Stream.of(
+            dollyPerson.setBarn(new ArrayList<>(Stream.of(
                     person.getRelasjoner().stream()
                             .filter(Relasjon::isBarn)
                             .map(Relasjon::getPersonRelasjonMed)
-                            .map(Person::getIdent),
-                    partnere.stream().map(Person::getRelasjoner)
-                            .flatMap(relasjon -> relasjon.stream().filter(Relasjon::isBarn)
-                                    .map(Relasjon::getPersonRelasjonMed)
-                                    .map(Person::getIdent))
+                            .map(Person::getIdent)
+                            .collect(Collectors.toSet()),
+                    dollyPerson.getPartnere().stream()
+                            .map(partner -> dollyPerson.getPerson(partner))
+                            .map(Person::getRelasjoner)
+                            .flatMap(Collection::stream)
+                            .filter(Relasjon::isBarn)
+                            .map(Relasjon::getPersonRelasjonMed)
+                            .map(Person::getIdent)
+                            .collect(Collectors.toSet()))
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toSet())));
 
-            ).flatMap(Stream::distinct).collect(Collectors.toList()));
             dollyPerson.setForeldre(person.getRelasjoner().stream()
                     .filter(Relasjon::isForelder)
                     .map(Relasjon::getPersonRelasjonMed)
@@ -121,36 +130,12 @@ public class DollyPersonCache {
 
     public DollyPerson prepareTpsPersoner(Person person) {
 
+        var personer = new ArrayList<Person>();
+        personer.add(person);
+
         return fetchIfEmpty(DollyPerson.builder()
                 .hovedperson(person.getIdent())
-                .partnere(person.getRelasjoner().stream()
-                        .filter(Relasjon::isPartner)
-                        .map(Relasjon::getPersonRelasjonMed)
-                        .map(Person::getIdent)
-                        .collect(Collectors.toList()))
-                .barn(person.getRelasjoner().stream()
-                        .filter(Relasjon::isBarn)
-                        .map(Relasjon::getPersonRelasjonMed)
-                        .map(Person::getIdent)
-                        .collect(Collectors.toList()))
-                .foreldre(person.getRelasjoner().stream()
-                        .filter(Relasjon::isForelder)
-                        .map(Relasjon::getPersonRelasjonMed)
-                        .map(Person::getIdent)
-                        .collect(Collectors.toList()))
-                .verger(person.getVergemaal().stream()
-                        .map(RsVergemaal::getVerge)
-                        .map(RsSimplePerson::getIdent)
-                        .collect(Collectors.toList()))
-                .fullmektige(person.getFullmakt().stream()
-                        .map(RsFullmakt::getFullmektig)
-                        .map(RsSimplePerson::getIdent)
-                        .collect(Collectors.toList()))
-                .identhistorikk(person.getIdentHistorikk().stream()
-                        .map(IdentHistorikk::getAliasPerson)
-                        .map(Person::getIdent)
-                        .collect(Collectors.toList()))
-                .master(Master.TPSF)
+                .persondetaljer(personer)
                 .build());
     }
 
