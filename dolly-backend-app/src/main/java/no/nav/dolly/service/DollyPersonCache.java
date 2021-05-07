@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -63,15 +64,16 @@ public class DollyPersonCache {
                             .filter(Relasjon::isBarn)
                             .map(Relasjon::getPersonRelasjonMed)
                             .map(Person::getIdent)
-                            .collect(Collectors.toList()),
+                            .collect(Collectors.toSet()),
                     dollyPerson.getPartnere().stream()
                             .map(dollyPerson::getPerson)
+                            .filter(Objects::nonNull)
                             .map(Person::getRelasjoner)
                             .flatMap(Collection::stream)
                             .filter(Relasjon::isBarn)
                             .map(Relasjon::getPersonRelasjonMed)
                             .map(Person::getIdent)
-                            .collect(Collectors.toList()))
+                            .collect(Collectors.toSet()))
                     .flatMap(Collection::stream)
                     .collect(Collectors.toSet())));
 
