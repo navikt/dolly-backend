@@ -63,7 +63,7 @@ public class DollyPersonCache {
                             .filter(Relasjon::isBarn)
                             .map(Relasjon::getPersonRelasjonMed)
                             .map(Person::getIdent)
-                            .collect(Collectors.toSet()),
+                            .collect(Collectors.toList()),
                     dollyPerson.getPartnere().stream()
                             .map(dollyPerson::getPerson)
                             .map(Person::getRelasjoner)
@@ -71,7 +71,7 @@ public class DollyPersonCache {
                             .filter(Relasjon::isBarn)
                             .map(Relasjon::getPersonRelasjonMed)
                             .map(Person::getIdent)
-                            .collect(Collectors.toSet()))
+                            .collect(Collectors.toList()))
                     .flatMap(Collection::stream)
                     .collect(Collectors.toSet())));
 
