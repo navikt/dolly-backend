@@ -69,6 +69,7 @@ public class ArenaMappingStrategyTest {
                 .build(), no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyBruker.class);
 
         assertThat(arenaNyBruker.getUtenServicebehov(), is(nullValue()));
+        assertThat(arenaNyBruker.getAktiveringsDato(), is(nullValue()));
         assertThat(arenaNyBruker.getKvalifiseringsgruppe(), is(equalTo(VARIG)));
     }
 
