@@ -42,7 +42,7 @@ public class ArenaMappingStrategy implements MappingStrategy {
                             if (nonNull(arenadata.getInaktiveringDato())) {
                                 arenaNyBruker.getUtenServicebehov().setStansDato(arenadata.getInaktiveringDato().toLocalDate());
                             }
-                        } else if (!arenadata.getAap().isEmpty() || !arenadata.getAap115().isEmpty()) {
+                        } else if (!arenadata.getAap().isEmpty() || !arenadata.getAap115().isEmpty() || !arenadata.getDagpenger().isEmpty()) {
                             arenaNyBruker.setAktiveringsDato(
                                     Stream.of(
                                             arenadata.getAap().stream()
@@ -50,11 +50,20 @@ public class ArenaMappingStrategy implements MappingStrategy {
                                                     .map(RsArenaAap::getFraDato),
                                             arenadata.getAap115().stream()
                                                     .filter(Objects::nonNull)
-                                                    .map(RsArenaAap115::getFraDato))
+                                                    .map(RsArenaAap115::getFraDato),
+                                            arenadata.getDagpenger().stream()
+                                                    .filter(Objects::nonNull)
+                                                    .map(RsArenaDagpenger::getFraDato))
                                             .flatMap(Stream::distinct)
                                             .map(LocalDateTime::toLocalDate)
                                             .min(LocalDate::compareTo)
                                             .orElse(null));
+                        }
+                        if (arenadata.getAap().isEmpty()) {
+                            arenaNyBruker.setAap(null);
+                        }
+                        if (arenadata.getAap115().isEmpty()) {
+                            arenaNyBruker.setAap115(null);
                         }
                     }
                 })
