@@ -118,10 +118,10 @@ public class ArenaForvalterClient implements ClientRegister {
 
         try {
             ResponseEntity<ArenaNyeDagpengerResponse> response = arenaForvalterConsumer.postArenaDagpenger(arenaNyeDagpenger);
+            log.info("Dagpenger mottatt: \n" + Json.pretty(response));
             if (response.hasBody()) {
                 if (nonNull((response.getBody().getNyeDagp()))) {
                     response.getBody().getNyeDagp().forEach(dagpenger -> {
-                        log.info("Dagpenger mottatt: \n" + Json.pretty(dagpenger));
 //                        if ("OK".equals(dagpenger.getStatus())) { //TODO FIX THIS
 //                            status.append(',')
 //                                    .append(dagpenger.getMiljoe())
