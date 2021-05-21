@@ -2,7 +2,9 @@ name: Deploy dev
 
 on:
   push:
-    branches: feature/dagpenger
+    branches:
+      - master
+      - feature/dagpenger
 
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/dolly-backend:${{ github.sha }}
