@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -76,7 +75,6 @@ public class ArenaMappingStrategy implements MappingStrategy {
                     public void mapAtoB(Arenadata arenadata, ArenaDagpenger arenaDagpenger, MappingContext context) {
                         RsArenaDagpenger rsArenaDagpenger = arenadata.getDagpenger().get(0);
 
-                        List<NyeDagp> nyeDagp = arenaDagpenger.getNyeDagp();
                         NyeDagp dagpenger = new NyeDagp();
 
                         dagpenger.setFraDato(rsArenaDagpenger.getFraDato().toLocalDate());
@@ -88,7 +86,7 @@ public class ArenaMappingStrategy implements MappingStrategy {
                         if (nonNull(rsArenaDagpenger.getMottattDato())) {
                             dagpenger.setMottattDato(rsArenaDagpenger.getMottattDato().toLocalDate());
                         }
-                        nyeDagp.add(dagpenger);
+                        arenaDagpenger.getNyeDagp().add(dagpenger);
                     }
                 })
                 .byDefault()
