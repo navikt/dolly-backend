@@ -117,6 +117,7 @@ public class ArenaForvalterClient implements ClientRegister {
     private void sendArenadagpenger(ArenaDagpenger arenaNyeDagpenger, StringBuilder status) {
 
         try {
+            log.info("Sender dagpenger: \n" + Json.pretty(arenaNyeDagpenger));
             ResponseEntity<ArenaNyeDagpengerResponse> response = arenaForvalterConsumer.postArenaDagpenger(arenaNyeDagpenger);
             log.info("Dagpenger mottatt: \n" + Json.pretty(response));
             if (response.hasBody()) {
