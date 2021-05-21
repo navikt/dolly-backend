@@ -8,7 +8,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.Objects.isNull;
 
 @Getter
 @Setter
@@ -35,6 +38,14 @@ public class ArenaDagpenger {
         private LocalDate tilDato;
         private LocalDate mottattDato;
         private String utfall;
+
+        public List<Vilkaar> getVilkaar() {
+            if (isNull(vilkaar)) {
+                return new ArrayList<>();
+            }
+            return vilkaar;
+        }
+
         private List<Vilkaar> vilkaar;
     }
 
@@ -49,4 +60,10 @@ public class ArenaDagpenger {
         private String status;
     }
 
+    public List<NyeDagp> getNyeDagp() {
+        if (isNull(nyeDagp)) {
+            return new ArrayList<>();
+        }
+        return nyeDagp;
+    }
 }
