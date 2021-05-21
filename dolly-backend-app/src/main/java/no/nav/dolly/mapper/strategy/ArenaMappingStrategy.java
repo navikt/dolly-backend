@@ -4,15 +4,19 @@ import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaBrukerUtenServicebehov;
+import no.nav.dolly.domain.resultset.arenaforvalter.ArenaDagpenger;
+import no.nav.dolly.domain.resultset.arenaforvalter.ArenaDagpenger.NyeDagp;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyBruker;
 import no.nav.dolly.domain.resultset.arenaforvalter.Arenadata;
 import no.nav.dolly.domain.resultset.arenaforvalter.RsArenaAap;
 import no.nav.dolly.domain.resultset.arenaforvalter.RsArenaAap115;
+import no.nav.dolly.domain.resultset.arenaforvalter.RsArenaDagpenger;
 import no.nav.dolly.mapper.MappingStrategy;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -22,6 +26,7 @@ import static no.nav.dolly.domain.resultset.arenaforvalter.ArenaKvalifiseringsgr
 
 @Component
 public class ArenaMappingStrategy implements MappingStrategy {
+
 
     @Override
     public void register(MapperFactory factory) {
@@ -51,6 +56,29 @@ public class ArenaMappingStrategy implements MappingStrategy {
                                             .min(LocalDate::compareTo)
                                             .orElse(null));
                         }
+                    }
+                })
+                .byDefault()
+                .register();
+
+        factory.classMap(Arenadata.class, ArenaDagpenger.class)
+                .customize(new CustomMapper<>() {
+                    @Override
+                    public void mapAtoB(Arenadata arenadata, ArenaDagpenger arenaDagpenger, MappingContext context) {
+                        RsArenaDagpenger rsArenaDagpenger = arenadata.getDagpenger().get(0);
+                        List<NyeDagp> nyeDagp = arenaDagpenger.getNyeDagp();
+                        NyeDagp dagpenger = new NyeDagp();
+
+                        dagpenger.setFraDato(rsArenaDagpenger.getFraDato().toLocalDate());
+                        dagpenger.setRettighetKode(rsArenaDagpenger.getRettighetKode());
+
+                        if (nonNull(rsArenaDagpenger.getTilDato())) {
+                            dagpenger.setTilDato(rsArenaDagpenger.getTilDato().toLocalDate());
+                        }
+                        if (nonNull(rsArenaDagpenger.getMottattDato())) {
+                            dagpenger.setMottattDato(rsArenaDagpenger.getMottattDato().toLocalDate());
+                        }
+                        nyeDagp.add(dagpenger);
                     }
                 })
                 .byDefault()

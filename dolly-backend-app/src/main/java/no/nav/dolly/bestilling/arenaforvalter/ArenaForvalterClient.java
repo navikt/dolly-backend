@@ -1,14 +1,6 @@
 package no.nav.dolly.bestilling.arenaforvalter;
 
-import static java.util.Collections.emptyList;
-import static java.util.Objects.nonNull;
-
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-
+import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
@@ -16,10 +8,22 @@ import no.nav.dolly.bestilling.ClientRegister;
 import no.nav.dolly.domain.jpa.BestillingProgress;
 import no.nav.dolly.domain.resultset.RsDollyUtvidetBestilling;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaArbeidssokerBruker;
+import no.nav.dolly.domain.resultset.arenaforvalter.ArenaDagpenger;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyBruker;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeBrukere;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeBrukereResponse;
+import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeDagpenger;
+import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeDagpengerResponse;
 import no.nav.dolly.domain.resultset.tpsf.DollyPerson;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.Collections.emptyList;
+import static java.util.Objects.nonNull;
 
 @Slf4j
 @Service
@@ -58,6 +62,17 @@ public class ArenaForvalterClient implements ClientRegister {
                 });
 
                 sendArenadata(arenaNyeBrukere, status);
+
+                if (!bestilling.getArenaforvalter().getDagpenger().isEmpty()) {
+                    ArenaNyeDagpenger arenaNyeDagpenger = new ArenaNyeDagpenger();
+                    availEnvironments.forEach(environment -> {
+                        ArenaDagpenger arenaDagpenger = mapperFacade.map(bestilling.getArenaforvalter(), ArenaDagpenger.class);
+                        arenaDagpenger.setPersonident(dollyPerson.getHovedperson());
+                        arenaDagpenger.setMiljoe(environment);
+                        arenaNyeDagpenger.getNyeDagp().add(arenaDagpenger);
+                    });
+                    sendArenadagpenger(arenaNyeDagpenger, status);
+                }
             }
 
             List<String> notSupportedEnvironments = new ArrayList<>(bestilling.getEnvironments());
@@ -100,6 +115,47 @@ public class ArenaForvalterClient implements ClientRegister {
             log.error("Feilet å inaktivere testperson: {} i ArenaForvalter: ", ident, e);
         }
 
+    }
+
+    private void sendArenadagpenger(ArenaNyeDagpenger arenaNyeDagpenger, StringBuilder status) {
+
+        try {
+            ResponseEntity<ArenaNyeDagpengerResponse> response = arenaForvalterConsumer.postArenaDagpenger(arenaNyeDagpenger);
+            if (response.hasBody()) {
+                if (nonNull((response.getBody().getNyeDagp()))) {
+                    response.getBody().getNyeDagp().forEach(dagpenger -> {
+                        log.info("Dagpenger mottatt: \n" + Json.pretty(dagpenger));
+//                        if ("OK".equals(dagpenger.getStatus())) { //TODO FIX THIS
+//                            status.append(',')
+//                                    .append(dagpenger.getMiljoe())
+//                                    .append('$')
+//                                    .append(dagpenger.getStatus());
+//                        }
+                    });
+                }
+                if (nonNull(response.getBody().getNyeDagpFeilList())) {
+                    response.getBody().getNyeDagpFeilList().forEach(brukerfeil -> {
+                        status.append(',')
+                                .append(brukerfeil.getMiljoe())
+                                .append("$Feilstatus: \"")
+                                .append(brukerfeil.getNyDagpFeilstatus())
+                                .append("\". Se detaljer i logg.");
+                        log.error("Feilet å opprette dagpenger for testperson {} i ArenaForvalter på miljø: {}, feilstatus: {}, melding: \"{}\"",
+                                brukerfeil.getPersonident(), brukerfeil.getMiljoe(), brukerfeil.getNyDagpFeilstatus(), brukerfeil.getMelding());
+                    });
+                }
+            }
+
+        } catch (RuntimeException e) {
+
+            arenaNyeDagpenger.getNyeDagp().forEach(bruker -> {
+                status.append(',')
+                        .append(bruker.getMiljoe())
+                        .append('$');
+                appendErrorText(status, e);
+            });
+            log.error("Feilet å legge til dagpenger i ArenaForvalter: ", e);
+        }
     }
 
     private void sendArenadata(ArenaNyeBrukere arenaNyeBrukere, StringBuilder status) {
