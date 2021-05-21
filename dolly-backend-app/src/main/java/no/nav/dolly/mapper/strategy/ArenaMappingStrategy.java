@@ -1,5 +1,7 @@
 package no.nav.dolly.mapper.strategy;
 
+import io.swagger.v3.core.util.Json;
+import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
@@ -23,6 +25,7 @@ import static java.util.Objects.nonNull;
 import static no.nav.dolly.domain.resultset.arenaforvalter.ArenaBrukertype.UTEN_SERVICEBEHOV;
 import static no.nav.dolly.domain.resultset.arenaforvalter.ArenaKvalifiseringsgruppe.IKVAL;
 
+@Slf4j
 @Component
 public class ArenaMappingStrategy implements MappingStrategy {
 
@@ -74,6 +77,8 @@ public class ArenaMappingStrategy implements MappingStrategy {
                     @Override
                     public void mapAtoB(Arenadata arenadata, ArenaDagpenger arenaDagpenger, MappingContext context) {
                         RsArenaDagpenger rsArenaDagpenger = arenadata.getDagpenger().get(0);
+                        log.info("ArenaData" + Json.pretty(arenadata)); //TODO: Slett meg
+                        log.info("RsArenaDagpenger" + Json.pretty(rsArenaDagpenger)); //TODO: Slett meg
 
                         NyeDagp dagpenger = new NyeDagp();
 
