@@ -63,6 +63,7 @@ public class ArenaForvalterClient implements ClientRegister {
                 sendArenadata(arenaNyeBrukere, status);
 
                 if (!bestilling.getArenaforvalter().getDagpenger().isEmpty()) {
+                    log.info("Bestilling dagpenger fra Dolly: \n" + Json.pretty(bestilling.getArenaforvalter().getDagpenger()));
                     availEnvironments.forEach(environment -> {
                         ArenaDagpenger arenaDagpenger = mapperFacade.map(bestilling.getArenaforvalter(), ArenaDagpenger.class);
                         arenaDagpenger.setPersonident(dollyPerson.getHovedperson());
