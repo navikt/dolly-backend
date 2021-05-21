@@ -3,9 +3,9 @@ package no.nav.dolly.bestilling.arenaforvalter;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaArbeidssokerBruker;
+import no.nav.dolly.domain.resultset.arenaforvalter.ArenaDagpenger;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeBrukere;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeBrukereResponse;
-import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeDagpenger;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeDagpengerResponse;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.properties.ProvidersProps;
@@ -62,7 +62,7 @@ public class ArenaForvalterConsumer {
     }
 
     @Timed(name = "providers", tags = { "operation", "arena_postDagpenger" })
-    public ResponseEntity<ArenaNyeDagpengerResponse> postArenaDagpenger(ArenaNyeDagpenger arenaDagpenger) {
+    public ResponseEntity<ArenaNyeDagpengerResponse> postArenaDagpenger(ArenaDagpenger arenaDagpenger) {
         return restTemplate.exchange(RequestEntity.post(
                 URI.create(providersProps.getArenaForvalter().getUrl() + ARENAFORVALTER_DAGPENGER))
                 .header(HEADER_NAV_CALL_ID, generateCallId())

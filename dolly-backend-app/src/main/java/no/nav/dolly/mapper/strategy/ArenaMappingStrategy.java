@@ -75,6 +75,7 @@ public class ArenaMappingStrategy implements MappingStrategy {
                     @Override
                     public void mapAtoB(Arenadata arenadata, ArenaDagpenger arenaDagpenger, MappingContext context) {
                         RsArenaDagpenger rsArenaDagpenger = arenadata.getDagpenger().get(0);
+
                         List<NyeDagp> nyeDagp = arenaDagpenger.getNyeDagp();
                         NyeDagp dagpenger = new NyeDagp();
 

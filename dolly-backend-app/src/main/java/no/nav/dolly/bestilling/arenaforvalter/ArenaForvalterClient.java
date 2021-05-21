@@ -12,7 +12,6 @@ import no.nav.dolly.domain.resultset.arenaforvalter.ArenaDagpenger;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyBruker;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeBrukere;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeBrukereResponse;
-import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeDagpenger;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeDagpengerResponse;
 import no.nav.dolly.domain.resultset.tpsf.DollyPerson;
 import org.springframework.http.ResponseEntity;
@@ -64,14 +63,12 @@ public class ArenaForvalterClient implements ClientRegister {
                 sendArenadata(arenaNyeBrukere, status);
 
                 if (!bestilling.getArenaforvalter().getDagpenger().isEmpty()) {
-                    ArenaNyeDagpenger arenaNyeDagpenger = new ArenaNyeDagpenger();
                     availEnvironments.forEach(environment -> {
                         ArenaDagpenger arenaDagpenger = mapperFacade.map(bestilling.getArenaforvalter(), ArenaDagpenger.class);
                         arenaDagpenger.setPersonident(dollyPerson.getHovedperson());
                         arenaDagpenger.setMiljoe(environment);
-                        arenaNyeDagpenger.getNyeDagp().add(arenaDagpenger);
+                        sendArenadagpenger(arenaDagpenger, status);
                     });
-                    sendArenadagpenger(arenaNyeDagpenger, status);
                 }
             }
 
@@ -117,7 +114,7 @@ public class ArenaForvalterClient implements ClientRegister {
 
     }
 
-    private void sendArenadagpenger(ArenaNyeDagpenger arenaNyeDagpenger, StringBuilder status) {
+    private void sendArenadagpenger(ArenaDagpenger arenaNyeDagpenger, StringBuilder status) {
 
         try {
             ResponseEntity<ArenaNyeDagpengerResponse> response = arenaForvalterConsumer.postArenaDagpenger(arenaNyeDagpenger);
@@ -148,12 +145,10 @@ public class ArenaForvalterClient implements ClientRegister {
 
         } catch (RuntimeException e) {
 
-            arenaNyeDagpenger.getNyeDagp().forEach(bruker -> {
-                status.append(',')
-                        .append(bruker.getMiljoe())
-                        .append('$');
-                appendErrorText(status, e);
-            });
+            status.append(',')
+                    .append(arenaNyeDagpenger.getMiljoe())
+                    .append('$');
+            appendErrorText(status, e);
             log.error("Feilet å legge til dagpenger i ArenaForvalter: ", e);
         }
     }
