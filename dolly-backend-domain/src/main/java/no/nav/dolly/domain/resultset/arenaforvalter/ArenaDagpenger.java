@@ -34,7 +34,7 @@ public class ArenaDagpenger {
     public static class NyeDagp {
 
         private String rettighetKode;
-        private LocalDate fraDato;
+        private LocalDate fraDato; // TODO: Endre til dagpenge eller vedtak dato, samme for til og mottatt
         private LocalDate tilDato;
         private LocalDate mottattDato;
         private String utfall;
