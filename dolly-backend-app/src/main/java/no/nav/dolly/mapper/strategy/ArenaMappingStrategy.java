@@ -134,9 +134,9 @@ public class ArenaMappingStrategy implements MappingStrategy {
                         if (nonNull(rsArenaDagpenger.getTilDato())) {
                             dagpenger.getVedtaksperiode().setTom(rsArenaDagpenger.getTilDato().toLocalDate());
                         }
-                        if (nonNull(rsArenaDagpenger.getMottattDato())) {
-                            dagpenger.setDatoMottatt(rsArenaDagpenger.getMottattDato().toLocalDate());
-                        }
+                        dagpenger.setDatoMottatt(nonNull(rsArenaDagpenger.getMottattDato())
+                                ? rsArenaDagpenger.getMottattDato().toLocalDate()
+                                : rsArenaDagpenger.getFraDato().toLocalDate());
 
                         arenaDagpenger.setNyeDagp(List.of(dagpenger));
                     }
