@@ -1,6 +1,5 @@
 package no.nav.dolly.mapper.strategy;
 
-import io.swagger.v3.core.util.Json;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;
@@ -78,19 +77,67 @@ public class ArenaMappingStrategy implements MappingStrategy {
                     @Override
                     public void mapAtoB(Arenadata arenadata, ArenaDagpenger arenaDagpenger, MappingContext context) {
                         RsArenaDagpenger rsArenaDagpenger = arenadata.getDagpenger().get(0);
-                        log.info("RsArenaDagpenger" + Json.pretty(rsArenaDagpenger)); //TODO: Slett meg
 
                         NyeDagp dagpenger = new NyeDagp();
 
-                        dagpenger.setFraDato(rsArenaDagpenger.getFraDato().toLocalDate());
+                        dagpenger.setVedtaksperiode(ArenaDagpenger.Vedtaksperiode.builder()
+                                .fom(rsArenaDagpenger.getFraDato().toLocalDate())
+                                .build());
+
                         dagpenger.setRettighetKode(rsArenaDagpenger.getRettighetKode());
 
+                        dagpenger.setDagpengeperiode(ArenaDagpenger.Dagpengeperiode.builder()
+                                .nullstillPeriodeteller("J")
+                                .nullstillPermitteringsteller("N")
+                                .nullstillPermitteringstellerFisk("N")
+                                .build());
+
+                        dagpenger.setGodkjenningerReellArbeidssoker(ArenaDagpenger.GodkjenningerReellArbeidssoker.builder()
+                                .godkjentDeltidssoker("N")
+                                .godkjentLokalArbeidssoker("N")
+                                .godkjentUtdanning("J")
+                                .build());
+
+                        dagpenger.setTaptArbeidstid(ArenaDagpenger.TaptArbeidstid.builder()
+                                .anvedtRegelKode("GJSNITT12MND")
+                                .fastsattArbeidstid(30)
+                                .naavaerendeArbeidstid(0)
+                                .build());
+
+                        dagpenger.setUtfall("JA");
+
+                        dagpenger.setVedtaktype("O");
+
+                        dagpenger.setVilkaar(List.of(
+                                new ArenaDagpenger.Vilkaar("GEOMOB", "J"),
+                                new ArenaDagpenger.Vilkaar("HELDELT", "J"),
+                                new ArenaDagpenger.Vilkaar("IFAFP", "J"),
+                                new ArenaDagpenger.Vilkaar("IFFODSP", "J"),
+                                new ArenaDagpenger.Vilkaar("IFGAFISK", "J"),
+                                new ArenaDagpenger.Vilkaar("IFSYKEP", "J"),
+                                new ArenaDagpenger.Vilkaar("OATVIST", "J"),
+                                new ArenaDagpenger.Vilkaar("PATVIST", "J"),
+                                new ArenaDagpenger.Vilkaar("MEDLFOLKT", "J"),
+                                new ArenaDagpenger.Vilkaar("MELDMØT", "J"),
+                                new ArenaDagpenger.Vilkaar("ARBFØR", "J"),
+                                new ArenaDagpenger.Vilkaar("ARBVILL", "J"),
+                                new ArenaDagpenger.Vilkaar("INORGE", "J"),
+                                new ArenaDagpenger.Vilkaar("TILTDELT", "J"),
+                                new ArenaDagpenger.Vilkaar("UNDER67", "J"),
+                                new ArenaDagpenger.Vilkaar("UNDERUTD", "J"),
+                                new ArenaDagpenger.Vilkaar("UTESTENG", "J"),
+                                new ArenaDagpenger.Vilkaar("IFUFTRY", "J"),
+                                new ArenaDagpenger.Vilkaar("TAPTINNT", "J"),
+                                new ArenaDagpenger.Vilkaar("MOTTATTDOK", "J")
+                        ));
+
                         if (nonNull(rsArenaDagpenger.getTilDato())) {
-                            dagpenger.setTilDato(rsArenaDagpenger.getTilDato().toLocalDate());
+                            dagpenger.getVedtaksperiode().setTom(rsArenaDagpenger.getTilDato().toLocalDate());
                         }
                         if (nonNull(rsArenaDagpenger.getMottattDato())) {
-                            dagpenger.setMottattDato(rsArenaDagpenger.getMottattDato().toLocalDate());
+                            dagpenger.setDatoMottatt(rsArenaDagpenger.getMottattDato().toLocalDate());
                         }
+
                         arenaDagpenger.setNyeDagp(List.of(dagpenger));
                     }
                 })

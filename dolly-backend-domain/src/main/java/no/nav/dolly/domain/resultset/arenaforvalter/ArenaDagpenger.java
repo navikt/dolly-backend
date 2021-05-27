@@ -34,9 +34,12 @@ public class ArenaDagpenger {
     public static class NyeDagp {
 
         private String rettighetKode;
-        private LocalDate fraDato; // TODO: Endre til dagpenge eller vedtak dato, samme for til og mottatt
-        private LocalDate tilDato;
-        private LocalDate mottattDato;
+        private LocalDate datoMottatt;
+        private Dagpengeperiode dagpengeperiode;
+        private GodkjenningerReellArbeidssoker godkjenningerReellArbeidssoker;
+        private TaptArbeidstid taptArbeidstid;
+        private Vedtaksperiode vedtaksperiode;
+        private String vedtaktype;
         private String utfall;
 
         public List<Vilkaar> getVilkaar() {
@@ -58,6 +61,51 @@ public class ArenaDagpenger {
 
         private String kode;
         private String status;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Dagpengeperiode {
+
+        private String nullstillPeriodeteller;
+        private String nullstillPermitteringsteller;
+        private String nullstillPermitteringstellerFisk;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Vedtaksperiode {
+        private LocalDate fom;
+        private LocalDate tom;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TaptArbeidstid {
+
+        private String anvedtRegelKode;
+        private Integer fastsattArbeidstid;
+        private Integer naavaerendeArbeidstid;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GodkjenningerReellArbeidssoker {
+        private String godkjentDeltidssoker;
+        private String godkjentLokalArbeidssoker;
+        private String godkjentUtdanning;
     }
 
     public List<NyeDagp> getNyeDagp() {

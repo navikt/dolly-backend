@@ -1,7 +1,9 @@
 package no.nav.dolly.bestilling.arenaforvalter;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaArbeidssokerBruker;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaDagpenger;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeBrukere;
@@ -24,6 +26,7 @@ import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
 import static no.nav.dolly.util.CallIdUtil.generateCallId;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ArenaForvalterConsumer {
 
@@ -54,6 +57,7 @@ public class ArenaForvalterConsumer {
 
     @Timed(name = "providers", tags = { "operation", "arena_postBruker" })
     public ResponseEntity<ArenaNyeBrukereResponse> postArenadata(ArenaNyeBrukere arenaNyeBrukere) {
+        log.info("Sender nye arena brukere med følgende kriterier: " + Json.pretty(arenaNyeBrukere));
         return restTemplate.exchange(RequestEntity.post(
                 URI.create(providersProps.getArenaForvalter().getUrl() + ARENAFORVALTER_BRUKER))
                 .header(HEADER_NAV_CALL_ID, generateCallId())
@@ -63,6 +67,7 @@ public class ArenaForvalterConsumer {
 
     @Timed(name = "providers", tags = { "operation", "arena_postDagpenger" })
     public ResponseEntity<ArenaNyeDagpengerResponse> postArenaDagpenger(ArenaDagpenger arenaDagpenger) {
+        log.info("Sender dagpenger med følgende kriterier: " + Json.pretty(arenaDagpenger));
         return restTemplate.exchange(RequestEntity.post(
                 URI.create(providersProps.getArenaForvalter().getUrl() + ARENAFORVALTER_DAGPENGER))
                 .header(HEADER_NAV_CALL_ID, generateCallId())
