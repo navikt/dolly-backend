@@ -122,16 +122,6 @@ public class ArenaForvalterClient implements ClientRegister {
             ResponseEntity<ArenaNyeDagpengerResponse> response = arenaForvalterConsumer.postArenaDagpenger(arenaNyeDagpenger);
             log.info("Dagpenger mottatt: \n" + Json.pretty(response));
             if (response.hasBody()) {
-                if (nonNull((response.getBody().getNyeDagp()))) {
-                    response.getBody().getNyeDagp().forEach(dagpenger -> {
-//                        if ("OK".equals(dagpenger.getStatus())) { //TODO FIX THIS
-//                            status.append(',')
-//                                    .append(dagpenger.getMiljoe())
-//                                    .append('$')
-//                                    .append(dagpenger.getStatus());
-//                        }
-                    });
-                }
                 if (nonNull(response.getBody().getNyeDagpFeilList())) {
                     response.getBody().getNyeDagpFeilList().forEach(brukerfeil -> {
                         status.append(',')
@@ -142,6 +132,10 @@ public class ArenaForvalterClient implements ClientRegister {
                         log.error("Feilet å opprette dagpenger for testperson {} i ArenaForvalter på miljø: {}, feilstatus: {}, melding: \"{}\"",
                                 brukerfeil.getPersonident(), brukerfeil.getMiljoe(), brukerfeil.getNyDagpFeilstatus(), brukerfeil.getMelding());
                     });
+                } else {
+                    status.append(',')
+                            .append(arenaNyeDagpenger.getMiljoe())
+                            .append("Feilstatus: Mottok ugyldig svar fra Arena");
                 }
             }
 
