@@ -58,19 +58,18 @@ public class ArenaForvalterClient implements ClientRegister {
                     arenaNyBruker.setPersonident(dollyPerson.getHovedperson());
                     arenaNyBruker.setMiljoe(environment);
                     arenaNyeBrukere.getNyeBrukere().add(arenaNyBruker);
-                });
 
-                sendArenadata(arenaNyeBrukere, status);
-
-                if (!bestilling.getArenaforvalter().getDagpenger().isEmpty()) {
-                    log.info("Bestilling dagpenger fra Dolly: \n" + Json.pretty(bestilling.getArenaforvalter().getDagpenger()));
-                    availEnvironments.forEach(environment -> {
+                    if (!bestilling.getArenaforvalter().getDagpenger().isEmpty()) {
                         ArenaDagpenger arenaDagpenger = mapperFacade.map(bestilling.getArenaforvalter(), ArenaDagpenger.class);
                         arenaDagpenger.setPersonident(dollyPerson.getHovedperson());
                         arenaDagpenger.setMiljoe(environment);
                         sendArenadagpenger(arenaDagpenger, status);
-                    });
-                }
+                    }
+
+                });
+
+                sendArenadata(arenaNyeBrukere, status);
+
             }
 
             List<String> notSupportedEnvironments = new ArrayList<>(bestilling.getEnvironments());

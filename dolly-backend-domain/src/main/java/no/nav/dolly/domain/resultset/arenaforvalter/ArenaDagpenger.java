@@ -21,6 +21,30 @@ import static java.util.Objects.isNull;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ArenaDagpenger {
 
+    public static final List<Vilkaar> DAGPENGER_VILKAAR =
+            List.of(
+                    new ArenaDagpenger.Vilkaar("GEOMOB", "J"),
+                    new ArenaDagpenger.Vilkaar("HELDELT", "J"),
+                    new ArenaDagpenger.Vilkaar("IFAFP", "J"),
+                    new ArenaDagpenger.Vilkaar("IFFODSP", "J"),
+                    new ArenaDagpenger.Vilkaar("IFGAFISK", "J"),
+                    new ArenaDagpenger.Vilkaar("IFSYKEP", "J"),
+                    new ArenaDagpenger.Vilkaar("OATVIST", "J"),
+                    new ArenaDagpenger.Vilkaar("PATVIST", "J"),
+                    new ArenaDagpenger.Vilkaar("MEDLFOLKT", "J"),
+                    new ArenaDagpenger.Vilkaar("MELDMØT", "J"),
+                    new ArenaDagpenger.Vilkaar("ARBFØR", "J"),
+                    new ArenaDagpenger.Vilkaar("ARBVILL", "J"),
+                    new ArenaDagpenger.Vilkaar("INORGE", "J"),
+                    new ArenaDagpenger.Vilkaar("TILTDELT", "J"),
+                    new ArenaDagpenger.Vilkaar("UNDER67", "J"),
+                    new ArenaDagpenger.Vilkaar("UNDERUTD", "J"),
+                    new ArenaDagpenger.Vilkaar("UTESTENG", "J"),
+                    new ArenaDagpenger.Vilkaar("IFUFTRY", "J"),
+                    new ArenaDagpenger.Vilkaar("TAPTINNT", "J"),
+                    new ArenaDagpenger.Vilkaar("MOTTATTDOK", "J")
+            );
+
     private String personident;
     private String miljoe;
     private List<NyeDagp> nyeDagp;
@@ -44,7 +68,7 @@ public class ArenaDagpenger {
 
         public List<Vilkaar> getVilkaar() {
             if (isNull(vilkaar)) {
-                return new ArrayList<>();
+                vilkaar = new ArrayList<>();
             }
             return vilkaar;
         }
@@ -110,7 +134,7 @@ public class ArenaDagpenger {
 
     public List<NyeDagp> getNyeDagp() {
         if (isNull(nyeDagp)) {
-            return new ArrayList<>();
+            nyeDagp = new ArrayList<>();
         }
         return nyeDagp;
     }

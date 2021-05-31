@@ -41,17 +41,23 @@ public class Arenadata {
     private List<RsArenaDagpenger> dagpenger;
 
     public List<RsArenaAap115> getAap115() {
-        if (isNull(aap115)) return new ArrayList<>();
+        if (isNull(aap115)) {
+            aap115 = new ArrayList<>();
+        }
         return aap115;
     }
 
     public List<RsArenaAap> getAap() {
-        if (isNull(aap)) return new ArrayList<>();
+        if (isNull(aap)) {
+            aap = new ArrayList<>();
+        }
         return aap;
     }
 
     public List<RsArenaDagpenger> getDagpenger() {
-        if (isNull(dagpenger)) return new ArrayList<>();
+        if (isNull(dagpenger)) {
+            dagpenger = new ArrayList<>();
+        }
         return dagpenger;
     }
 }

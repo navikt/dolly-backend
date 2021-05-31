@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.nonNull;
 import static no.nav.dolly.domain.resultset.arenaforvalter.ArenaBrukertype.UTEN_SERVICEBEHOV;
+import static no.nav.dolly.domain.resultset.arenaforvalter.ArenaDagpenger.DAGPENGER_VILKAAR;
 import static no.nav.dolly.domain.resultset.arenaforvalter.ArenaKvalifiseringsgruppe.IKVAL;
 
 @Slf4j
@@ -108,28 +109,7 @@ public class ArenaMappingStrategy implements MappingStrategy {
 
                         dagpenger.setVedtaktype("O");
 
-                        dagpenger.setVilkaar(List.of(
-                                new ArenaDagpenger.Vilkaar("GEOMOB", "J"),
-                                new ArenaDagpenger.Vilkaar("HELDELT", "J"),
-                                new ArenaDagpenger.Vilkaar("IFAFP", "J"),
-                                new ArenaDagpenger.Vilkaar("IFFODSP", "J"),
-                                new ArenaDagpenger.Vilkaar("IFGAFISK", "J"),
-                                new ArenaDagpenger.Vilkaar("IFSYKEP", "J"),
-                                new ArenaDagpenger.Vilkaar("OATVIST", "J"),
-                                new ArenaDagpenger.Vilkaar("PATVIST", "J"),
-                                new ArenaDagpenger.Vilkaar("MEDLFOLKT", "J"),
-                                new ArenaDagpenger.Vilkaar("MELDMØT", "J"),
-                                new ArenaDagpenger.Vilkaar("ARBFØR", "J"),
-                                new ArenaDagpenger.Vilkaar("ARBVILL", "J"),
-                                new ArenaDagpenger.Vilkaar("INORGE", "J"),
-                                new ArenaDagpenger.Vilkaar("TILTDELT", "J"),
-                                new ArenaDagpenger.Vilkaar("UNDER67", "J"),
-                                new ArenaDagpenger.Vilkaar("UNDERUTD", "J"),
-                                new ArenaDagpenger.Vilkaar("UTESTENG", "J"),
-                                new ArenaDagpenger.Vilkaar("IFUFTRY", "J"),
-                                new ArenaDagpenger.Vilkaar("TAPTINNT", "J"),
-                                new ArenaDagpenger.Vilkaar("MOTTATTDOK", "J")
-                        ));
+                        dagpenger.setVilkaar(DAGPENGER_VILKAAR);
 
                         if (nonNull(rsArenaDagpenger.getTilDato())) {
                             dagpenger.getVedtaksperiode().setTom(rsArenaDagpenger.getTilDato().toLocalDate());
