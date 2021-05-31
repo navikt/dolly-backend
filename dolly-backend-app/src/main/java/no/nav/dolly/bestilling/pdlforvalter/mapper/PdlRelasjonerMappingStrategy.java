@@ -44,10 +44,8 @@ public class PdlRelasjonerMappingStrategy implements MappingStrategy {
                         familierelasjon.setRelatertPersonsRolle(decode(relasjon.getRelasjonTypeNavn()));
                         familierelasjon.setMinRolleForPerson(decode(relasjon.getPersonRelasjonTil().getRelasjoner().stream()
                                 .filter(relasjon2 -> relasjon.getPersonRelasjonMed().getIdent().equals(relasjon2.getPerson().getIdent()) &&
-                                        !(relasjon.isForelder() && relasjon2.isForelder()) &&
-                                        !(relasjon.isBarn() && relasjon2.isBarn()) &&
-                                        !(relasjon.isPartner() && relasjon2.isBarn()) &&
-                                        !(relasjon.isBarn() && relasjon2.isPartner())
+                                        (relasjon.isForelder() && relasjon2.isBarn() ||
+                                        relasjon.isBarn() && relasjon2.isForelder())
                                 )
                                 .map(Relasjon::getRelasjonTypeNavn)
                                 .findFirst().orElse(null)));
