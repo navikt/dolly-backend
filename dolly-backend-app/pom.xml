@@ -12,6 +12,12 @@
     <artifactId>dolly-backend-app</artifactId>
 
     <dependencies>
+        <!-- Testnorge -->
+        <dependency>
+            <groupId>no.nav.registre.testnorge.libs</groupId>
+            <artifactId>testnorge-data-transfer-objects</artifactId>
+            <version>2021.03.09-08.49-ba612f1df122</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
