@@ -53,6 +53,7 @@ public class ArenaForvalterClient implements ClientRegister {
                 }
 
                 ArenaNyeBrukere arenaNyeBrukere = new ArenaNyeBrukere();
+                List<ArenaDagpenger> dagpengerListe = new ArrayList<>();
                 availEnvironments.forEach(environment -> {
                     ArenaNyBruker arenaNyBruker = mapperFacade.map(bestilling.getArenaforvalter(), ArenaNyBruker.class);
                     arenaNyBruker.setPersonident(dollyPerson.getHovedperson());
@@ -63,12 +64,12 @@ public class ArenaForvalterClient implements ClientRegister {
                         ArenaDagpenger arenaDagpenger = mapperFacade.map(bestilling.getArenaforvalter(), ArenaDagpenger.class);
                         arenaDagpenger.setPersonident(dollyPerson.getHovedperson());
                         arenaDagpenger.setMiljoe(environment);
-                        sendArenadagpenger(arenaDagpenger, status);
+                        dagpengerListe.add(arenaDagpenger);
                     }
-
                 });
 
-                sendArenadata(arenaNyeBrukere, status);
+                sendArenadata(arenaNyeBrukere, status, dagpengerListe.isEmpty());
+                dagpengerListe.forEach(dagpenger -> sendArenadagpenger(dagpenger, status));
 
             }
 
@@ -121,8 +122,9 @@ public class ArenaForvalterClient implements ClientRegister {
             ResponseEntity<ArenaNyeDagpengerResponse> response = arenaForvalterConsumer.postArenaDagpenger(arenaNyeDagpenger);
             log.info("Dagpenger mottatt: \n" + Json.pretty(response));
             if (response.hasBody()) {
-                if (nonNull(response.getBody().getNyeDagpFeilList())) {
+                if (nonNull(response.getBody().getNyeDagpFeilList()) && !response.getBody().getNyeDagpFeilList().isEmpty()) {
                     response.getBody().getNyeDagpFeilList().forEach(brukerfeil -> {
+                        log.info("Brukerfeil inneholder: " + Json.pretty(brukerfeil));
                         status.append(',')
                                 .append(brukerfeil.getMiljoe())
                                 .append("$Feilstatus: \"")
@@ -134,10 +136,13 @@ public class ArenaForvalterClient implements ClientRegister {
                 } else {
                     status.append(',')
                             .append(arenaNyeDagpenger.getMiljoe())
-                            .append("Feilstatus: Mottok ugyldig svar fra Arena");
+                            .append("$OK");
                 }
+            } else {
+                status.append(',')
+                        .append(arenaNyeDagpenger.getMiljoe())
+                        .append("Feilstatus: Mottok ugyldig svar fra Arena");
             }
-
         } catch (RuntimeException e) {
 
             status.append(',')
@@ -148,7 +153,7 @@ public class ArenaForvalterClient implements ClientRegister {
         }
     }
 
-    private void sendArenadata(ArenaNyeBrukere arenaNyeBrukere, StringBuilder status) {
+    private void sendArenadata(ArenaNyeBrukere arenaNyeBrukere, StringBuilder status, boolean harIkkeDagpenger) {
 
         try {
             log.info("Sender Arenadata: \n" + Json.pretty(arenaNyeBrukere));
@@ -156,7 +161,7 @@ public class ArenaForvalterClient implements ClientRegister {
             if (response.hasBody()) {
                 if (nonNull((response.getBody().getArbeidsokerList()))) {
                     response.getBody().getArbeidsokerList().forEach(arbeidsoker -> {
-                        if ("OK".equals(arbeidsoker.getStatus())) {
+                        if ("OK".equals(arbeidsoker.getStatus()) && harIkkeDagpenger) {
                             status.append(',')
                                     .append(arbeidsoker.getMiljoe())
                                     .append('$')
