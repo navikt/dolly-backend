@@ -16,7 +16,7 @@
         <dependency>
             <groupId>no.nav.registre.testnorge.libs</groupId>
             <artifactId>testnorge-data-transfer-objects</artifactId>
-            <version>2021.03.09-08.49-ba612f1df122</version>
+            <version>2021.06.03-12.05-0590662d7994</version>
         </dependency>
 
         <dependency>
