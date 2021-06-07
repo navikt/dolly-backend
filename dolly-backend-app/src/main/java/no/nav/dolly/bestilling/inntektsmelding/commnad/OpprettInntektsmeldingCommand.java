@@ -22,7 +22,7 @@ public class OpprettInntektsmeldingCommand implements Callable<Mono<ResponseEnti
     public Mono<ResponseEntity<InntektsmeldingResponse>> call() {
         return webClient.post()
                 .uri("/api/v1/inntektsmelding")
-                .header(HttpHeaders.AUTHORIZATION, token)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .body(BodyInserters.fromPublisher(Mono.just(request), InntektsmeldingRequest.class))
                 .retrieve()
                 .toEntity(InntektsmeldingResponse.class);
