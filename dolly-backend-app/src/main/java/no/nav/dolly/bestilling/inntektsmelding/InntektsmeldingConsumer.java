@@ -40,7 +40,7 @@ public class InntektsmeldingConsumer {
         log.info("Inntektsmelding med callId {} sendt", callId);
 
         return tokenService.generateToken(serverProperties).flatMap(accessToken ->
-                new OpprettInntektsmeldingCommand(webClient, accessToken.getTokenValue(), inntekstsmelding).call()
+                new OpprettInntektsmeldingCommand(webClient, accessToken.getTokenValue(), inntekstsmelding, callId).call()
         ).block();
     }
 

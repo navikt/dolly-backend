@@ -17,12 +17,14 @@ public class OpprettInntektsmeldingCommand implements Callable<Mono<ResponseEnti
     private final WebClient webClient;
     private final String token;
     private final InntektsmeldingRequest request;
+    private final String callId;
 
     @Override
     public Mono<ResponseEntity<InntektsmeldingResponse>> call() {
         return webClient.post()
                 .uri("/api/v1/inntektsmelding")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .header("Nav-Call-Id", callId)
                 .body(BodyInserters.fromPublisher(Mono.just(request), InntektsmeldingRequest.class))
                 .retrieve()
                 .toEntity(InntektsmeldingResponse.class);
