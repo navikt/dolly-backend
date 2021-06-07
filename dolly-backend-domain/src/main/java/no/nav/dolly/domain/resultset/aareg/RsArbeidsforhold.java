@@ -1,16 +1,10 @@
-package no.nav.dolly.bestilling.aareg.domain;
+package no.nav.dolly.domain.resultset.aareg;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import no.nav.dolly.domain.resultset.aareg.RsAktoer;
-import no.nav.dolly.domain.resultset.aareg.RsAntallTimerIPerioden;
-import no.nav.dolly.domain.resultset.aareg.RsArbeidsavtale;
-import no.nav.dolly.domain.resultset.aareg.RsPeriode;
-import no.nav.dolly.domain.resultset.aareg.RsPersonAareg;
-import no.nav.dolly.domain.resultset.aareg.RsUtenlandsopphold;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +16,7 @@ import static java.util.Objects.isNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Arbeidsforhold {
+public class RsArbeidsforhold {
 
     private String arbeidsforholdID;
 
@@ -34,17 +28,17 @@ public class Arbeidsforhold {
 
     private List<RsAntallTimerIPerioden> antallTimerForTimeloennet;
 
-    private String fartoy;
+    private RsFartoy fartoy;
 
     private RsArbeidsavtale arbeidsavtale;
 
-    private List<Permisjon> permisjon;
+    private List<RsPermisjon> permisjon;
 
-    private List<Permittering> permittering;
+    private List<RsPermittering> permittering;
 
     private List<RsUtenlandsopphold> utenlandsopphold;
 
-    private RsAktoer arbeidsgiver;
+    private RsArbeidsgiver arbeidsgiver;
 
     private RsPersonAareg arbeidstaker;
 
@@ -62,10 +56,27 @@ public class Arbeidsforhold {
         return utenlandsopphold;
     }
 
-    public List<Permisjon> getPermisjon() {
+    public List<RsPermisjon> getPermisjon() {
         if (isNull(permisjon)) {
             permisjon = new ArrayList<>();
         }
         return permisjon;
+    }
+
+    public List<RsPermittering> getPermittering() {
+        if (isNull(permittering)) {
+            permittering = new ArrayList<>();
+        }
+        return permittering;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RsArbeidsgiver {
+        private String aktoertype;
+        private String orgnummer;
     }
 }

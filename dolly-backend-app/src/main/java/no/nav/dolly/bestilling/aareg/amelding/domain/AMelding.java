@@ -1,4 +1,4 @@
-package no.nav.dolly.bestilling.aareg.domain.amelding;
+package no.nav.dolly.bestilling.aareg.amelding.domain;
 
 import lombok.RequiredArgsConstructor;
 import no.nav.registre.testnorge.libs.dto.ameldingservice.v1.AMeldingDTO;

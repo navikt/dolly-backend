@@ -1,14 +1,15 @@
 package no.nav.dolly.domain.resultset.aareg;
 
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -24,6 +25,10 @@ public class RsAaregArbeidsforhold {
     @Schema(required = true,
             description = "Gyldige verdier finnes i kodeverk 'Arbeidsforholdstyper'")
     private String arbeidsforholdstype;
+
+    private LocalDate genererPeriode;
+
+    private RsAmeldingRequest amelding;
 
     private List<RsAntallTimerIPerioden> antallTimerForTimeloennet;
 
