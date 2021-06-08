@@ -10,7 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.UUID;
 
-import no.nav.dolly.bestilling.inntektsmelding.commnad.OpprettInntektsmeldingCommand;
+import no.nav.dolly.bestilling.inntektsmelding.command.OpprettInntektsmeldingCommand;
 import no.nav.dolly.bestilling.inntektsmelding.domain.InntektsmeldingRequest;
 import no.nav.dolly.bestilling.inntektsmelding.domain.InntektsmeldingResponse;
 import no.nav.dolly.config.credentials.InntektsmeldingServiceProperties;

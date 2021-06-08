@@ -1,4 +1,4 @@
-package no.nav.dolly.bestilling.inntektsmelding.commnad;
+package no.nav.dolly.bestilling.inntektsmelding.command;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
