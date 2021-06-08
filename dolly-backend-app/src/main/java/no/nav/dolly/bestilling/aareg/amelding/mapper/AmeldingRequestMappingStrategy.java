@@ -8,6 +8,7 @@ import no.nav.dolly.domain.resultset.aareg.RsArbeidsforhold;
 import no.nav.dolly.domain.resultset.aareg.RsFartoy;
 import no.nav.dolly.domain.resultset.aareg.RsPermisjon;
 import no.nav.dolly.domain.resultset.aareg.RsPermittering;
+import no.nav.dolly.domain.resultset.aareg.RsUtenlandsopphold;
 import no.nav.dolly.mapper.MappingStrategy;
 import no.nav.registre.testnorge.libs.dto.ameldingservice.v1.AMeldingDTO;
 import no.nav.registre.testnorge.libs.dto.ameldingservice.v1.ArbeidsforholdDTO;
@@ -34,7 +35,7 @@ public class AmeldingRequestMappingStrategy implements MappingStrategy {
                                         AMeldingDTO amelding, MappingContext context) {
 
                         amelding.setKalendermaaned(rsAmelding.getMaaned());
-                        List<VirksomhetDTO> virksomheter = mapperFacade.mapAsList(rsAmelding.getRsArbeidsforhold(), VirksomhetDTO.class);
+                        amelding.setVirksomheter(mapperFacade.mapAsList(rsAmelding.getRsArbeidsforhold(), VirksomhetDTO.class));
 
                     }
                 })
@@ -45,9 +46,11 @@ public class AmeldingRequestMappingStrategy implements MappingStrategy {
                 .customize(new CustomMapper<>() {
                     @Override
                     public void mapAtoB(RsArbeidsforhold rsArbeidsforhold, VirksomhetDTO virksomhetDTO, MappingContext context) {
+
                         virksomhetDTO = VirksomhetDTO.builder()
                                 .organisajonsnummer(rsArbeidsforhold.getArbeidsgiver().getOrgnummer())
                                 .personer(List.of(PersonDTO.builder()
+                                        .ident((String) context.getProperty("personIdent"))
                                         .arbeidsforhold(List.of(ArbeidsforholdDTO.builder()
                                                 .antallTimerPerUke(rsArbeidsforhold.getAntallTimerForTimeloennet().get(0).getAntallTimer().floatValue())
                                                 .arbeidsforholdId(rsArbeidsforhold.getArbeidsforholdID())
@@ -70,9 +73,15 @@ public class AmeldingRequestMappingStrategy implements MappingStrategy {
                                 ))
                                 .build();
 
-                        if (nonNull(rsArbeidsforhold.getPermittering()) && !rsArbeidsforhold.getPermittering().isEmpty()) {
+                        if (nonNull(rsArbeidsforhold.getPermittering())) {
                             virksomhetDTO.getPersoner().get(0).getArbeidsforhold().get(0).getPermisjoner().addAll(
                                     mapperFacade.mapAsList(rsArbeidsforhold.getPermittering(), PermisjonDTO.class)
+                            );
+                        }
+
+                        if (nonNull(rsArbeidsforhold.getUtenlandsopphold())) {
+                            virksomhetDTO.getPersoner().get(0).getArbeidsforhold().get(0).getInntekter().addAll(
+                                    mapperFacade.mapAsList(rsArbeidsforhold.getUtenlandsopphold(), InntektDTO.class)
                             );
                         }
                     }
@@ -86,6 +95,17 @@ public class AmeldingRequestMappingStrategy implements MappingStrategy {
             @Override
             public void mapAtoB(RsPermittering rsPermittering, PermisjonDTO permisjonDTO, MappingContext context) {
                 permisjonDTO.setPermisjonId("permittering");
+            }
+        })
+                .byDefault()
+                .register();
+
+        factory.classMap(RsUtenlandsopphold.class, InntektDTO.class).customize(new CustomMapper<>() {
+            @Override
+            public void mapAtoB(RsUtenlandsopphold utenlandsopphold, InntektDTO inntekt, MappingContext context) {
+                inntekt.setStartdatoOpptjeningsperiode(nonNull(utenlandsopphold.getPeriode().getFom()) ? utenlandsopphold.getPeriode().getFom().toLocalDate() : null);
+                inntekt.setSluttdatoOpptjeningsperiode(nonNull(utenlandsopphold.getPeriode().getTom()) ? utenlandsopphold.getPeriode().getTom().toLocalDate() : null);
+                inntekt.setOpptjeningsland(utenlandsopphold.getLand());
             }
         })
                 .byDefault()

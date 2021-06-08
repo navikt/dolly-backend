@@ -28,7 +28,7 @@ public class RsAaregArbeidsforhold {
 
     private LocalDate genererPeriode;
 
-    private RsAmeldingRequest amelding;
+    private List<RsAmeldingRequest> amelding;
 
     private List<RsAntallTimerIPerioden> antallTimerForTimeloennet;
 

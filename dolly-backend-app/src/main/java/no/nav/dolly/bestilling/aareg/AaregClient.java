@@ -3,7 +3,9 @@ package no.nav.dolly.bestilling.aareg;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
+import ma.glasnost.orika.MappingContext;
 import no.nav.dolly.bestilling.ClientRegister;
+import no.nav.dolly.bestilling.aareg.amelding.AmeldingConsumer;
 import no.nav.dolly.bestilling.aareg.domain.AaregOpprettRequest;
 import no.nav.dolly.bestilling.aareg.domain.Arbeidsforhold;
 import no.nav.dolly.bestilling.aareg.domain.ArbeidsforholdResponse;
@@ -12,6 +14,7 @@ import no.nav.dolly.domain.jpa.BestillingProgress;
 import no.nav.dolly.domain.resultset.RsDollyUtvidetBestilling;
 import no.nav.dolly.domain.resultset.tpsf.DollyPerson;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
+import no.nav.registre.testnorge.libs.dto.ameldingservice.v1.AMeldingDTO;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +24,7 @@ import java.util.Map;
 
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
+import static java.util.Objects.nonNull;
 
 @Slf4j
 @Order(3)
@@ -29,6 +33,7 @@ import static java.util.Collections.singletonMap;
 public class AaregClient implements ClientRegister {
 
     private final AaregConsumer aaregConsumer;
+    private final AmeldingConsumer ameldingConsumer;
     private final ErrorStatusDecoder errorStatusDecoder;
     private final MapperFacade mapperFacade;
 
@@ -44,6 +49,15 @@ public class AaregClient implements ClientRegister {
                 try {
                     List<Arbeidsforhold> arbeidsforholdRequest = mapperFacade.mapAsList(bestilling.getAareg(), Arbeidsforhold.class);
                     List<ArbeidsforholdResponse> eksisterendeArbeidsforhold = aaregConsumer.hentArbeidsforhold(dollyPerson.getHovedperson(), env);
+
+                    if (nonNull(bestilling.getAareg().get(0).getAmelding()) && !bestilling.getAareg().get(0).getAmelding().isEmpty()) {
+                        bestilling.getAareg().get(0).getAmelding().forEach(amelding -> {
+                            MappingContext context = new MappingContext.Factory().getContext();
+                            context.setProperty("personIdent", dollyPerson.getHovedperson());
+                            AMeldingDTO ameldingDto = mapperFacade.map(amelding, AMeldingDTO.class, context);
+                            ameldingConsumer.putAmeldingdata(ameldingDto);
+                        });
+                    }
 
                     List<Arbeidsforhold> arbeidsforhold = AaregMergeUtil.merge(
                             arbeidsforholdRequest,
