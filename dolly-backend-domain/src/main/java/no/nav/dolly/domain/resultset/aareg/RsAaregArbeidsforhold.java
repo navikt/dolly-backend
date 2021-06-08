@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -26,7 +25,7 @@ public class RsAaregArbeidsforhold {
             description = "Gyldige verdier finnes i kodeverk 'Arbeidsforholdstyper'")
     private String arbeidsforholdstype;
 
-    private LocalDate genererPeriode;
+    private RsPeriode genererPeriode;
 
     private List<RsAmeldingRequest> amelding;
 

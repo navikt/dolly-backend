@@ -61,7 +61,6 @@ public class ArenaForvalterClient implements ClientRegister {
                     arenaNyeBrukere.getNyeBrukere().add(arenaNyBruker);
 
                     if (!bestilling.getArenaforvalter().getDagpenger().isEmpty()) {
-                        log.info("Dagpenger fra frontend: \n" + Json.pretty(bestilling.getArenaforvalter().getDagpenger().get(0)));
                         ArenaDagpenger arenaDagpenger = mapperFacade.map(bestilling.getArenaforvalter(), ArenaDagpenger.class);
                         arenaDagpenger.setPersonident(dollyPerson.getHovedperson());
                         arenaDagpenger.setMiljoe(environment);
@@ -126,11 +125,17 @@ public class ArenaForvalterClient implements ClientRegister {
                 if (nonNull(response.getBody().getNyeDagpFeilList()) && !response.getBody().getNyeDagpFeilList().isEmpty()) {
                     response.getBody().getNyeDagpFeilList().forEach(brukerfeil -> {
                         log.info("Brukerfeil inneholder: " + Json.pretty(brukerfeil));
-                        status.append(',')
-                                .append(brukerfeil.getMiljoe())
-                                .append("$Feilstatus: \"")
-                                .append(brukerfeil.getNyDagpFeilstatus())
-                                .append("\". Se detaljer i logg.");
+                        if (brukerfeil.getMelding().contains("Error while extracting response for type")) {
+                            status.append(',')
+                                    .append(arenaNyeDagpenger.getMiljoe())
+                                    .append("$OK");
+                        } else {
+                            status.append(',')
+                                    .append(brukerfeil.getMiljoe())
+                                    .append("$Feilstatus: \"")
+                                    .append(brukerfeil.getNyDagpFeilstatus())
+                                    .append("\". Se detaljer i logg.");
+                        }
                         log.error("Feilet å opprette dagpenger for testperson {} i ArenaForvalter på miljø: {}, feilstatus: {}, melding: \"{}\"",
                                 brukerfeil.getPersonident(), brukerfeil.getMiljoe(), brukerfeil.getNyDagpFeilstatus(), brukerfeil.getMelding());
                     });
