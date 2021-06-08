@@ -1,5 +1,6 @@
 package no.nav.dolly.bestilling.aareg;
 
+import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
@@ -51,6 +52,7 @@ public class AaregClient implements ClientRegister {
                     List<ArbeidsforholdResponse> eksisterendeArbeidsforhold = aaregConsumer.hentArbeidsforhold(dollyPerson.getHovedperson(), env);
 
                     if (nonNull(bestilling.getAareg().get(0).getAmelding()) && !bestilling.getAareg().get(0).getAmelding().isEmpty()) {
+                        log.info("Sender a-melding: \n" + Json.pretty(bestilling.getAareg().get(0).getAmelding().get(0)));
                         bestilling.getAareg().get(0).getAmelding().forEach(amelding -> {
                             MappingContext context = new MappingContext.Factory().getContext();
                             context.setProperty("personIdent", dollyPerson.getHovedperson());

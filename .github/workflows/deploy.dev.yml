@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-      - feature/dagpenger
+      - feature/a-melding-oppsett
 
 
 env:

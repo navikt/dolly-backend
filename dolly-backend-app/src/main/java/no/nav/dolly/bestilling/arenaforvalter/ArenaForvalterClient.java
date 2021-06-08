@@ -61,6 +61,7 @@ public class ArenaForvalterClient implements ClientRegister {
                     arenaNyeBrukere.getNyeBrukere().add(arenaNyBruker);
 
                     if (!bestilling.getArenaforvalter().getDagpenger().isEmpty()) {
+                        log.info("Dagpenger fra frontend: \n" + Json.pretty(bestilling.getArenaforvalter().getDagpenger().get(0)));
                         ArenaDagpenger arenaDagpenger = mapperFacade.map(bestilling.getArenaforvalter(), ArenaDagpenger.class);
                         arenaDagpenger.setPersonident(dollyPerson.getHovedperson());
                         arenaDagpenger.setMiljoe(environment);
