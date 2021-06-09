@@ -16,7 +16,7 @@ import static java.util.Objects.isNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RsArbeidsforhold {
+public class RsArbeidsforholdAareg {
 
     private String arbeidsforholdID;
 

@@ -4,7 +4,7 @@ import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
 import no.nav.dolly.domain.resultset.aareg.RsAmeldingRequest;
-import no.nav.dolly.domain.resultset.aareg.RsArbeidsforhold;
+import no.nav.dolly.domain.resultset.aareg.RsArbeidsforholdAareg;
 import no.nav.dolly.domain.resultset.aareg.RsFartoy;
 import no.nav.dolly.domain.resultset.aareg.RsPermisjon;
 import no.nav.dolly.domain.resultset.aareg.RsPermittering;
@@ -37,52 +37,52 @@ public class AmeldingRequestMappingStrategy implements MappingStrategy {
 
                         String[] date = rsAmelding.getMaaned().split(",");
                         amelding.setKalendermaaned(LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), 1));
-                        amelding.setVirksomheter(mapperFacade.mapAsList(rsAmelding.getRsArbeidsforhold(), VirksomhetDTO.class));
+                        amelding.setVirksomheter(mapperFacade.mapAsList(rsAmelding.getRsArbeidsforholdAareg(), VirksomhetDTO.class));
                     }
                 })
                 .byDefault()
                 .register();
 
-        factory.classMap(RsArbeidsforhold.class, VirksomhetDTO.class)
+        factory.classMap(RsArbeidsforholdAareg.class, VirksomhetDTO.class)
                 .customize(new CustomMapper<>() {
                     @Override
-                    public void mapAtoB(RsArbeidsforhold rsArbeidsforhold, VirksomhetDTO virksomhetDTO, MappingContext context) {
+                    public void mapAtoB(RsArbeidsforholdAareg rsArbeidsforholdAareg, VirksomhetDTO virksomhetDTO, MappingContext context) {
 
                         virksomhetDTO = VirksomhetDTO.builder()
-                                .organisajonsnummer(rsArbeidsforhold.getArbeidsgiver().getOrgnummer())
+                                .organisajonsnummer(rsArbeidsforholdAareg.getArbeidsgiver().getOrgnummer())
                                 .personer(List.of(PersonDTO.builder()
                                         .ident((String) context.getProperty("personIdent"))
                                         .arbeidsforhold(List.of(ArbeidsforholdDTO.builder()
-                                                .antallTimerPerUke(rsArbeidsforhold.getAntallTimerForTimeloennet().get(0).getAntallTimer().floatValue())
-                                                .arbeidsforholdId(rsArbeidsforhold.getArbeidsforholdID())
-                                                .arbeidsforholdType(rsArbeidsforhold.getArbeidsforholdstype())
-                                                .arbeidstidsordning(rsArbeidsforhold.getArbeidsavtale().getArbeidstidsordning())
-                                                .fartoey(nonNull(rsArbeidsforhold.getFartoy()) ? mapperFacade.map(rsArbeidsforhold.getFartoy(), FartoeyDTO.class) : null)
+                                                .antallTimerPerUke(rsArbeidsforholdAareg.getAntallTimerForTimeloennet().get(0).getAntallTimer().floatValue())
+                                                .arbeidsforholdId(rsArbeidsforholdAareg.getArbeidsforholdID())
+                                                .arbeidsforholdType(rsArbeidsforholdAareg.getArbeidsforholdstype())
+                                                .arbeidstidsordning(rsArbeidsforholdAareg.getArbeidsavtale().getArbeidstidsordning())
+                                                .fartoey(nonNull(rsArbeidsforholdAareg.getFartoy()) ? mapperFacade.map(rsArbeidsforholdAareg.getFartoy(), FartoeyDTO.class) : null)
                                                 .inntekter(List.of(InntektDTO.builder()
-                                                        .antall(rsArbeidsforhold.getArbeidsavtale().getAvtaltArbeidstimerPerUke().intValue())
+                                                        .antall(rsArbeidsforholdAareg.getArbeidsavtale().getAvtaltArbeidstimerPerUke().intValue())
                                                         .opptjeningsland("NO")
-                                                        .startdatoOpptjeningsperiode(nonNull(rsArbeidsforhold.getAnsettelsesPeriode().getFom()) ? rsArbeidsforhold.getAnsettelsesPeriode().getFom().toLocalDate() : null)
-                                                        .sluttdatoOpptjeningsperiode(nonNull(rsArbeidsforhold.getAnsettelsesPeriode().getTom()) ? rsArbeidsforhold.getAnsettelsesPeriode().getFom().toLocalDate() : null)
+                                                        .startdatoOpptjeningsperiode(nonNull(rsArbeidsforholdAareg.getAnsettelsesPeriode().getFom()) ? rsArbeidsforholdAareg.getAnsettelsesPeriode().getFom().toLocalDate() : null)
+                                                        .sluttdatoOpptjeningsperiode(nonNull(rsArbeidsforholdAareg.getAnsettelsesPeriode().getTom()) ? rsArbeidsforholdAareg.getAnsettelsesPeriode().getFom().toLocalDate() : null)
                                                         .build()))
-                                                .yrke(rsArbeidsforhold.getArbeidsavtale().getYrke())
-                                                .arbeidstidsordning(rsArbeidsforhold.getArbeidsavtale().getArbeidstidsordning())
-                                                .stillingsprosent(nonNull(rsArbeidsforhold.getArbeidsavtale().getStillingsprosent()) ? rsArbeidsforhold.getArbeidsavtale().getStillingsprosent().floatValue() : null)
-                                                .sisteLoennsendringsdato(nonNull(rsArbeidsforhold.getArbeidsavtale().getEndringsdatoLoenn()) ? rsArbeidsforhold.getArbeidsavtale().getEndringsdatoLoenn().toLocalDate() : null)
-                                                .permisjoner(nonNull(rsArbeidsforhold.getPermisjon()) ? mapperFacade.mapAsList(rsArbeidsforhold.getPermisjon(), PermisjonDTO.class) : null)
+                                                .yrke(rsArbeidsforholdAareg.getArbeidsavtale().getYrke())
+                                                .arbeidstidsordning(rsArbeidsforholdAareg.getArbeidsavtale().getArbeidstidsordning())
+                                                .stillingsprosent(nonNull(rsArbeidsforholdAareg.getArbeidsavtale().getStillingsprosent()) ? rsArbeidsforholdAareg.getArbeidsavtale().getStillingsprosent().floatValue() : null)
+                                                .sisteLoennsendringsdato(nonNull(rsArbeidsforholdAareg.getArbeidsavtale().getEndringsdatoLoenn()) ? rsArbeidsforholdAareg.getArbeidsavtale().getEndringsdatoLoenn().toLocalDate() : null)
+                                                .permisjoner(nonNull(rsArbeidsforholdAareg.getPermisjon()) ? mapperFacade.mapAsList(rsArbeidsforholdAareg.getPermisjon(), PermisjonDTO.class) : null)
                                                 .build()))
                                         .build()
                                 ))
                                 .build();
 
-                        if (nonNull(rsArbeidsforhold.getPermittering())) {
+                        if (nonNull(rsArbeidsforholdAareg.getPermittering())) {
                             virksomhetDTO.getPersoner().get(0).getArbeidsforhold().get(0).getPermisjoner().addAll(
-                                    mapperFacade.mapAsList(rsArbeidsforhold.getPermittering(), PermisjonDTO.class)
+                                    mapperFacade.mapAsList(rsArbeidsforholdAareg.getPermittering(), PermisjonDTO.class)
                             );
                         }
 
-                        if (nonNull(rsArbeidsforhold.getUtenlandsopphold())) {
+                        if (nonNull(rsArbeidsforholdAareg.getUtenlandsopphold())) {
                             virksomhetDTO.getPersoner().get(0).getArbeidsforhold().get(0).getInntekter().addAll(
-                                    mapperFacade.mapAsList(rsArbeidsforhold.getUtenlandsopphold(), InntektDTO.class)
+                                    mapperFacade.mapAsList(rsArbeidsforholdAareg.getUtenlandsopphold(), InntektDTO.class)
                             );
                         }
                     }
