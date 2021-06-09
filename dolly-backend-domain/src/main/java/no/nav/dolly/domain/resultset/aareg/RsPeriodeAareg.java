@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class RsPeriode {
+public class RsPeriodeAareg {
 
     @Schema(description = "Dato fra-og-med",
             type = "LocalDateTime",

@@ -16,5 +16,5 @@ import java.util.List;
 public class RsAmeldingRequest {
 
     private String maaned;
-    private List<RsArbeidsforholdAareg> rsArbeidsforholdAareg;
+    private List<RsArbeidsforholdAareg> arbeidsforhold;
 }

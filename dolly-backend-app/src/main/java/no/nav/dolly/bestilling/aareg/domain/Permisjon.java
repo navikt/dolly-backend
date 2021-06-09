@@ -1,13 +1,13 @@
 package no.nav.dolly.bestilling.aareg.domain;
 
-import java.math.BigDecimal;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import no.nav.dolly.domain.resultset.aareg.RsPeriode;
+import no.nav.dolly.domain.resultset.aareg.RsPeriodeAareg;
+
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -18,7 +18,7 @@ public class Permisjon {
 
     private String permisjonsId;
 
-    private RsPeriode permisjonsPeriode;
+    private RsPeriodeAareg permisjonsPeriode;
 
     private BigDecimal permisjonsprosent;
 

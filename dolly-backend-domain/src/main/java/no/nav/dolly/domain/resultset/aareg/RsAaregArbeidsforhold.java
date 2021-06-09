@@ -19,13 +19,12 @@ import java.util.List;
 public class RsAaregArbeidsforhold {
 
     @Schema(required = true)
-    private RsPeriode ansettelsesPeriode;
+    private RsPeriodeAareg ansettelsesPeriode;
 
-    @Schema(required = true,
-            description = "Gyldige verdier finnes i kodeverk 'Arbeidsforholdstyper'")
+    @Schema(description = "Gyldige verdier finnes i kodeverk 'Arbeidsforholdstyper'")
     private String arbeidsforholdstype;
 
-    private RsPeriode genererPeriode;
+    private RsPeriodeAareg genererPeriode;
 
     private List<RsAmeldingRequest> amelding;
 

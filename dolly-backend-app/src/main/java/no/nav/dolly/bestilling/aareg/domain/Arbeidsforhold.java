@@ -8,7 +8,7 @@ import lombok.Setter;
 import no.nav.dolly.domain.resultset.aareg.RsAktoer;
 import no.nav.dolly.domain.resultset.aareg.RsAntallTimerIPerioden;
 import no.nav.dolly.domain.resultset.aareg.RsArbeidsavtale;
-import no.nav.dolly.domain.resultset.aareg.RsPeriode;
+import no.nav.dolly.domain.resultset.aareg.RsPeriodeAareg;
 import no.nav.dolly.domain.resultset.aareg.RsPersonAareg;
 import no.nav.dolly.domain.resultset.aareg.RsUtenlandsopphold;
 
@@ -28,7 +28,7 @@ public class Arbeidsforhold {
 
     private Long arbeidsforholdIDnav;
 
-    private RsPeriode ansettelsesPeriode;
+    private RsPeriodeAareg ansettelsesPeriode;
 
     private String arbeidsforholdstype;
 

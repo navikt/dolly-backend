@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 public class RsPermittering {
 
     @Schema(required = true)
-    private RsPeriode permisjonsPeriode;
+    private RsPeriodeAareg permisjonsPeriode;
 
     @Schema(required = true)
     private BigDecimal permisjonsprosent;

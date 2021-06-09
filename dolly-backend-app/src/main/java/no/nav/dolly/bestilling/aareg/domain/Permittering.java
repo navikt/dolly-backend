@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import no.nav.dolly.domain.resultset.aareg.RsPeriode;
+import no.nav.dolly.domain.resultset.aareg.RsPeriodeAareg;
 
 import java.math.BigDecimal;
 
@@ -18,7 +18,7 @@ public class Permittering {
 
     private String permisjonsId;
 
-    private RsPeriode permitteringsPeriode;
+    private RsPeriodeAareg permitteringsPeriode;
 
     private BigDecimal permitteringsprosent;
 }
