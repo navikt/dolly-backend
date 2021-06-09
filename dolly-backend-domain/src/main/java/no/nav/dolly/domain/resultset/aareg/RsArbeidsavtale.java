@@ -29,6 +29,10 @@ public class RsArbeidsavtale {
             required = true)
     private String yrke;
 
+    @Schema(description = "Gyldige verdier finnes i kodeverk 'AnsettelsesformAaareg'",
+            type = "String")
+    private String ansettelsesform;
+
     private BigDecimal avtaltArbeidstimerPerUke;
 
     private BigDecimal stillingsprosent;
