@@ -19,6 +19,7 @@ import no.nav.registre.testnorge.libs.dto.ameldingservice.v1.PersonDTO;
 import no.nav.registre.testnorge.libs.dto.ameldingservice.v1.VirksomhetDTO;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static java.util.Objects.nonNull;
@@ -34,9 +35,9 @@ public class AmeldingRequestMappingStrategy implements MappingStrategy {
                     public void mapAtoB(RsAmeldingRequest rsAmelding,
                                         AMeldingDTO amelding, MappingContext context) {
 
-                        amelding.setKalendermaaned(rsAmelding.getMaaned());
+                        String[] date = rsAmelding.getMaaned().split(",");
+                        amelding.setKalendermaaned(LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), 1));
                         amelding.setVirksomheter(mapperFacade.mapAsList(rsAmelding.getRsArbeidsforhold(), VirksomhetDTO.class));
-
                     }
                 })
                 .byDefault()
