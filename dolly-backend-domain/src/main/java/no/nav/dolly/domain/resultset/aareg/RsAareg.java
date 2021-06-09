@@ -33,7 +33,7 @@ public class RsAareg {
     @NoArgsConstructor
     @AllArgsConstructor
     @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
-    public class RsAaregArbeidsforhold {
+    public static class RsAaregArbeidsforhold {
 
         private String arbeidsforholdId;
 
