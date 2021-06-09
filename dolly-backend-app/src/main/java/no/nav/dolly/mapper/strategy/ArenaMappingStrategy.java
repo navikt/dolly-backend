@@ -40,32 +40,9 @@ public class ArenaMappingStrategy implements MappingStrategy {
                     public void mapAtoB(Arenadata arenadata, ArenaNyBruker arenaNyBruker, MappingContext context) {
 
                         if (UTEN_SERVICEBEHOV.equals(arenadata.getArenaBrukertype())) {
-                            arenaNyBruker.setUtenServicebehov(new ArenaBrukerUtenServicebehov());
-
-                            arenaNyBruker.setKvalifiseringsgruppe(IKVAL);
-                            if (isNull(arenadata.getAutomatiskInnsendingAvMeldekort())) {
-                                arenaNyBruker.setAutomatiskInnsendingAvMeldekort(true);
-                            }
-
-                            if (nonNull(arenadata.getInaktiveringDato())) {
-                                arenaNyBruker.getUtenServicebehov().setStansDato(arenadata.getInaktiveringDato().toLocalDate());
-                            }
+                            mapUtenServicebehov(arenadata, arenaNyBruker);
                         } else if (!arenadata.getAap().isEmpty() || !arenadata.getAap115().isEmpty() || !arenadata.getDagpenger().isEmpty()) {
-                            arenaNyBruker.setAktiveringsDato(
-                                    Stream.of(
-                                            arenadata.getAap().stream()
-                                                    .filter(Objects::nonNull)
-                                                    .map(RsArenaAap::getFraDato),
-                                            arenadata.getAap115().stream()
-                                                    .filter(Objects::nonNull)
-                                                    .map(RsArenaAap115::getFraDato),
-                                            arenadata.getDagpenger().stream()
-                                                    .filter(Objects::nonNull)
-                                                    .map(RsArenaDagpenger::getFraDato))
-                                            .flatMap(Stream::distinct)
-                                            .map(LocalDateTime::toLocalDate)
-                                            .min(LocalDate::compareTo)
-                                            .orElse(null));
+                            mapMedServicebehov(arenadata, arenaNyBruker);
                         }
                         if (arenadata.getAap().isEmpty()) {
                             arenaNyBruker.setAap(null);
@@ -128,5 +105,36 @@ public class ArenaMappingStrategy implements MappingStrategy {
                 })
                 .byDefault()
                 .register();
+    }
+
+    private void mapMedServicebehov(Arenadata arenadata, ArenaNyBruker arenaNyBruker) {
+        arenaNyBruker.setAktiveringsDato(
+                Stream.of(
+                        arenadata.getAap().stream()
+                                .filter(Objects::nonNull)
+                                .map(RsArenaAap::getFraDato),
+                        arenadata.getAap115().stream()
+                                .filter(Objects::nonNull)
+                                .map(RsArenaAap115::getFraDato),
+                        arenadata.getDagpenger().stream()
+                                .filter(Objects::nonNull)
+                                .map(RsArenaDagpenger::getFraDato))
+                        .flatMap(Stream::distinct)
+                        .map(LocalDateTime::toLocalDate)
+                        .min(LocalDate::compareTo)
+                        .orElse(null));
+    }
+
+    private void mapUtenServicebehov(Arenadata arenadata, ArenaNyBruker arenaNyBruker) {
+        arenaNyBruker.setUtenServicebehov(new ArenaBrukerUtenServicebehov());
+
+        arenaNyBruker.setKvalifiseringsgruppe(IKVAL);
+        if (isNull(arenadata.getAutomatiskInnsendingAvMeldekort())) {
+            arenaNyBruker.setAutomatiskInnsendingAvMeldekort(true);
+        }
+
+        if (nonNull(arenadata.getInaktiveringDato())) {
+            arenaNyBruker.getUtenServicebehov().setStansDato(arenadata.getInaktiveringDato().toLocalDate());
+        }
     }
 }
