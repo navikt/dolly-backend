@@ -1,5 +1,6 @@
 package no.nav.dolly.bestilling.pdlforvalter;
 
+import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
@@ -225,7 +226,7 @@ public class PdlForvalterClient implements ClientRegister {
     private void sendAdressebeskyttelse(Person person) {
 
         PdlAdressebeskyttelse pdlAdressebeskyttelse = mapperFacade.map(person, PdlAdressebeskyttelse.class);
-        log.info("Sender adresebeskyttelse med følgende verdier: " + pdlAdressebeskyttelse); //TODO: Fjerne
+        log.info("Sender adresebeskyttelse med følgende verdier: " + Json.pretty(pdlAdressebeskyttelse)); //TODO: Fjerne
         pdlForvalterConsumer.postAdressebeskyttelse(pdlAdressebeskyttelse,
                 person.getIdent());
     }
