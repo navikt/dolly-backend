@@ -37,7 +37,7 @@ public class AmeldingRequestMappingStrategy implements MappingStrategy {
 
                         String[] date = rsAmelding.getMaaned().split(",");
                         amelding.setKalendermaaned(LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), 1));
-                        amelding.setVirksomheter(mapperFacade.mapAsList(rsAmelding.getRsArbeidsforholdAareg(), VirksomhetDTO.class));
+                        amelding.setVirksomheter(mapperFacade.mapAsList(rsAmelding.getArbeidsforhold(), VirksomhetDTO.class));
                     }
                 })
                 .byDefault()

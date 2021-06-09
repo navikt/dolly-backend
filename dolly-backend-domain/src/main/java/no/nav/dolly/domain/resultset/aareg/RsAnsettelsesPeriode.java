@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class RsGenererPeriode {
+public class RsAnsettelsesPeriode {
 
     @Schema(description = "Dato fra-og-med",
             type = "LocalDateTime",

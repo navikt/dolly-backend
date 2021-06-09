@@ -22,7 +22,7 @@ public class RsArbeidsforholdAareg {
 
     private Long arbeidsforholdIDnav;
 
-    private RsGenererPeriode ansettelsesPeriode;
+    private RsAnsettelsesPeriode ansettelsesPeriode;
 
     private String arbeidsforholdstype;
 
