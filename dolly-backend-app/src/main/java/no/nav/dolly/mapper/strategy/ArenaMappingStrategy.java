@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.nav.dolly.domain.resultset.arenaforvalter.ArenaBrukertype.UTEN_SERVICEBEHOV;
 import static no.nav.dolly.domain.resultset.arenaforvalter.ArenaDagpenger.DAGPENGER_VILKAAR;
@@ -42,6 +43,10 @@ public class ArenaMappingStrategy implements MappingStrategy {
                             arenaNyBruker.setUtenServicebehov(new ArenaBrukerUtenServicebehov());
 
                             arenaNyBruker.setKvalifiseringsgruppe(IKVAL);
+                            if (isNull(arenadata.getAutomatiskInnsendingAvMeldekort())) {
+                                arenaNyBruker.setAutomatiskInnsendingAvMeldekort(true);
+                            }
+
                             if (nonNull(arenadata.getInaktiveringDato())) {
                                 arenaNyBruker.getUtenServicebehov().setStansDato(arenadata.getInaktiveringDato().toLocalDate());
                             }
