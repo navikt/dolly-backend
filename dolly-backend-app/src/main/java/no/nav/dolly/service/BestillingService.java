@@ -17,7 +17,7 @@ import no.nav.dolly.domain.resultset.RsDollyImportFraPdlRequest;
 import no.nav.dolly.domain.resultset.RsDollyImportFraTpsRequest;
 import no.nav.dolly.domain.resultset.RsDollyRelasjonRequest;
 import no.nav.dolly.domain.resultset.RsDollyUpdateRequest;
-import no.nav.dolly.domain.resultset.aareg.RsAaregArbeidsforhold;
+import no.nav.dolly.domain.resultset.aareg.RsAareg;
 import no.nav.dolly.domain.resultset.aareg.RsOrganisasjon;
 import no.nav.dolly.domain.resultset.pdlforvalter.RsPdldata;
 import no.nav.dolly.domain.resultset.tpsf.RsTpsfBasisBestilling;
@@ -310,7 +310,7 @@ public class BestillingService {
         });
     }
 
-    private static void fixAaregAbstractClassProblem(List<RsAaregArbeidsforhold> aaregdata) {
+    private static void fixAaregAbstractClassProblem(List<RsAareg> aaregdata) {
 
         aaregdata.forEach(arbeidforhold -> arbeidforhold.getArbeidsgiver().setAktoertype(
                 arbeidforhold.getArbeidsgiver() instanceof RsOrganisasjon ? "ORG" : "PERS"));

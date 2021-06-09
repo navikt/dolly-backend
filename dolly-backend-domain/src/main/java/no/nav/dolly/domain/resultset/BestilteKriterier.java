@@ -1,16 +1,12 @@
 package no.nav.dolly.domain.resultset;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import no.nav.dolly.domain.resultset.aareg.RsAaregArbeidsforhold;
+import no.nav.dolly.domain.resultset.aareg.RsAareg;
 import no.nav.dolly.domain.resultset.arenaforvalter.Arenadata;
 import no.nav.dolly.domain.resultset.breg.RsBregdata;
 import no.nav.dolly.domain.resultset.dokarkiv.RsDokarkiv;
@@ -24,6 +20,10 @@ import no.nav.dolly.domain.resultset.sigrunstub.OpprettSkattegrunnlag;
 import no.nav.dolly.domain.resultset.sykemelding.RsSykemelding;
 import no.nav.dolly.domain.resultset.udistub.model.RsUdiPerson;
 
+import java.util.List;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 @Getter
 @Setter
 @Builder
@@ -32,7 +32,7 @@ import no.nav.dolly.domain.resultset.udistub.model.RsUdiPerson;
 @JsonInclude(value = Include.NON_EMPTY)
 public class BestilteKriterier {
 
-    private List<RsAaregArbeidsforhold> aareg;
+    private List<RsAareg> aareg;
     private RsDigitalKontaktdata krrstub;
     private RsUdiPerson udistub;
     private List<OpprettSkattegrunnlag> sigrunstub;
