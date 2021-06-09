@@ -100,6 +100,7 @@ public class PdlPersondetaljerMappingStrategy implements MappingStrategy {
                             adressebeskyttelse.setMaster(PDL);
                         } else {
                             adressebeskyttelse.setGradering(UGRADERT);
+                            adressebeskyttelse.setMaster(PDL);
                         }
 
                         adressebeskyttelse.setKilde(CONSUMER);

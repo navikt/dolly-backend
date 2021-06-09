@@ -224,7 +224,9 @@ public class PdlForvalterClient implements ClientRegister {
 
     private void sendAdressebeskyttelse(Person person) {
 
-        pdlForvalterConsumer.postAdressebeskyttelse(mapperFacade.map(person, PdlAdressebeskyttelse.class),
+        PdlAdressebeskyttelse pdlAdressebeskyttelse = mapperFacade.map(person, PdlAdressebeskyttelse.class);
+        log.info("Sender adresebeskyttelse med følgende verdier: " + pdlAdressebeskyttelse); //TODO: Fjerne
+        pdlForvalterConsumer.postAdressebeskyttelse(pdlAdressebeskyttelse,
                 person.getIdent());
     }
 
