@@ -122,10 +122,10 @@ public class PdlForvalterClient implements ClientRegister {
         }
     }
 
-   @Override
-   public boolean isTestnorgeRelevant() {
+    @Override
+    public boolean isTestnorgeRelevant() {
         return false;
-   }
+    }
 
     private void hentPersondetaljer(DollyPerson dollyPerson) {
 
@@ -145,7 +145,7 @@ public class PdlForvalterClient implements ClientRegister {
             dollyPerson.getPersondetaljer().stream()
                     .filter(person -> dollyPerson.getIdenthistorikk().stream().anyMatch(historisk -> historisk.equals(person.getIdent())))
                     .forEach(person ->
-                        sendArtifacter(bestilling, dollyPerson, person));
+                            sendArtifacter(bestilling, dollyPerson, person));
             // Send øvrige personer
             dollyPerson.getPersondetaljer().stream()
                     .filter(person -> dollyPerson.getIdenthistorikk().stream().noneMatch(historisk -> historisk.equals(person.getIdent())))
@@ -224,10 +224,8 @@ public class PdlForvalterClient implements ClientRegister {
 
     private void sendAdressebeskyttelse(Person person) {
 
-        if ("SPSF".equals(person.getSpesreg()) || "SPFO".equals(person.getSpesreg()) || "SFU".equals(person.getSpesreg())) {
-            pdlForvalterConsumer.postAdressebeskyttelse(mapperFacade.map(person, PdlAdressebeskyttelse.class),
-                    person.getIdent());
-        }
+        pdlForvalterConsumer.postAdressebeskyttelse(mapperFacade.map(person, PdlAdressebeskyttelse.class),
+                person.getIdent());
     }
 
     private void sendFamilierelasjoner(Person person) {
