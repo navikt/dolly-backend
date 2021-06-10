@@ -315,8 +315,10 @@ public class BestillingService {
 
         aaregdata.forEach(arbeidforhold -> {
             log.info("Arbeidsforhold: " + Json.pretty(arbeidforhold));
-            arbeidforhold.getArbeidsforhold().getArbeidsgiver().setAktoertype(
-                    arbeidforhold.getArbeidsforhold().getArbeidsgiver() instanceof RsOrganisasjon ? "ORG" : "PERS");
+            if (nonNull(arbeidforhold.getArbeidsforhold()) && nonNull(arbeidforhold.getArbeidsforhold().getArbeidsgiver())) {
+                arbeidforhold.getArbeidsforhold().getArbeidsgiver().setAktoertype(
+                        arbeidforhold.getArbeidsforhold().getArbeidsgiver() instanceof RsOrganisasjon ? "ORG" : "PERS");
+            }
         });
     }
 
