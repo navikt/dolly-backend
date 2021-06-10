@@ -316,7 +316,7 @@ public class BestillingService {
         if (!aaregdata.isEmpty() && nonNull(aaregdata.get(0).getArbeidsforhold())) {
             aaregdata.get(0).getArbeidsforhold().forEach(arbeidforhold -> {
                 log.info("Arbeidsforhold: " + Json.pretty(arbeidforhold));
-                if (nonNull(arbeidforhold.getArbeidsgiver())) {
+                if (nonNull(arbeidforhold.getArbeidsgiver()) && isNull(arbeidforhold.getArbeidsgiver().getAktoertype())) {
                     arbeidforhold.getArbeidsgiver().setAktoertype(
                             arbeidforhold.getArbeidsgiver() instanceof RsOrganisasjon ? "ORG" : "PERS");
                 }

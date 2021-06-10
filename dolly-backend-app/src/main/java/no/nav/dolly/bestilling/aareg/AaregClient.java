@@ -44,6 +44,7 @@ public class AaregClient implements ClientRegister {
         StringBuilder result = new StringBuilder();
 
         if (!bestilling.getAareg().isEmpty()) {
+            log.info("Aareg bestilling: " + Json.pretty(bestilling.getAareg()));
 
             bestilling.getEnvironments().forEach(env -> {
 
