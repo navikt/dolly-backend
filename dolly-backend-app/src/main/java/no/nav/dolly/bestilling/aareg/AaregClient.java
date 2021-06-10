@@ -59,6 +59,7 @@ public class AaregClient implements ClientRegister {
                         bestilling.getAareg().get(0).getAmelding().forEach(amelding -> {
                             MappingContext context = new MappingContext.Factory().getContext();
                             context.setProperty("personIdent", dollyPerson.getHovedperson());
+                            context.setProperty("arbeidsforholdstype", bestilling.getAareg().get(0).getArbeidsforholdstype());
                             AMeldingDTO ameldingDto = mapperFacade.map(amelding, AMeldingDTO.class, context);
                             ameldingConsumer.putAmeldingdata(ameldingDto);
                         });

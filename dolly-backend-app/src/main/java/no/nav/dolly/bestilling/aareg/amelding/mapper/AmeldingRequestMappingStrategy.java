@@ -4,6 +4,7 @@ import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
 import no.nav.dolly.domain.resultset.aareg.RsAmeldingRequest;
+import no.nav.dolly.domain.resultset.aareg.RsAntallTimerIPerioden;
 import no.nav.dolly.domain.resultset.aareg.RsArbeidsforholdAareg;
 import no.nav.dolly.domain.resultset.aareg.RsFartoy;
 import no.nav.dolly.domain.resultset.aareg.RsPermisjon;
@@ -20,7 +21,10 @@ import no.nav.registre.testnorge.libs.dto.ameldingservice.v1.VirksomhetDTO;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Objects.nonNull;
 
@@ -53,17 +57,19 @@ public class AmeldingRequestMappingStrategy implements MappingStrategy {
                                 .personer(List.of(PersonDTO.builder()
                                         .ident((String) context.getProperty("personIdent"))
                                         .arbeidsforhold(List.of(ArbeidsforholdDTO.builder()
-                                                .antallTimerPerUke(rsArbeidsforholdAareg.getAntallTimerForTimeloennet().get(0).getAntallTimer().floatValue())
-                                                .arbeidsforholdId(rsArbeidsforholdAareg.getArbeidsforholdID())
-                                                .arbeidsforholdType(rsArbeidsforholdAareg.getArbeidsforholdstype())
+                                                .antallTimerPerUke(
+                                                        !rsArbeidsforholdAareg.getAntallTimerForTimeloennet().isEmpty()
+                                                                ? rsArbeidsforholdAareg.getAntallTimerForTimeloennet().get(0).getAntallTimer().floatValue()
+                                                                : rsArbeidsforholdAareg.getArbeidsavtale().getAvtaltArbeidstimerPerUke().floatValue())
+                                                .arbeidsforholdId(nonNull(rsArbeidsforholdAareg.getArbeidsforholdID()) ? rsArbeidsforholdAareg.getArbeidsforholdID() : "1")
+                                                .arbeidsforholdType((String) context.getProperty("arbeidsforholdstype"))
                                                 .arbeidstidsordning(rsArbeidsforholdAareg.getArbeidsavtale().getArbeidstidsordning())
                                                 .fartoey(nonNull(rsArbeidsforholdAareg.getFartoy()) ? mapperFacade.map(rsArbeidsforholdAareg.getFartoy(), FartoeyDTO.class) : null)
-                                                .inntekter(List.of(InntektDTO.builder()
-                                                        .antall(rsArbeidsforholdAareg.getArbeidsavtale().getAvtaltArbeidstimerPerUke().intValue())
-                                                        .opptjeningsland("NO")
-                                                        .startdatoOpptjeningsperiode(nonNull(rsArbeidsforholdAareg.getAnsettelsesPeriode().getFom()) ? rsArbeidsforholdAareg.getAnsettelsesPeriode().getFom().toLocalDate() : null)
-                                                        .sluttdatoOpptjeningsperiode(nonNull(rsArbeidsforholdAareg.getAnsettelsesPeriode().getTom()) ? rsArbeidsforholdAareg.getAnsettelsesPeriode().getFom().toLocalDate() : null)
-                                                        .build()))
+                                                .inntekter(
+                                                        Stream.of(
+                                                                mapperFacade.mapAsList(rsArbeidsforholdAareg.getAntallTimerForTimeloennet(), InntektDTO.class),
+                                                                mapperFacade.mapAsList(rsArbeidsforholdAareg.getUtenlandsopphold(), InntektDTO.class))
+                                                                .flatMap(Collection::stream).collect(Collectors.toList()))
                                                 .yrke(rsArbeidsforholdAareg.getArbeidsavtale().getYrke())
                                                 .arbeidstidsordning(rsArbeidsforholdAareg.getArbeidsavtale().getArbeidstidsordning())
                                                 .stillingsprosent(nonNull(rsArbeidsforholdAareg.getArbeidsavtale().getStillingsprosent()) ? rsArbeidsforholdAareg.getArbeidsavtale().getStillingsprosent().floatValue() : null)
@@ -107,6 +113,17 @@ public class AmeldingRequestMappingStrategy implements MappingStrategy {
                 inntekt.setStartdatoOpptjeningsperiode(nonNull(utenlandsopphold.getPeriode().getFom()) ? utenlandsopphold.getPeriode().getFom().toLocalDate() : null);
                 inntekt.setSluttdatoOpptjeningsperiode(nonNull(utenlandsopphold.getPeriode().getTom()) ? utenlandsopphold.getPeriode().getTom().toLocalDate() : null);
                 inntekt.setOpptjeningsland(utenlandsopphold.getLand());
+            }
+        })
+                .byDefault()
+                .register();
+
+        factory.classMap(RsAntallTimerIPerioden.class, InntektDTO.class).customize(new CustomMapper<>() {
+            @Override
+            public void mapAtoB(RsAntallTimerIPerioden antallTimerIPerioden, InntektDTO inntekt, MappingContext context) {
+                inntekt.setStartdatoOpptjeningsperiode(nonNull(antallTimerIPerioden.getPeriode().getFom()) ? antallTimerIPerioden.getPeriode().getFom().toLocalDate() : null);
+                inntekt.setSluttdatoOpptjeningsperiode(nonNull(antallTimerIPerioden.getPeriode().getTom()) ? antallTimerIPerioden.getPeriode().getTom().toLocalDate() : null);
+                inntekt.setAntall(antallTimerIPerioden.getAntallTimer().intValue());
             }
         })
                 .byDefault()
