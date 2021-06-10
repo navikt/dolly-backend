@@ -4,7 +4,7 @@ import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
 import no.nav.dolly.bestilling.aareg.domain.Arbeidsforhold;
-import no.nav.dolly.domain.resultset.aareg.RsAareg;
+import no.nav.dolly.domain.resultset.aareg.RsAareg.RsAaregArbeidsforhold;
 import no.nav.dolly.domain.resultset.aareg.RsAktoerPerson;
 import no.nav.dolly.domain.resultset.aareg.RsOrganisasjon;
 import no.nav.dolly.mapper.MappingStrategy;
@@ -15,15 +15,15 @@ public class AaregRequestMappingStrategy implements MappingStrategy {
 
     @Override
     public void register(MapperFactory factory) {
-        factory.classMap(RsAareg.class, Arbeidsforhold.class)
-                .customize(new CustomMapper<RsAareg, Arbeidsforhold>() {
+        factory.classMap(RsAaregArbeidsforhold.class, Arbeidsforhold.class)
+                .customize(new CustomMapper<>() {
                     @Override
-                    public void mapAtoB(RsAareg rsArbeidsforhold,
+                    public void mapAtoB(RsAaregArbeidsforhold rsArbeidsforhold,
                                         Arbeidsforhold arbeidsforhold, MappingContext context) {
 
-                        if (rsArbeidsforhold.getArbeidsforhold().getArbeidsgiver() instanceof RsOrganisasjon) {
+                        if (rsArbeidsforhold.getArbeidsgiver() instanceof RsOrganisasjon) {
                             arbeidsforhold.getArbeidsgiver().setAktoertype("ORG");
-                        } else if (rsArbeidsforhold.getArbeidsforhold().getArbeidsgiver() instanceof RsAktoerPerson) {
+                        } else if (rsArbeidsforhold.getArbeidsgiver() instanceof RsAktoerPerson) {
                             arbeidsforhold.getArbeidsgiver().setAktoertype("PERS");
                         }
                     }

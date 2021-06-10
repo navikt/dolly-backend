@@ -21,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
@@ -105,9 +106,9 @@ public class AaregClientTest {
 
         RsDollyBestillingRequest request = new RsDollyBestillingRequest();
         request.setAareg(singletonList(RsAareg.builder()
-                .arbeidsforhold(RsAareg.RsAaregArbeidsforhold.builder()
+                .arbeidsforhold(List.of(RsAareg.RsAaregArbeidsforhold.builder()
                         .arbeidsgiver(RsOrganisasjon.builder().orgnummer(ORGNUMMER).build())
-                        .build())
+                        .build()))
                 .build()));
         request.setEnvironments(singletonList("u2"));
         aaregClient.gjenopprett(request, DollyPerson.builder().hovedperson(IDENT).build(), new BestillingProgress(), false);
@@ -125,9 +126,9 @@ public class AaregClientTest {
 
         RsDollyBestillingRequest request = new RsDollyBestillingRequest();
         request.setAareg(singletonList(RsAareg.builder()
-                .arbeidsforhold(RsAareg.RsAaregArbeidsforhold.builder()
+                .arbeidsforhold(List.of(RsAareg.RsAaregArbeidsforhold.builder()
                         .arbeidsgiver(RsAktoerPerson.builder().ident(IDENT).build())
-                        .build())
+                        .build()))
                 .build()));
         request.setEnvironments(singletonList("u2"));
         aaregClient.gjenopprett(request,
@@ -148,9 +149,9 @@ public class AaregClientTest {
 
         RsDollyBestillingRequest request = new RsDollyBestillingRequest();
         request.setAareg(singletonList(RsAareg.builder()
-                .arbeidsforhold(RsAareg.RsAaregArbeidsforhold.builder()
+                .arbeidsforhold(List.of(RsAareg.RsAaregArbeidsforhold.builder()
                         .arbeidsgiver(RsAktoerPerson.builder().ident(IDENT).build())
-                        .build())
+                        .build()))
                 .build()));
         request.setEnvironments(singletonList("u2"));
         aaregClient.gjenopprett(request, DollyPerson.builder().hovedperson(IDENT).build(), progress, false);

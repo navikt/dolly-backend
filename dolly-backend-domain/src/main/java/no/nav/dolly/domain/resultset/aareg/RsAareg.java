@@ -23,7 +23,7 @@ public class RsAareg {
     @Schema(description = "Gyldige verdier finnes i kodeverk 'Arbeidsforholdstyper'")
     private String arbeidsforholdstype;
 
-    private RsAaregArbeidsforhold arbeidsforhold;
+    private List<RsAaregArbeidsforhold> arbeidsforhold;
 
     private List<RsAmeldingRequest> amelding;
 
