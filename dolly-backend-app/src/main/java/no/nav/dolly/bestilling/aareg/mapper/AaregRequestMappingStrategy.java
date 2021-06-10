@@ -21,9 +21,9 @@ public class AaregRequestMappingStrategy implements MappingStrategy {
                     public void mapAtoB(RsAareg rsArbeidsforhold,
                                         Arbeidsforhold arbeidsforhold, MappingContext context) {
 
-                        if (rsArbeidsforhold.getArbeidsgiver() instanceof RsOrganisasjon) {
+                        if (rsArbeidsforhold.getArbeidsforhold().getArbeidsgiver() instanceof RsOrganisasjon) {
                             arbeidsforhold.getArbeidsgiver().setAktoertype("ORG");
-                        } else if (rsArbeidsforhold.getArbeidsgiver() instanceof RsAktoerPerson) {
+                        } else if (rsArbeidsforhold.getArbeidsforhold().getArbeidsgiver() instanceof RsAktoerPerson) {
                             arbeidsforhold.getArbeidsgiver().setAktoertype("PERS");
                         }
                     }

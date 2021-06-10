@@ -156,7 +156,7 @@ public class BestillingService {
 
     @Transactional
     public Bestilling saveBestilling(Long gruppeId, RsDollyBestilling request, RsTpsfBasisBestilling tpsf, Integer antall,
-            List<String> opprettFraIdenter, Boolean navSyntetiskIdent) {
+                                     List<String> opprettFraIdenter, Boolean navSyntetiskIdent) {
         Testgruppe gruppe = testgruppeRepository.findById(gruppeId).orElseThrow(() -> new NotFoundException("Finner ikke gruppe basert på gruppeID: " + gruppeId));
         fixAaregAbstractClassProblem(request.getAareg());
         fixPdlAbstractClassProblem(request.getPdlforvalter());
@@ -312,8 +312,8 @@ public class BestillingService {
 
     private static void fixAaregAbstractClassProblem(List<RsAareg> aaregdata) {
 
-        aaregdata.forEach(arbeidforhold -> arbeidforhold.getArbeidsgiver().setAktoertype(
-                arbeidforhold.getArbeidsgiver() instanceof RsOrganisasjon ? "ORG" : "PERS"));
+        aaregdata.forEach(arbeidforhold -> arbeidforhold.getArbeidsforhold().getArbeidsgiver().setAktoertype(
+                arbeidforhold.getArbeidsforhold().getArbeidsgiver() instanceof RsOrganisasjon ? "ORG" : "PERS"));
     }
 
     private static void fixPdlAbstractClassProblem(RsPdldata pdldata) {
