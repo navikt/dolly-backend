@@ -35,7 +35,7 @@ public class AmeldingRequestMappingStrategy implements MappingStrategy {
                     public void mapAtoB(RsAmeldingRequest rsAmelding,
                                         AMeldingDTO amelding, MappingContext context) {
 
-                        String[] date = rsAmelding.getMaaned().split(",");
+                        String[] date = rsAmelding.getMaaned().split("-");
                         amelding.setKalendermaaned(LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), 1));
                         amelding.setVirksomheter(mapperFacade.mapAsList(rsAmelding.getArbeidsforhold(), VirksomhetDTO.class));
                     }
