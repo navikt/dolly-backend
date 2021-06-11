@@ -17,6 +17,7 @@ import no.nav.dolly.domain.resultset.tpsf.DollyPerson;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
 import no.nav.registre.testnorge.libs.dto.ameldingservice.v1.AMeldingDTO;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -50,10 +51,6 @@ public class AaregClient implements ClientRegister {
             bestilling.getEnvironments().forEach(env -> {
 
                 try {
-                    List<Arbeidsforhold> arbeidsforholdRequest =
-                            nonNull(bestilling.getAareg().get(0).getArbeidsforhold()) ? mapperFacade.mapAsList(bestilling.getAareg().get(0).getArbeidsforhold(), Arbeidsforhold.class) : emptyList();
-                    List<ArbeidsforholdResponse> eksisterendeArbeidsforhold = aaregConsumer.hentArbeidsforhold(dollyPerson.getHovedperson(), env);
-
                     if (nonNull(bestilling.getAareg().get(0).getAmelding()) && !bestilling.getAareg().get(0).getAmelding().isEmpty()) {
                         log.info("Sender a-melding: \n" + Json.pretty(bestilling.getAareg().get(0).getAmelding().get(0)));
                         bestilling.getAareg().get(0).getAmelding().forEach(amelding -> {
@@ -62,28 +59,35 @@ public class AaregClient implements ClientRegister {
                             context.setProperty("arbeidsforholdstype", bestilling.getAareg().get(0).getArbeidsforholdstype());
                             AMeldingDTO ameldingDto = mapperFacade.map(amelding, AMeldingDTO.class, context);
                             log.info("Sender Amelding til service: " + Json.pretty(ameldingDto));
-                            ameldingConsumer.putAmeldingdata(ameldingDto);
+                            ResponseEntity<?> response = ameldingConsumer.putAmeldingdata(ameldingDto);
+                            log.info("Response fra Amelding service: " + Json.pretty(response));
+                            appendResult((singletonMap(env, "OK")), "1", result);
                         });
+                    } else {
+
+                        List<Arbeidsforhold> arbeidsforholdRequest =
+                                nonNull(bestilling.getAareg().get(0).getArbeidsforhold()) ? mapperFacade.mapAsList(bestilling.getAareg().get(0).getArbeidsforhold(), Arbeidsforhold.class) : emptyList();
+                        List<ArbeidsforholdResponse> eksisterendeArbeidsforhold = aaregConsumer.hentArbeidsforhold(dollyPerson.getHovedperson(), env);
+
+
+                        List<Arbeidsforhold> arbeidsforhold = AaregMergeUtil.merge(
+                                arbeidsforholdRequest,
+                                eksisterendeArbeidsforhold,
+                                dollyPerson.getHovedperson(), isOpprettEndre);
+
+                        arbeidsforhold.forEach(arbforhold -> {
+                            AaregOpprettRequest aaregOpprettRequest = AaregOpprettRequest.builder()
+                                    .arbeidsforhold(arbforhold)
+                                    .environments(singletonList(env))
+                                    .build();
+                            log.info("Sender Arbeidsforhold til Aareg: " + Json.pretty(aaregOpprettRequest));
+                            appendResult(aaregConsumer.opprettArbeidsforhold(aaregOpprettRequest).getStatusPerMiljoe(), arbforhold.getArbeidsforholdID(), result);
+                        });
+
+                        if (arbeidsforhold.isEmpty()) {
+                            appendResult(singletonMap(env, "OK"), "0", result);
+                        }
                     }
-
-                    List<Arbeidsforhold> arbeidsforhold = AaregMergeUtil.merge(
-                            arbeidsforholdRequest,
-                            eksisterendeArbeidsforhold,
-                            dollyPerson.getHovedperson(), isOpprettEndre);
-
-                    arbeidsforhold.forEach(arbforhold -> {
-                        AaregOpprettRequest aaregOpprettRequest = AaregOpprettRequest.builder()
-                                .arbeidsforhold(arbforhold)
-                                .environments(singletonList(env))
-                                .build();
-                        log.info("Sender Arbeidsforhold til Aareg: " + Json.pretty(aaregOpprettRequest));
-                        appendResult(aaregConsumer.opprettArbeidsforhold(aaregOpprettRequest).getStatusPerMiljoe(), arbforhold.getArbeidsforholdID(), result);
-                    });
-
-                    if (arbeidsforhold.isEmpty()) {
-                        appendResult(singletonMap(env, "OK"), "0", result);
-                    }
-
                 } catch (RuntimeException e) {
                     Map<String, String> status = new HashMap<>();
                     status.put(env, errorStatusDecoder.decodeRuntimeException(e));
