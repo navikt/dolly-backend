@@ -61,6 +61,7 @@ public class AaregClient implements ClientRegister {
                             context.setProperty("personIdent", dollyPerson.getHovedperson());
                             context.setProperty("arbeidsforholdstype", bestilling.getAareg().get(0).getArbeidsforholdstype());
                             AMeldingDTO ameldingDto = mapperFacade.map(amelding, AMeldingDTO.class, context);
+                            log.info("Sender Amelding til service: " + Json.pretty(ameldingDto));
                             ameldingConsumer.putAmeldingdata(ameldingDto);
                         });
                     }
@@ -70,11 +71,14 @@ public class AaregClient implements ClientRegister {
                             eksisterendeArbeidsforhold,
                             dollyPerson.getHovedperson(), isOpprettEndre);
 
-                    arbeidsforhold.forEach(arbforhold ->
-                            appendResult(aaregConsumer.opprettArbeidsforhold(AaregOpprettRequest.builder()
-                                    .arbeidsforhold(arbforhold)
-                                    .environments(singletonList(env))
-                                    .build()).getStatusPerMiljoe(), arbforhold.getArbeidsforholdID(), result));
+                    arbeidsforhold.forEach(arbforhold -> {
+                        AaregOpprettRequest aaregOpprettRequest = AaregOpprettRequest.builder()
+                                .arbeidsforhold(arbforhold)
+                                .environments(singletonList(env))
+                                .build();
+                        log.info("Sender Arbeidsforhold til Aareg: " + Json.pretty(aaregOpprettRequest));
+                        appendResult(aaregConsumer.opprettArbeidsforhold(aaregOpprettRequest).getStatusPerMiljoe(), arbforhold.getArbeidsforholdID(), result);
+                    });
 
                     if (arbeidsforhold.isEmpty()) {
                         appendResult(singletonMap(env, "OK"), "0", result);
