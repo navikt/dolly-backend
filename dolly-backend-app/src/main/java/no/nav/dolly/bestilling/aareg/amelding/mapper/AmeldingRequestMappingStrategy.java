@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -42,6 +43,9 @@ public class AmeldingRequestMappingStrategy implements MappingStrategy {
 
                         String[] date = rsAmelding.getMaaned().split("-");
                         amelding.setKalendermaaned(LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), 1));
+                        Map<String, String> opplysningsPliktig = (Map<String, String>) context.getProperty("opplysningsPliktig");
+
+                        amelding.setOpplysningspliktigOrganisajonsnummer(opplysningsPliktig.get(rsAmelding.getArbeidsforhold().get(0).getArbeidsgiver().getOrgnummer()));
 
                         List<Virksomhet> virksomheter = mapperFacade.mapAsList(rsAmelding.getArbeidsforhold(), Virksomhet.class);
                         List<VirksomhetDTO> ameldingVirksomheter = virksomheter.stream().map(virksomhet ->
