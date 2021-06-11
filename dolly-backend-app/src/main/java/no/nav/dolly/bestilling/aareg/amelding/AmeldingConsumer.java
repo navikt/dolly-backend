@@ -31,15 +31,16 @@ public class AmeldingConsumer {
     }
 
     @Timed(name = "providers", tags = { "operation", "amelding_put" })
-    public ResponseEntity<Object> putAmeldingdata(AMeldingDTO amelding) {
-        return webClient.put()
-                .uri(uriBuilder -> uriBuilder.path("/api/v1/amelding").build())
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenService.generateToken(serverProperties).map(AccessToken::getTokenValue))
-                .header("Nav-Call-Id", generateCallId())
-                .body(BodyInserters.fromPublisher(Mono.just(amelding), AMeldingDTO.class))
-                .retrieve()
-                .toEntity(Object.class)
-                .block();
+    public Object putAmeldingdata(AMeldingDTO amelding) {
+        return tokenService.generateToken(serverProperties).flatMap(accessToken ->
+                webClient.put()
+                        .uri(uriBuilder -> uriBuilder.path("/api/v1/amelding").build())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getTokenValue())
+                        .header("Nav-Call-Id", generateCallId())
+                        .body(BodyInserters.fromPublisher(Mono.just(amelding), AMeldingDTO.class))
+                        .retrieve()
+                        .bodyToMono(Object.class)
+        ).block();
     }
 
     @Timed(name = "providers", tags = { "operation", "amelding_get" })
