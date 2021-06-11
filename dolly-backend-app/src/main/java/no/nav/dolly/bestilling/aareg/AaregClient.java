@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -65,14 +66,13 @@ public class AaregClient implements ClientRegister {
                             List<OrganisasjonDTO> organisasjoner = organisasjonServiceConsumer.getOrganisasjoner(orgnumre, env);
 
                             Map<String, String> opplysningspliktig = new HashMap<>();
-                            orgnumre.forEach(orgnummer -> {
-                                opplysningspliktig.put(orgnummer,
-                                        organisasjoner.stream()
-                                                .filter(org -> org.getOrgnummer().equals(orgnummer))
-                                                .map(OrganisasjonDTO::getJuridiskEnhet)
-                                                .findFirst()
-                                                .orElse(null));
-                            });
+                            orgnumre.forEach(orgnummer -> opplysningspliktig.put(orgnummer,
+                                    organisasjoner.stream()
+                                            .filter(Objects::nonNull)
+                                            .filter(org -> nonNull(org.getOrgnummer()) && org.getOrgnummer().equals(orgnummer))
+                                            .map(OrganisasjonDTO::getJuridiskEnhet)
+                                            .findFirst()
+                                            .orElse("12345678")));
                             MappingContext context = new MappingContext.Factory().getContext();
 
                             context.setProperty("personIdent", dollyPerson.getHovedperson());
