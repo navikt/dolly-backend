@@ -19,7 +19,6 @@ import no.nav.registre.testnorge.libs.dto.ameldingservice.v1.AMeldingDTO;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.List;
@@ -60,7 +59,7 @@ public class AaregClient implements ClientRegister {
                             context.setProperty("arbeidsforholdstype", bestilling.getAareg().get(0).getArbeidsforholdstype());
                             AMeldingDTO ameldingDto = mapperFacade.map(amelding, AMeldingDTO.class, context);
                             log.info("Sender Amelding til service: " + Json.pretty(ameldingDto));
-                            Mono<ResponseEntity<Object>> response = ameldingConsumer.putAmeldingdata(ameldingDto);
+                            ResponseEntity<Object> response = ameldingConsumer.putAmeldingdata(ameldingDto);
                             log.info("Response fra Amelding service: " + Json.pretty(response));
                             appendResult((singletonMap(env, "OK")), "1", result); //TODO: Fiks
                         });
