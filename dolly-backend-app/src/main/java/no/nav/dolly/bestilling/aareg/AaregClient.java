@@ -89,6 +89,7 @@ public class AaregClient implements ClientRegister {
                         }
                     }
                 } catch (RuntimeException e) {
+                    log.error("Innsending til Aareg feilet: ", e);
                     Map<String, String> status = new HashMap<>();
                     status.put(env, errorStatusDecoder.decodeRuntimeException(e));
                     appendResult(status, "1", result);
