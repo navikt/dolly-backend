@@ -96,8 +96,14 @@ public class AmeldingRequestMappingStrategy implements MappingStrategy {
                 .byDefault()
                 .register();
 
-        factory.classMap(RsFartoy.class, FartoeyDTO.class).byDefault().register();
-        factory.classMap(RsPermisjon.class, PermisjonDTO.class).byDefault().register();
+        factory.classMap(RsFartoy.class, FartoeyDTO.class)
+                .byDefault()
+                .register();
+
+        factory.classMap(RsPermisjon.class, PermisjonDTO.class)
+                .byDefault()
+                .register();
+
         factory.classMap(RsPermittering.class, PermisjonDTO.class).customize(new CustomMapper<>() {
             @Override
             public void mapAtoB(RsPermittering rsPermittering, PermisjonDTO permisjonDTO, MappingContext context) {
