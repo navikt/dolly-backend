@@ -27,6 +27,11 @@ consumers:
     name: testnav-inntektsmelding-service
     cluster: dev-gcp
     namespace: dolly
+  testnav-amelding-service:
+    url: https://testnav-amelding-service.dev.intern.nav.no
+    name: testnav-amelding-service
+    cluster: dev-gcp
+    namespace: dolly
 
 
 #### APP DB ####

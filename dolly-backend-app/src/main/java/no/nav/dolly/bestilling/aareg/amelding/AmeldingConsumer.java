@@ -1,47 +1,54 @@
 package no.nav.dolly.bestilling.aareg.amelding;
 
-import lombok.RequiredArgsConstructor;
-import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeBrukereResponse;
+import no.nav.dolly.config.credentials.AmeldingServiceProperties;
 import no.nav.dolly.metrics.Timed;
-import no.nav.dolly.properties.ProvidersProps;
+import no.nav.dolly.security.oauth2.config.NaisServerProperties;
+import no.nav.dolly.security.oauth2.domain.AccessToken;
+import no.nav.dolly.security.oauth2.service.TokenService;
 import no.nav.registre.testnorge.libs.dto.ameldingservice.v1.AMeldingDTO;
-import org.springframework.http.RequestEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
-import java.net.URI;
-
-import static java.lang.String.format;
-import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
-import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
-import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
 import static no.nav.dolly.util.CallIdUtil.generateCallId;
 
 @Service
-@RequiredArgsConstructor
 public class AmeldingConsumer {
 
-    private static final String AMELDING_URL = "/api/v1/amelding";
+    private final TokenService tokenService;
+    private final WebClient webClient;
+    private final NaisServerProperties serverProperties;
 
-    private final RestTemplate restTemplate;
-    private final ProvidersProps providersProps;
-
-    @Timed(name = "providers", tags = { "operation", "amelding_get" })
-    public ResponseEntity<AMeldingDTO> getAmelding(String id) {
-        return restTemplate.exchange(RequestEntity.get(
-                URI.create(format("%s%s/%s", providersProps.getAmeldingService().getUrl(), AMELDING_URL, id)))
-                .header(HEADER_NAV_CALL_ID, generateCallId())
-                .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .build(), AMeldingDTO.class);
+    public AmeldingConsumer(TokenService tokenService, AmeldingServiceProperties serviceProperties) {
+        this.tokenService = tokenService;
+        this.serverProperties = serviceProperties;
+        this.webClient = WebClient.builder()
+                .baseUrl(serviceProperties.getUrl())
+                .build();
     }
 
     @Timed(name = "providers", tags = { "operation", "amelding_put" })
-    public ResponseEntity<?> putAmeldingdata(AMeldingDTO amelding) {
-        return restTemplate.exchange(RequestEntity.put(
-                URI.create(providersProps.getAmeldingService().getUrl() + AMELDING_URL))
-                .header(HEADER_NAV_CALL_ID, generateCallId())
-                .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .body(amelding), ArenaNyeBrukereResponse.class);
+    public Mono<ResponseEntity<Object>> putAmeldingdata(AMeldingDTO amelding) {
+        return webClient.put()
+                .uri(uriBuilder -> uriBuilder.path("/api/v1/amelding").build())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenService.generateToken(serverProperties).map(AccessToken::getTokenValue))
+                .header("Nav-Call-Id", generateCallId())
+                .body(BodyInserters.fromPublisher(Mono.just(amelding), AMeldingDTO.class))
+                .retrieve()
+                .toEntity(Object.class);
+    }
+
+    @Timed(name = "providers", tags = { "operation", "amelding_get" })
+    public Mono<ResponseEntity<AMeldingDTO>> getAmelding(String id) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/api/v1/amelding/{id}")
+                        .build(id))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenService.generateToken(serverProperties).map(AccessToken::getTokenValue))
+                .header("Nav-Call-Id", generateCallId())
+                .retrieve()
+                .toEntity(AMeldingDTO.class);
     }
 }
