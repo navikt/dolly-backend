@@ -79,15 +79,25 @@ public class AmeldingRequestMappingStrategy implements MappingStrategy {
                                         .arbeidstidsordning(rsArbeidsforholdAareg.getArbeidsavtale().getArbeidstidsordning())
                                         .fartoey(nonNull(rsArbeidsforholdAareg.getFartoy()) ? mapperFacade.map(rsArbeidsforholdAareg.getFartoy(), FartoeyDTO.class) : null)
                                         .inntekter(
-                                                Stream.of(
+                                                (nonNull(rsArbeidsforholdAareg.getUtenlandsopphold()) && !rsArbeidsforholdAareg.getUtenlandsopphold().isEmpty())
+                                                        || (nonNull(rsArbeidsforholdAareg.getAntallTimerForTimeloennet()) && !rsArbeidsforholdAareg.getAntallTimerForTimeloennet().isEmpty())
+                                                        ? Stream.of(
                                                         mapperFacade.mapAsList(rsArbeidsforholdAareg.getAntallTimerForTimeloennet(), InntektDTO.class),
                                                         mapperFacade.mapAsList(rsArbeidsforholdAareg.getUtenlandsopphold(), InntektDTO.class))
-                                                        .flatMap(Collection::stream).collect(Collectors.toList()))
+                                                        .flatMap(Collection::stream).collect(Collectors.toList())
+                                                        : null)
                                         .yrke(rsArbeidsforholdAareg.getArbeidsavtale().getYrke())
                                         .arbeidstidsordning(rsArbeidsforholdAareg.getArbeidsavtale().getArbeidstidsordning())
                                         .stillingsprosent(nonNull(rsArbeidsforholdAareg.getArbeidsavtale().getStillingsprosent()) ? rsArbeidsforholdAareg.getArbeidsavtale().getStillingsprosent().floatValue() : null)
                                         .sisteLoennsendringsdato(nonNull(rsArbeidsforholdAareg.getArbeidsavtale().getEndringsdatoLoenn()) ? rsArbeidsforholdAareg.getArbeidsavtale().getEndringsdatoLoenn().toLocalDate() : null)
-                                        .permisjoner(nonNull(rsArbeidsforholdAareg.getPermisjon()) ? mapperFacade.mapAsList(rsArbeidsforholdAareg.getPermisjon(), PermisjonDTO.class) : null)
+                                        .permisjoner((nonNull(rsArbeidsforholdAareg.getPermisjon()) && !rsArbeidsforholdAareg.getPermisjon().isEmpty())
+                                                || (nonNull(rsArbeidsforholdAareg.getPermittering()) && !rsArbeidsforholdAareg.getPermittering().isEmpty())
+                                                ? Stream.of(
+                                                mapperFacade.mapAsList(rsArbeidsforholdAareg.getPermisjon(), PermisjonDTO.class),
+                                                mapperFacade.mapAsList(rsArbeidsforholdAareg.getPermittering(), PermisjonDTO.class))
+                                                .flatMap(Collection::stream).collect(Collectors.toList())
+                                                : null)
+                                        .avvik(null) // Settes dersom avvik kommer fra frontend
                                         .build()))
                                 .build()
                         ));
