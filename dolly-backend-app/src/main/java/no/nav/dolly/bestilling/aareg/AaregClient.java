@@ -18,6 +18,7 @@ import no.nav.dolly.domain.resultset.aareg.RsArbeidsforholdAareg;
 import no.nav.dolly.domain.resultset.aareg.RsArbeidsforholdAareg.RsArbeidsgiver;
 import no.nav.dolly.domain.resultset.tpsf.DollyPerson;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
+import no.nav.dolly.exceptions.NotFoundException;
 import no.nav.registre.testnorge.libs.dto.ameldingservice.v1.AMeldingDTO;
 import no.nav.registre.testnorge.libs.dto.organisasjon.v1.OrganisasjonDTO;
 import org.springframework.core.annotation.Order;
@@ -59,11 +60,11 @@ public class AaregClient implements ClientRegister {
 
                 try {
                     if (nonNull(bestilling.getAareg().get(0).getAmelding()) && !bestilling.getAareg().get(0).getAmelding().isEmpty()) {
-                        log.info("Sender a-melding: \n" + Json.pretty(bestilling.getAareg().get(0).getAmelding().get(0)));
                         bestilling.getAareg().get(0).getAmelding().forEach(amelding -> {
 
                             Set<String> orgnumre = amelding.getArbeidsforhold().stream().map(RsArbeidsforholdAareg::getArbeidsgiver).map(RsArbeidsgiver::getOrgnummer).collect(Collectors.toSet());
                             List<OrganisasjonDTO> organisasjoner = organisasjonServiceConsumer.getOrganisasjoner(orgnumre, env);
+                            log.info("Hentet organisajoner fra org service: \n" + Json.pretty(organisasjoner));
 
                             Map<String, String> opplysningspliktig = new HashMap<>();
                             orgnumre.forEach(orgnummer -> opplysningspliktig.put(orgnummer,
@@ -72,7 +73,7 @@ public class AaregClient implements ClientRegister {
                                             .filter(org -> nonNull(org.getOrgnummer()) && org.getOrgnummer().equals(orgnummer))
                                             .map(OrganisasjonDTO::getJuridiskEnhet)
                                             .findFirst()
-                                            .orElse("12345678")));
+                                            .orElseThrow(() -> new NotFoundException(String.format("Juridisk enhet for organisasjon: %s ikke funnet", orgnummer)))));
                             MappingContext context = new MappingContext.Factory().getContext();
 
                             context.setProperty("personIdent", dollyPerson.getHovedperson());
