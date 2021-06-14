@@ -123,13 +123,37 @@ public class AmeldingRequestMappingStrategy implements MappingStrategy {
                 .register();
 
         factory.classMap(RsPermisjon.class, PermisjonDTO.class)
+                .customize(new CustomMapper<>() {
+                    @Override
+                    public void mapAtoB(RsPermisjon rsPermisjon, PermisjonDTO permisjonDTO, MappingContext context) {
+                        permisjonDTO.setBeskrivelse(rsPermisjon.getPermisjon());
+                        permisjonDTO.setPermisjonsprosent(rsPermisjon.getPermisjonsprosent().floatValue());
+                        permisjonDTO.setStartdato(
+                                nonNull(rsPermisjon.getPermisjonsPeriode()) && nonNull(rsPermisjon.getPermisjonsPeriode().getFom())
+                                        ? rsPermisjon.getPermisjonsPeriode().getFom().toLocalDate()
+                                        : null);
+                        permisjonDTO.setSluttdato(
+                                nonNull(rsPermisjon.getPermisjonsPeriode()) && nonNull(rsPermisjon.getPermisjonsPeriode().getTom())
+                                        ? rsPermisjon.getPermisjonsPeriode().getTom().toLocalDate()
+                                        : null);
+                    }
+                })
                 .byDefault()
                 .register();
 
         factory.classMap(RsPermittering.class, PermisjonDTO.class).customize(new CustomMapper<>() {
             @Override
             public void mapAtoB(RsPermittering rsPermittering, PermisjonDTO permisjonDTO, MappingContext context) {
-                permisjonDTO.setPermisjonId("permittering");
+                permisjonDTO.setBeskrivelse("permittering");
+                permisjonDTO.setPermisjonsprosent(rsPermittering.getPermitteringsprosent().floatValue());
+                permisjonDTO.setStartdato(
+                        nonNull(rsPermittering.getPermitteringsPeriode()) && nonNull(rsPermittering.getPermitteringsPeriode().getFom())
+                                ? rsPermittering.getPermitteringsPeriode().getFom().toLocalDate()
+                                : null);
+                permisjonDTO.setSluttdato(
+                        nonNull(rsPermittering.getPermitteringsPeriode()) && nonNull(rsPermittering.getPermitteringsPeriode().getTom())
+                                ? rsPermittering.getPermitteringsPeriode().getTom().toLocalDate()
+                                : null);
             }
         })
                 .byDefault()

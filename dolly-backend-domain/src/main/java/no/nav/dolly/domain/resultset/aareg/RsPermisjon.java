@@ -26,5 +26,5 @@ public class RsPermisjon {
 
     @Schema(description = "Gyldige verdier finnes i kodeverk 'PermisjonsOgPermitteringsBeskrivelse'",
             required = true)
-    private String permisjonOgPermittering;
+    private String permisjon;
 }
