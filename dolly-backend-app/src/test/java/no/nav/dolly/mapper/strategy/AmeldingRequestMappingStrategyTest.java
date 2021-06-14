@@ -48,7 +48,8 @@ public class AmeldingRequestMappingStrategyTest {
     private static final String ORGNUMMER = "805824352";
     private static final String JURIDISK_ENHET = "987654321";
 
-    private static final LocalDateTime ANSETTELSESPERIODEFOM = LocalDateTime.of(2001, 6, 10, 0, 0);
+    private static final LocalDateTime ANSETTELSESPERIODEFOM = LocalDateTime.of(2001, 1, 1, 0, 0);
+    private static final LocalDateTime ANSETTELSESPERIODETOM = LocalDateTime.of(2001, 6, 1, 0, 0);
 
     private MapperFacade mapperFacade;
     private List<RsAmeldingRequest> rsAmeldingRequest;
@@ -61,6 +62,7 @@ public class AmeldingRequestMappingStrategyTest {
         RsArbeidsforholdAareg arbeidsforholdAareg = RsArbeidsforholdAareg.builder()
                 .ansettelsesPeriode(RsAnsettelsesPeriode.builder()
                         .fom(ANSETTELSESPERIODEFOM)
+                        .tom(ANSETTELSESPERIODETOM)
                         .build())
                 .antallTimerForTimeloennet(new ArrayList<>())
                 .fartoy(null)
@@ -96,9 +98,11 @@ public class AmeldingRequestMappingStrategyTest {
                                 .arbeidsforhold(List.of(ArbeidsforholdDTO.builder()
                                         .arbeidsforholdId("1")
                                         .arbeidsforholdType(ARBEIDSFORHOLDSTYPE)
+                                        .arbeidstidsordning(ARBEIDSTIDSORDNING)
                                         .antallTimerPerUke(AVTALTARBEIDSTIMERPERUKE.floatValue())
                                         .yrke(YRKE)
-                                        .arbeidstidsordning(ARBEIDSTIDSORDNING)
+                                        .startdato(ANSETTELSESPERIODEFOM.toLocalDate())
+                                        .sluttdato(ANSETTELSESPERIODETOM.toLocalDate())
                                         .stillingsprosent(STILLINGSPROSENT.floatValue())
                                         .build()))
                                 .build()))

@@ -70,6 +70,14 @@ public class AmeldingRequestMappingStrategy implements MappingStrategy {
                         virksomhet.setPersoner(List.of(PersonDTO.builder()
                                 .ident((String) context.getProperty("personIdent"))
                                 .arbeidsforhold(List.of(ArbeidsforholdDTO.builder()
+                                        .startdato(
+                                                nonNull(rsArbeidsforholdAareg.getAnsettelsesPeriode()) && nonNull(rsArbeidsforholdAareg.getAnsettelsesPeriode().getFom())
+                                                        ? rsArbeidsforholdAareg.getAnsettelsesPeriode().getFom().toLocalDate()
+                                                        : null)
+                                        .sluttdato(
+                                                nonNull(rsArbeidsforholdAareg.getAnsettelsesPeriode()) && nonNull(rsArbeidsforholdAareg.getAnsettelsesPeriode().getTom())
+                                                        ? rsArbeidsforholdAareg.getAnsettelsesPeriode().getTom().toLocalDate()
+                                                        : null)
                                         .antallTimerPerUke(
                                                 !rsArbeidsforholdAareg.getAntallTimerForTimeloennet().isEmpty()
                                                         ? rsArbeidsforholdAareg.getAntallTimerForTimeloennet().get(0).getAntallTimer().floatValue()
