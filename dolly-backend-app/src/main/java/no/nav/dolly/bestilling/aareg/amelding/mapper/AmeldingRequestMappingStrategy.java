@@ -47,7 +47,7 @@ public class AmeldingRequestMappingStrategy implements MappingStrategy {
 
                         amelding.setOpplysningspliktigOrganisajonsnummer(opplysningsPliktig.get(rsAmelding.getArbeidsforhold().get(0).getArbeidsgiver().getOrgnummer()));
 
-                        List<Virksomhet> virksomheter = mapperFacade.mapAsList(rsAmelding.getArbeidsforhold(), Virksomhet.class);
+                        List<Virksomhet> virksomheter = mapperFacade.mapAsList(rsAmelding.getArbeidsforhold(), Virksomhet.class, context);
                         List<VirksomhetDTO> ameldingVirksomheter = virksomheter.stream().map(virksomhet ->
                                 VirksomhetDTO.builder()
                                         .organisajonsnummer(virksomhet.getOrganisajonsnummer())

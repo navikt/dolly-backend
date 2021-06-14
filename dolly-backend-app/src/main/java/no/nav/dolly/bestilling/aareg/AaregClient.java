@@ -62,7 +62,10 @@ public class AaregClient implements ClientRegister {
                     if (nonNull(bestilling.getAareg().get(0).getAmelding()) && !bestilling.getAareg().get(0).getAmelding().isEmpty()) {
                         bestilling.getAareg().get(0).getAmelding().forEach(amelding -> {
 
-                            Set<String> orgnumre = amelding.getArbeidsforhold().stream().map(RsArbeidsforholdAareg::getArbeidsgiver).map(RsArbeidsgiver::getOrgnummer).collect(Collectors.toSet());
+                            Set<String> orgnumre = amelding.getArbeidsforhold().stream()
+                                    .map(RsArbeidsforholdAareg::getArbeidsgiver)
+                                    .map(RsArbeidsgiver::getOrgnummer)
+                                    .collect(Collectors.toSet());
                             List<OrganisasjonDTO> organisasjoner = organisasjonServiceConsumer.getOrganisasjoner(orgnumre, env);
                             log.info("Hentet organisajoner fra org service: \n" + Json.pretty(organisasjoner));
 
@@ -73,7 +76,7 @@ public class AaregClient implements ClientRegister {
                                             .filter(org -> nonNull(org.getOrgnummer()) && org.getOrgnummer().equals(orgnummer))
                                             .map(OrganisasjonDTO::getJuridiskEnhet)
                                             .findFirst()
-                                            .orElseThrow(() -> new NotFoundException(String.format("Juridisk enhet for organisasjon: %s ikke funnet", orgnummer)))));
+                                            .orElseThrow(() -> new NotFoundException(String.format("Juridisk enhet for organisasjon: %s ikke funnet i miljø: %s", orgnummer, env)))));
                             MappingContext context = new MappingContext.Factory().getContext();
 
                             context.setProperty("personIdent", dollyPerson.getHovedperson());
