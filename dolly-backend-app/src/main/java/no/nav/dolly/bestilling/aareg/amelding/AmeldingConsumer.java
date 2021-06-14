@@ -29,12 +29,13 @@ public class AmeldingConsumer {
     }
 
     @Timed(name = "providers", tags = { "operation", "amelding_put" })
-    public Object putAmeldingdata(AMeldingDTO amelding) {
+    public Object putAmeldingdata(AMeldingDTO amelding, String miljoe) {
         return tokenService.generateToken(serverProperties).flatMap(accessToken ->
                 webClient.put()
                         .uri(uriBuilder -> uriBuilder.path("/api/v1/amelding").build())
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getTokenValue())
                         .header("Nav-Call-Id", generateCallId())
+                        .header("miljo", miljoe)
                         .body(BodyInserters.fromPublisher(Mono.just(amelding), AMeldingDTO.class))
                         .retrieve()
                         .bodyToMono(Object.class)

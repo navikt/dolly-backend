@@ -85,7 +85,7 @@ public class AaregClient implements ClientRegister {
 
                             AMeldingDTO ameldingDto = mapperFacade.map(amelding, AMeldingDTO.class, context);
                             log.info("Sender Amelding til service: " + Json.pretty(ameldingDto));
-                            Object response = ameldingConsumer.putAmeldingdata(ameldingDto);
+                            Object response = ameldingConsumer.putAmeldingdata(ameldingDto, env);
                             log.info("Response fra Amelding service: " + Json.pretty(response));
                             appendResult((singletonMap(env, "OK")), "1", result); //TODO: Fiks
                         });
