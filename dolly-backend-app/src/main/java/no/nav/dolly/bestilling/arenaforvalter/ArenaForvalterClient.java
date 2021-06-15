@@ -133,6 +133,14 @@ public class ArenaForvalterClient implements ClientRegister {
                         log.error("Feilet å opprette dagpenger for testperson {} i ArenaForvalter på miljø: {}, feilstatus: {}, melding: \"{}\"",
                                 brukerfeil.getPersonident(), brukerfeil.getMiljoe(), brukerfeil.getNyDagpFeilstatus(), brukerfeil.getMelding());
                     });
+                } else if (nonNull(response.getBody().getNyeDagp()) && !response.getBody().getNyeDagp().isEmpty()
+                        && (nonNull(response.getBody().getNyeDagp().get(0).getNyeDagpResponse()))) {
+                    status.append(',')
+                            .append(arenaNyeDagpenger.getMiljoe())
+                            .append(
+                                    response.getBody().getNyeDagp().get(0).getNyeDagpResponse().getUtfall().equals("JA")
+                                            ? "$OK"
+                                            : response.getBody().getNyeDagp().get(0).getNyeDagpResponse().getBegrunnelse());
                 } else {
                     status.append(',')
                             .append(arenaNyeDagpenger.getMiljoe())
