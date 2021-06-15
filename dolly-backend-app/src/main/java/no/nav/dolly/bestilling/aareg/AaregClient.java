@@ -57,9 +57,8 @@ public class AaregClient implements ClientRegister {
             log.info("Aareg bestilling: " + Json.pretty(bestilling.getAareg()));
 
             bestilling.getEnvironments().forEach(env -> {
-
-                try {
-                    if (nonNull(bestilling.getAareg().get(0).getAmelding()) && !bestilling.getAareg().get(0).getAmelding().isEmpty()) {
+                if (nonNull(bestilling.getAareg().get(0).getAmelding()) && !bestilling.getAareg().get(0).getAmelding().isEmpty()) {
+                    try {
                         bestilling.getAareg().get(0).getAmelding().forEach(amelding -> {
 
                             Set<String> orgnumre = amelding.getArbeidsforhold().stream()
@@ -89,7 +88,14 @@ public class AaregClient implements ClientRegister {
                             log.info("Response fra Amelding service: " + Json.pretty(response));
                             appendResult((singletonMap(env, "OK")), "1", result); //TODO: Fiks
                         });
-                    } else {
+                    } catch (RuntimeException e) {
+                        log.error("Innsending til A-melding service feilet: ", e);
+                        Map<String, String> status = new HashMap<>();
+                        status.put(env, errorStatusDecoder.decodeRuntimeException(e));
+                        appendResult(status, "1", result);
+                    }
+                } else {
+                    try {
 
                         List<Arbeidsforhold> arbeidsforholdRequest =
                                 nonNull(bestilling.getAareg().get(0).getArbeidsforhold()) ? mapperFacade.mapAsList(bestilling.getAareg().get(0).getArbeidsforhold(), Arbeidsforhold.class) : emptyList();
@@ -113,12 +119,12 @@ public class AaregClient implements ClientRegister {
                         if (arbeidsforhold.isEmpty()) {
                             appendResult(singletonMap(env, "OK"), "0", result);
                         }
+                    } catch (RuntimeException e) {
+                        log.error("Innsending til Aareg feilet: ", e);
+                        Map<String, String> status = new HashMap<>();
+                        status.put(env, errorStatusDecoder.decodeRuntimeException(e));
+                        appendResult(status, "1", result);
                     }
-                } catch (RuntimeException e) {
-                    log.error("Innsending til Aareg feilet: ", e);
-                    Map<String, String> status = new HashMap<>();
-                    status.put(env, errorStatusDecoder.decodeRuntimeException(e));
-                    appendResult(status, "1", result);
                 }
             });
         }
