@@ -204,7 +204,7 @@ public class ArenaForvalterClient implements ClientRegister {
 
     private static void appendErrorText(StringBuilder status, RuntimeException e) {
         status.append("Feil: ")
-                .append(e.getMessage());
+                .append(e.getMessage().replace(',', ';'));
 
         if (e instanceof HttpClientErrorException) {
             status.append(" (")
