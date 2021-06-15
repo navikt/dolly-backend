@@ -124,10 +124,10 @@ public class ArenaForvalterClient implements ClientRegister {
             if (response.hasBody()) {
                 if (nonNull(response.getBody().getNyeDagpFeilList()) && !response.getBody().getNyeDagpFeilList().isEmpty()) {
                     response.getBody().getNyeDagpFeilList().forEach(brukerfeil -> {
-                        log.info("Brukerfeil inneholder: " + Json.pretty(brukerfeil));
+                        log.info("Brukerfeil dagpenger: " + Json.pretty(brukerfeil));
                         status.append(',')
                                 .append(brukerfeil.getMiljoe())
-                                .append("$Feilstatus: \"")
+                                .append("$Feilstatus dagpenger: \"")
                                 .append(brukerfeil.getNyDagpFeilstatus())
                                 .append("\". Se detaljer i logg.");
                         log.error("Feilet å opprette dagpenger for testperson {} i ArenaForvalter på miljø: {}, feilstatus: {}, melding: \"{}\"",
@@ -140,7 +140,7 @@ public class ArenaForvalterClient implements ClientRegister {
                             .append(
                                     response.getBody().getNyeDagp().get(0).getNyeDagpResponse().getUtfall().equals("JA")
                                             ? "$OK"
-                                            : response.getBody().getNyeDagp().get(0).getNyeDagpResponse().getBegrunnelse());
+                                            : "Feil dagpenger: " + response.getBody().getNyeDagp().get(0).getNyeDagpResponse().getBegrunnelse());
                 } else {
                     status.append(',')
                             .append(arenaNyeDagpenger.getMiljoe())
@@ -149,7 +149,7 @@ public class ArenaForvalterClient implements ClientRegister {
             } else {
                 status.append(',')
                         .append(arenaNyeDagpenger.getMiljoe())
-                        .append("Feilstatus: Mottok ugyldig svar fra Arena");
+                        .append("Feilstatus: Mottok ugyldig dagpenge respons fra Arena");
             }
         } catch (RuntimeException e) {
 
@@ -157,7 +157,7 @@ public class ArenaForvalterClient implements ClientRegister {
                     .append(arenaNyeDagpenger.getMiljoe())
                     .append('$');
             appendErrorText(status, e);
-            log.error("Feilet å legge til dagpenger i ArenaForvalter: ", e);
+            log.error("Feilet å legge til dagpenger i Arena: ", e);
         }
     }
 
@@ -198,7 +198,7 @@ public class ArenaForvalterClient implements ClientRegister {
                         .append('$');
                 appendErrorText(status, e);
             });
-            log.error("Feilet å legge inn ny testperson i ArenaForvalter: ", e);
+            log.error("Feilet å legge inn ny testperson i Arena: ", e);
         }
     }
 
