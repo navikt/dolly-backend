@@ -14,4 +14,5 @@ import lombok.Setter;
 public class AmeldingTransaksjon {
 
     private String id;
+    private String maaned;
 }

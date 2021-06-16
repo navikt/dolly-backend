@@ -140,7 +140,7 @@ public class AaregClient implements ClientRegister {
                 log.info("Response fra Amelding service: " + Json.pretty(response));
                 if (response.getStatusCode().is2xxSuccessful()) {
                     appendResult((singletonMap(env, "OK")), "1", result);
-                    saveTransaksjonId(response, dollyPerson.getHovedperson(), progress.getBestilling().getId(), env);
+                    saveTransaksjonId(response, amelding.getMaaned(), dollyPerson.getHovedperson(), progress.getBestilling().getId(), env);
 
                 } else {
                     appendResult((singletonMap(env, response.getStatusCode().getReasonPhrase())), "1", result);
@@ -171,7 +171,7 @@ public class AaregClient implements ClientRegister {
         return builder;
     }
 
-    private void saveTransaksjonId(ResponseEntity<Void> response, String ident, Long bestillingId, String miljoe) {
+    private void saveTransaksjonId(ResponseEntity<Void> response, String maaned, String ident, Long bestillingId, String miljoe) {
 
         transaksjonMappingService.save(
                 TransaksjonMapping.builder()
@@ -181,6 +181,7 @@ public class AaregClient implements ClientRegister {
                                 .id(nonNull(response.getHeaders().get("id")) && !response.getHeaders().get("id").isEmpty()
                                         ? response.getHeaders().get("id").get(0)
                                         : null)
+                                .maaned(maaned)
                                 .build()))
                         .datoEndret(LocalDateTime.now())
                         .miljoe(miljoe)
