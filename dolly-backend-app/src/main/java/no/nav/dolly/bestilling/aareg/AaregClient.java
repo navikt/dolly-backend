@@ -111,6 +111,7 @@ public class AaregClient implements ClientRegister {
 
     private void sendAmelding(RsDollyUtvidetBestilling bestilling, DollyPerson dollyPerson, BestillingProgress progress, StringBuilder result, String env) {
         try {
+            Map<String, AMeldingDTO> dtoMaanedMap = new HashMap<>();
             bestilling.getAareg().get(0).getAmelding().forEach(amelding -> {
 
                 Set<String> orgnumre = amelding.getArbeidsforhold().stream()
@@ -134,16 +135,19 @@ public class AaregClient implements ClientRegister {
                 context.setProperty("arbeidsforholdstype", bestilling.getAareg().get(0).getArbeidsforholdstype());
                 context.setProperty("opplysningsPliktig", opplysningspliktig);
 
-                AMeldingDTO ameldingDto = mapperFacade.map(amelding, AMeldingDTO.class, context);
-                log.info("Sender Amelding til service: " + Json.pretty(ameldingDto));
-                ResponseEntity<Void> response = ameldingConsumer.putAmeldingdata(ameldingDto, env);
-                log.info("Response fra Amelding service: " + Json.pretty(response));
-                if (response.getStatusCode().is2xxSuccessful()) {
+                dtoMaanedMap.put(amelding.getMaaned(), mapperFacade.map(amelding, AMeldingDTO.class, context));
+            });
+
+            log.info("Sender Amelding til service: " + Json.pretty(dtoMaanedMap));
+            Map<String, ResponseEntity<Void>> response = ameldingConsumer.putAmeldingList(dtoMaanedMap, env);
+            response.forEach((maaned, resp) -> {
+                log.info("Response fra Amelding service: " + Json.pretty(resp));
+                if (resp.getStatusCode().is2xxSuccessful()) {
                     appendResult((singletonMap(env, "OK")), "1", result);
-                    saveTransaksjonId(response, amelding.getMaaned(), dollyPerson.getHovedperson(), progress.getBestilling().getId(), env);
+                    saveTransaksjonId(resp, maaned, dollyPerson.getHovedperson(), progress.getBestilling().getId(), env);
 
                 } else {
-                    appendResult((singletonMap(env, response.getStatusCode().getReasonPhrase())), "1", result);
+                    appendResult((singletonMap(env, resp.getStatusCode().getReasonPhrase())), "1", result);
                 }
             });
         } catch (RuntimeException e) {
