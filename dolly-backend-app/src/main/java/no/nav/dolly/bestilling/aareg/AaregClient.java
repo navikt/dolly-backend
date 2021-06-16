@@ -42,7 +42,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static java.util.Objects.nonNull;
-import static no.nav.dolly.domain.resultset.SystemTyper.DOKARKIV;
+import static no.nav.dolly.domain.resultset.SystemTyper.AAREG;
 
 @Slf4j
 @Order(3)
@@ -184,7 +184,7 @@ public class AaregClient implements ClientRegister {
                                 .build()))
                         .datoEndret(LocalDateTime.now())
                         .miljoe(miljoe)
-                        .system(DOKARKIV.name())
+                        .system(AAREG.name())
                         .build());
     }
 
