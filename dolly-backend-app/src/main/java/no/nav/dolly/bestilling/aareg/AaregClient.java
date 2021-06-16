@@ -1,5 +1,7 @@
 package no.nav.dolly.bestilling.aareg;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,22 +11,26 @@ import no.nav.dolly.bestilling.ClientRegister;
 import no.nav.dolly.bestilling.aareg.amelding.AmeldingConsumer;
 import no.nav.dolly.bestilling.aareg.amelding.OrganisasjonServiceConsumer;
 import no.nav.dolly.bestilling.aareg.domain.AaregOpprettRequest;
+import no.nav.dolly.bestilling.aareg.domain.AmeldingTransaksjon;
 import no.nav.dolly.bestilling.aareg.domain.Arbeidsforhold;
 import no.nav.dolly.bestilling.aareg.domain.ArbeidsforholdResponse;
 import no.nav.dolly.bestilling.aareg.util.AaregMergeUtil;
 import no.nav.dolly.domain.jpa.BestillingProgress;
+import no.nav.dolly.domain.jpa.TransaksjonMapping;
 import no.nav.dolly.domain.resultset.RsDollyUtvidetBestilling;
 import no.nav.dolly.domain.resultset.aareg.RsArbeidsforholdAareg;
 import no.nav.dolly.domain.resultset.aareg.RsArbeidsforholdAareg.RsArbeidsgiver;
 import no.nav.dolly.domain.resultset.tpsf.DollyPerson;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
 import no.nav.dolly.exceptions.NotFoundException;
+import no.nav.dolly.service.TransaksjonMappingService;
 import no.nav.registre.testnorge.libs.dto.ameldingservice.v1.AMeldingDTO;
 import no.nav.registre.testnorge.libs.dto.organisasjon.v1.OrganisasjonDTO;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +42,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static java.util.Objects.nonNull;
+import static no.nav.dolly.domain.resultset.SystemTyper.DOKARKIV;
 
 @Slf4j
 @Order(3)
@@ -45,6 +52,8 @@ public class AaregClient implements ClientRegister {
 
     private final AaregConsumer aaregConsumer;
     private final AmeldingConsumer ameldingConsumer;
+    private final TransaksjonMappingService transaksjonMappingService;
+    private final ObjectMapper objectMapper;
     private final OrganisasjonServiceConsumer organisasjonServiceConsumer;
     private final ErrorStatusDecoder errorStatusDecoder;
     private final MapperFacade mapperFacade;
@@ -59,78 +68,90 @@ public class AaregClient implements ClientRegister {
 
             bestilling.getEnvironments().forEach(env -> {
                 if (nonNull(bestilling.getAareg().get(0).getAmelding()) && !bestilling.getAareg().get(0).getAmelding().isEmpty()) {
-                    try {
-                        bestilling.getAareg().get(0).getAmelding().forEach(amelding -> {
-
-                            Set<String> orgnumre = amelding.getArbeidsforhold().stream()
-                                    .map(RsArbeidsforholdAareg::getArbeidsgiver)
-                                    .map(RsArbeidsgiver::getOrgnummer)
-                                    .collect(Collectors.toSet());
-                            List<OrganisasjonDTO> organisasjoner = organisasjonServiceConsumer.getOrganisasjoner(orgnumre, env);
-                            log.info("Hentet organisajoner fra org service: \n" + Json.pretty(organisasjoner));
-
-                            Map<String, String> opplysningspliktig = new HashMap<>();
-                            orgnumre.forEach(orgnummer -> opplysningspliktig.put(orgnummer,
-                                    organisasjoner.stream()
-                                            .filter(Objects::nonNull)
-                                            .filter(org -> nonNull(org.getOrgnummer()) && org.getOrgnummer().equals(orgnummer))
-                                            .map(OrganisasjonDTO::getJuridiskEnhet)
-                                            .findFirst()
-                                            .orElseThrow(() -> new NotFoundException(String.format("Juridisk enhet for organisasjon: %s ikke funnet i miljø: %s", orgnummer, env)))));
-                            MappingContext context = new MappingContext.Factory().getContext();
-
-                            context.setProperty("personIdent", dollyPerson.getHovedperson());
-                            context.setProperty("arbeidsforholdstype", bestilling.getAareg().get(0).getArbeidsforholdstype());
-                            context.setProperty("opplysningsPliktig", opplysningspliktig);
-
-                            AMeldingDTO ameldingDto = mapperFacade.map(amelding, AMeldingDTO.class, context);
-                            log.info("Sender Amelding til service: " + Json.pretty(ameldingDto));
-                            ResponseEntity response = ameldingConsumer.putAmeldingdata(ameldingDto, env);
-                            log.info("Response fra Amelding service: " + Json.pretty(response));
-                            appendResult((singletonMap(env, "OK")), "1", result); //TODO: Fiks
-                        });
-                    } catch (RuntimeException e) {
-                        log.error("Innsending til A-melding service feilet: ", e);
-                        Map<String, String> status = new HashMap<>();
-                        status.put(env, errorStatusDecoder.decodeRuntimeException(e));
-                        appendResult(status, "1", result);
-                    }
+                    sendAmelding(bestilling, dollyPerson, progress, result, env);
                 } else {
-                    try {
-
-                        List<Arbeidsforhold> arbeidsforholdRequest =
-                                nonNull(bestilling.getAareg().get(0).getArbeidsforhold()) ? mapperFacade.mapAsList(bestilling.getAareg().get(0).getArbeidsforhold(), Arbeidsforhold.class) : emptyList();
-                        List<ArbeidsforholdResponse> eksisterendeArbeidsforhold = aaregConsumer.hentArbeidsforhold(dollyPerson.getHovedperson(), env);
-
-
-                        List<Arbeidsforhold> arbeidsforhold = AaregMergeUtil.merge(
-                                arbeidsforholdRequest,
-                                eksisterendeArbeidsforhold,
-                                dollyPerson.getHovedperson(), isOpprettEndre);
-
-                        arbeidsforhold.forEach(arbforhold -> {
-                            AaregOpprettRequest aaregOpprettRequest = AaregOpprettRequest.builder()
-                                    .arbeidsforhold(arbforhold)
-                                    .environments(singletonList(env))
-                                    .build();
-                            log.info("Sender Arbeidsforhold til Aareg: " + Json.pretty(aaregOpprettRequest));
-                            appendResult(aaregConsumer.opprettArbeidsforhold(aaregOpprettRequest).getStatusPerMiljoe(), arbforhold.getArbeidsforholdID(), result);
-                        });
-
-                        if (arbeidsforhold.isEmpty()) {
-                            appendResult(singletonMap(env, "OK"), "0", result);
-                        }
-                    } catch (RuntimeException e) {
-                        log.error("Innsending til Aareg feilet: ", e);
-                        Map<String, String> status = new HashMap<>();
-                        status.put(env, errorStatusDecoder.decodeRuntimeException(e));
-                        appendResult(status, "1", result);
-                    }
+                    sendArbeidsforhold(bestilling, dollyPerson, isOpprettEndre, result, env);
                 }
             });
         }
-
         progress.setAaregStatus(result.length() > 1 ? result.substring(1) : null);
+    }
+
+    private void sendArbeidsforhold(RsDollyUtvidetBestilling bestilling, DollyPerson dollyPerson, boolean isOpprettEndre, StringBuilder result, String env) {
+        try {
+
+            List<Arbeidsforhold> arbeidsforholdRequest =
+                    nonNull(bestilling.getAareg().get(0).getArbeidsforhold()) ? mapperFacade.mapAsList(bestilling.getAareg().get(0).getArbeidsforhold(), Arbeidsforhold.class) : emptyList();
+            List<ArbeidsforholdResponse> eksisterendeArbeidsforhold = aaregConsumer.hentArbeidsforhold(dollyPerson.getHovedperson(), env);
+
+            List<Arbeidsforhold> arbeidsforhold = AaregMergeUtil.merge(
+                    arbeidsforholdRequest,
+                    eksisterendeArbeidsforhold,
+                    dollyPerson.getHovedperson(), isOpprettEndre);
+
+            arbeidsforhold.forEach(arbforhold -> {
+                AaregOpprettRequest aaregOpprettRequest = AaregOpprettRequest.builder()
+                        .arbeidsforhold(arbforhold)
+                        .environments(singletonList(env))
+                        .build();
+                log.info("Sender Arbeidsforhold til Aareg: " + Json.pretty(aaregOpprettRequest));
+                appendResult(aaregConsumer.opprettArbeidsforhold(aaregOpprettRequest).getStatusPerMiljoe(), arbforhold.getArbeidsforholdID(), result);
+            });
+
+            if (arbeidsforhold.isEmpty()) {
+                appendResult(singletonMap(env, "OK"), "0", result);
+            }
+        } catch (RuntimeException e) {
+            log.error("Innsending til Aareg feilet: ", e);
+            Map<String, String> status = new HashMap<>();
+            status.put(env, errorStatusDecoder.decodeRuntimeException(e));
+            appendResult(status, "1", result);
+        }
+    }
+
+    private void sendAmelding(RsDollyUtvidetBestilling bestilling, DollyPerson dollyPerson, BestillingProgress progress, StringBuilder result, String env) {
+        try {
+            bestilling.getAareg().get(0).getAmelding().forEach(amelding -> {
+
+                Set<String> orgnumre = amelding.getArbeidsforhold().stream()
+                        .map(RsArbeidsforholdAareg::getArbeidsgiver)
+                        .map(RsArbeidsgiver::getOrgnummer)
+                        .collect(Collectors.toSet());
+                List<OrganisasjonDTO> organisasjoner = organisasjonServiceConsumer.getOrganisasjoner(orgnumre, env);
+                log.info("Hentet organisajoner fra org service: \n" + Json.pretty(organisasjoner));
+
+                Map<String, String> opplysningspliktig = new HashMap<>();
+                orgnumre.forEach(orgnummer -> opplysningspliktig.put(orgnummer,
+                        organisasjoner.stream()
+                                .filter(Objects::nonNull)
+                                .filter(org -> nonNull(org.getOrgnummer()) && org.getOrgnummer().equals(orgnummer))
+                                .map(OrganisasjonDTO::getJuridiskEnhet)
+                                .findFirst()
+                                .orElseThrow(() -> new NotFoundException(String.format("Juridisk enhet for organisasjon: %s ikke funnet i miljø: %s", orgnummer, env)))));
+                MappingContext context = new MappingContext.Factory().getContext();
+
+                context.setProperty("personIdent", dollyPerson.getHovedperson());
+                context.setProperty("arbeidsforholdstype", bestilling.getAareg().get(0).getArbeidsforholdstype());
+                context.setProperty("opplysningsPliktig", opplysningspliktig);
+
+                AMeldingDTO ameldingDto = mapperFacade.map(amelding, AMeldingDTO.class, context);
+                log.info("Sender Amelding til service: " + Json.pretty(ameldingDto));
+                ResponseEntity<Void> response = ameldingConsumer.putAmeldingdata(ameldingDto, env);
+                log.info("Response fra Amelding service: " + Json.pretty(response));
+                if (response.getStatusCode().is2xxSuccessful()) {
+                    appendResult((singletonMap(env, "OK")), "1", result);
+                    saveTransaksjonId(response, dollyPerson.getHovedperson(), progress.getBestilling().getId(), env);
+
+                } else {
+                    appendResult((singletonMap(env, response.getStatusCode().getReasonPhrase())), "1", result);
+                }
+            });
+        } catch (RuntimeException e) {
+            log.error("Innsending til A-melding service feilet: ", e);
+            Map<String, String> status = new HashMap<>();
+            status.put(env, errorStatusDecoder.decodeRuntimeException(e));
+            appendResult(status, "1", result);
+        }
     }
 
     @Override
@@ -148,5 +169,32 @@ public class AaregClient implements ClientRegister {
                     .append(entry.getValue().replaceAll(",", "&").replaceAll(":", "="));
         }
         return builder;
+    }
+
+    private void saveTransaksjonId(ResponseEntity<Void> response, String ident, Long bestillingId, String miljoe) {
+
+        transaksjonMappingService.save(
+                TransaksjonMapping.builder()
+                        .ident(ident)
+                        .bestillingId(bestillingId)
+                        .transaksjonId(toJson(AmeldingTransaksjon.builder()
+                                .id(nonNull(response.getHeaders().get("id")) && !response.getHeaders().get("id").isEmpty()
+                                        ? response.getHeaders().get("id").get(0)
+                                        : null)
+                                .build()))
+                        .datoEndret(LocalDateTime.now())
+                        .miljoe(miljoe)
+                        .system(DOKARKIV.name())
+                        .build());
+    }
+
+    private String toJson(Object object) {
+
+        try {
+            return objectMapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            log.error("Feilet å konvertere transaksjonsId for aareg", e);
+        }
+        return null;
     }
 }
