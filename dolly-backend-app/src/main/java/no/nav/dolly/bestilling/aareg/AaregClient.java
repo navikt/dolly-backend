@@ -22,6 +22,7 @@ import no.nav.dolly.exceptions.NotFoundException;
 import no.nav.registre.testnorge.libs.dto.ameldingservice.v1.AMeldingDTO;
 import no.nav.registre.testnorge.libs.dto.organisasjon.v1.OrganisasjonDTO;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -84,7 +85,7 @@ public class AaregClient implements ClientRegister {
 
                             AMeldingDTO ameldingDto = mapperFacade.map(amelding, AMeldingDTO.class, context);
                             log.info("Sender Amelding til service: " + Json.pretty(ameldingDto));
-                            Object response = ameldingConsumer.putAmeldingdata(ameldingDto, env);
+                            ResponseEntity response = ameldingConsumer.putAmeldingdata(ameldingDto, env);
                             log.info("Response fra Amelding service: " + Json.pretty(response));
                             appendResult((singletonMap(env, "OK")), "1", result); //TODO: Fiks
                         });

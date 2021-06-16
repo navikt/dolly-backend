@@ -6,6 +6,7 @@ import no.nav.dolly.security.oauth2.config.NaisServerProperties;
 import no.nav.dolly.security.oauth2.service.TokenService;
 import no.nav.registre.testnorge.libs.dto.ameldingservice.v1.AMeldingDTO;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -29,7 +30,7 @@ public class AmeldingConsumer {
     }
 
     @Timed(name = "providers", tags = { "operation", "amelding_put" })
-    public Object putAmeldingdata(AMeldingDTO amelding, String miljoe) {
+    public ResponseEntity<Void> putAmeldingdata(AMeldingDTO amelding, String miljoe) {
         return tokenService.generateToken(serverProperties).flatMap(accessToken ->
                 webClient.put()
                         .uri(uriBuilder -> uriBuilder.path("/api/v1/amelding").build())
@@ -38,7 +39,7 @@ public class AmeldingConsumer {
                         .header("miljo", miljoe)
                         .body(BodyInserters.fromPublisher(Mono.just(amelding), AMeldingDTO.class))
                         .retrieve()
-                        .bodyToMono(Object.class)
+                        .toBodilessEntity()
         ).block();
     }
 }
