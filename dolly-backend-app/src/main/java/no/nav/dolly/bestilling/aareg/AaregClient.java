@@ -138,7 +138,7 @@ public class AaregClient implements ClientRegister {
                 dtoMaanedMap.put(amelding.getMaaned(), mapperFacade.map(amelding, AMeldingDTO.class, context));
             });
 
-            log.info("Sender Amelding til service: " + Json.pretty(dtoMaanedMap));
+            log.info("Sender Amelding til service: " + Json.pretty(dtoMaanedMap.values()));
             Map<String, ResponseEntity<Void>> response = ameldingConsumer.putAmeldingList(dtoMaanedMap, env);
             response.forEach((maaned, resp) -> {
                 log.info("Response fra Amelding service: " + Json.pretty(resp));
