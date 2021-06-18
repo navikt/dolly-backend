@@ -39,13 +39,15 @@ public class AmeldingConsumer {
         AccessToken accessToken = tokenService.generateToken(serverProperties).block();
 
         if (nonNull(accessToken)) {
-            return ameldingList.values().stream().map(amelding -> putAmeldingdata(amelding, miljoe, amelding.getKalendermaaned().toString(), accessToken.getTokenValue())).findFirst().orElse(null);
+            return ameldingList.values().stream().map(amelding -> putAmeldingdata(amelding, miljoe,
+                    amelding.getKalendermaaned().toString(), accessToken.getTokenValue())).findFirst().orElse(null);
         } else
             throw new DollyFunctionalException(String.format("Klarte ikke å hente accessToken for %s", serverProperties.getName()));
     }
 
     @Timed(name = "providers", tags = { "operation", "amelding_put" })
-    public Map<String, ResponseEntity<Void>> putAmeldingdata(AMeldingDTO amelding, String miljoe, String maaned, String accessTokenValue) {
+    public Map<String, ResponseEntity<Void>> putAmeldingdata(AMeldingDTO amelding, String miljoe,
+                                                             String maaned, String accessTokenValue) {
         ResponseEntity<Void> response = webClient.put()
                 .uri(uriBuilder -> uriBuilder.path("/api/v1/amelding").build())
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessTokenValue)
