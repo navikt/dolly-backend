@@ -45,7 +45,7 @@ public class AmeldingConsumer {
     }
 
     @Timed(name = "providers", tags = { "operation", "amelding_put" })
-    public Map<String, ResponseEntity<Void>> putAmeldingdata(AMeldingDTO amelding, String maaned, String miljoe, String accessTokenValue) {
+    public Map<String, ResponseEntity<Void>> putAmeldingdata(AMeldingDTO amelding, String miljoe, String maaned, String accessTokenValue) {
         ResponseEntity<Void> response = webClient.put()
                 .uri(uriBuilder -> uriBuilder.path("/api/v1/amelding").build())
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessTokenValue)
