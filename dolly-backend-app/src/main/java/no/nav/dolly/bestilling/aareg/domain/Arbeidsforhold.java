@@ -8,6 +8,7 @@ import lombok.Setter;
 import no.nav.dolly.domain.resultset.aareg.RsAktoer;
 import no.nav.dolly.domain.resultset.aareg.RsAntallTimerIPerioden;
 import no.nav.dolly.domain.resultset.aareg.RsArbeidsavtale;
+import no.nav.dolly.domain.resultset.aareg.RsFartoy;
 import no.nav.dolly.domain.resultset.aareg.RsPeriodeAareg;
 import no.nav.dolly.domain.resultset.aareg.RsPersonAareg;
 import no.nav.dolly.domain.resultset.aareg.RsUtenlandsopphold;
@@ -34,7 +35,7 @@ public class Arbeidsforhold {
 
     private List<RsAntallTimerIPerioden> antallTimerForTimeloennet;
 
-    private String fartoy;
+    private RsFartoy fartoy;
 
     private RsArbeidsavtale arbeidsavtale;
 
