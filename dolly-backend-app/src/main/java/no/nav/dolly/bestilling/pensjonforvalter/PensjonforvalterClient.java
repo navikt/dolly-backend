@@ -23,7 +23,6 @@ import java.util.Set;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.joining;
 import static no.nav.dolly.errorhandling.ErrorStatusDecoder.encodeStatus;
-import static org.apache.commons.lang3.BooleanUtils.isNotTrue;
 
 @Slf4j
 @Service
@@ -41,9 +40,6 @@ public class PensjonforvalterClient implements ClientRegister {
     @Override
     public void gjenopprett(RsDollyUtvidetBestilling bestilling, DollyPerson dollyPerson, BestillingProgress progress, boolean isOpprettEndre) {
 
-        if (nonNull(bestilling.getPensjonforvalter()) || isNotTrue(bestilling.getNavSyntetiskIdent())) {
-
-            log.info("Syntetisk ident? {}, sender ident til Pensjon", bestilling.getNavSyntetiskIdent());
             Set<String> bestilteMiljoer = new HashSet<>(bestilling.getEnvironments());
             Set<String> tilgjengeligeMiljoer = pensjonforvalterConsumer.getMiljoer();
             bestilteMiljoer.retainAll(tilgjengeligeMiljoer);
@@ -56,7 +52,8 @@ public class PensjonforvalterClient implements ClientRegister {
                 if (nonNull(bestilling.getPensjonforvalter())) {
                     lagreInntekt(bestilling.getPensjonforvalter(), dollyPerson, bestilteMiljoer, status);
                 }
-            } else {
+
+            } else if (nonNull(bestilling.getPensjonforvalter())) {
                 status.append('$')
                         .append(PENSJON_FORVALTER)
                         .append("#Feil= Bestilling ble ikke sendt til Pensjonsforvalter (PEN) da tilgjengelig(e) miljø(er) [")
@@ -66,7 +63,6 @@ public class PensjonforvalterClient implements ClientRegister {
             if (status.length() > 1) {
                 progress.setPensjonforvalterStatus(status.substring(1));
             }
-        }
     }
 
     @Override
