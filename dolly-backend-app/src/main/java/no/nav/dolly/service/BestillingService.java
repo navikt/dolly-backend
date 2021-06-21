@@ -313,10 +313,10 @@ public class BestillingService {
 
     private static void fixAaregAbstractClassProblem(List<RsAareg> aaregdata) {
 
-        if (!aaregdata.isEmpty() && nonNull(aaregdata.get(0).getArbeidsforhold())) {
+        if (!aaregdata.isEmpty() && nonNull(aaregdata.get(0).getArbeidsforhold()) && !aaregdata.get(0).getArbeidsforhold().isEmpty()) {
             aaregdata.get(0).getArbeidsforhold().forEach(arbeidforhold -> {
                 log.info("Arbeidsforhold: " + Json.pretty(arbeidforhold));
-                if (nonNull(arbeidforhold.getArbeidsgiver()) && isNull(arbeidforhold.getArbeidsgiver().getAktoertype())) {
+                if (nonNull(arbeidforhold.getArbeidsgiver())) {
                     arbeidforhold.getArbeidsgiver().setAktoertype(
                             arbeidforhold.getArbeidsgiver() instanceof RsOrganisasjon ? "ORG" : "PERS");
                 }

@@ -10,8 +10,6 @@ import no.nav.dolly.domain.resultset.aareg.RsOrganisasjon;
 import no.nav.dolly.mapper.MappingStrategy;
 import org.springframework.stereotype.Component;
 
-import static java.util.Objects.isNull;
-
 @Component
 public class AaregRequestMappingStrategy implements MappingStrategy {
 
@@ -23,9 +21,9 @@ public class AaregRequestMappingStrategy implements MappingStrategy {
                     public void mapAtoB(RsAaregArbeidsforhold rsArbeidsforhold,
                                         Arbeidsforhold arbeidsforhold, MappingContext context) {
 
-                        if (rsArbeidsforhold.getArbeidsgiver() instanceof RsOrganisasjon && isNull(rsArbeidsforhold.getArbeidsgiver().getAktoertype())) {
+                        if (rsArbeidsforhold.getArbeidsgiver() instanceof RsOrganisasjon) {
                             arbeidsforhold.getArbeidsgiver().setAktoertype("ORG");
-                        } else if (rsArbeidsforhold.getArbeidsgiver() instanceof RsAktoerPerson && isNull(rsArbeidsforhold.getArbeidsgiver().getAktoertype())) {
+                        } else if (rsArbeidsforhold.getArbeidsgiver() instanceof RsAktoerPerson) {
                             arbeidsforhold.getArbeidsgiver().setAktoertype("PERS");
                         }
                     }
