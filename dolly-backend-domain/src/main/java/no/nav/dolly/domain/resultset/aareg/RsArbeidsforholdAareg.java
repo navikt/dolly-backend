@@ -28,7 +28,7 @@ public class RsArbeidsforholdAareg {
 
     private List<RsAntallTimerIPerioden> antallTimerForTimeloennet;
 
-    private RsFartoy fartoy;
+    private List<RsFartoy> fartoy;
 
     private RsArbeidsavtale arbeidsavtale;
 
