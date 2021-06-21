@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -33,11 +32,11 @@ public class RsArbeidsavtale {
             type = "String")
     private String ansettelsesform;
 
-    private BigDecimal avtaltArbeidstimerPerUke;
+    private Double avtaltArbeidstimerPerUke;
 
-    private BigDecimal stillingsprosent;
+    private Double stillingsprosent;
 
-    private BigDecimal antallKonverterteTimer;
+    private Integer antallKonverterteTimer;
 
     @Schema(type = "LocalDateTime")
     private LocalDateTime endringsdatoStillingsprosent;

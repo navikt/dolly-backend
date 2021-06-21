@@ -35,13 +35,11 @@ public class Arbeidsforhold {
 
     private List<RsAntallTimerIPerioden> antallTimerForTimeloennet;
 
-    private RsFartoy fartoy;
+    private List<RsFartoy> fartoy;
 
     private RsArbeidsavtale arbeidsavtale;
 
     private List<Permisjon> permisjon;
-
-    private List<Permittering> permittering;
 
     private List<RsUtenlandsopphold> utenlandsopphold;
 

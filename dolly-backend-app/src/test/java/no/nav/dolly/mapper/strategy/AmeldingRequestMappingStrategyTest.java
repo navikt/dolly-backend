@@ -41,8 +41,8 @@ public class AmeldingRequestMappingStrategyTest {
     private static final String ARBEIDSTIDSORDNING = "ikkeSkift";
     private static final String YRKE = "2521106";
     private static final String ANSETTELSESFORM = "fast";
-    private static final BigDecimal AVTALTARBEIDSTIMERPERUKE = BigDecimal.valueOf(37.5);
-    private static final BigDecimal STILLINGSPROSENT = BigDecimal.valueOf(100);
+    private static final Double AVTALTARBEIDSTIMERPERUKE = 37.5;
+    private static final Double STILLINGSPROSENT = 100.0;
 
     private static final String AKTOERTYPE = "ORG";
     private static final String ORGNUMMER = "805824352";
