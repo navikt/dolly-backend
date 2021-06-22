@@ -35,7 +35,7 @@ public class ArenaForvalterConsumer {
     private final ProvidersProps providersProps;
 
     @Timed(name = "providers", tags = { "operation", "arena_getIdent" })
-    public ResponseEntity getIdent(String ident) {
+    public ResponseEntity<ArenaArbeidssokerBruker> getIdent(String ident) {
         return restTemplate.exchange(RequestEntity.get(
                 URI.create(format("%s%s?filter-personident=%s", providersProps.getArenaForvalter().getUrl(), ARENAFORVALTER_BRUKER, ident)))
                 .header(HEADER_NAV_CALL_ID, generateCallId())

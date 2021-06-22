@@ -20,8 +20,10 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @Slf4j
@@ -164,6 +166,12 @@ public class ArenaForvalterClient implements ClientRegister {
     private void sendArenadata(ArenaNyeBrukere arenaNyeBrukere, StringBuilder status, boolean harIkkeDagpenger) {
 
         try {
+            ArenaNyeBrukere filtrerteBrukere = filtrerEksisterendeBrukere(arenaNyeBrukere);
+            if (filtrerteBrukere.getNyeBrukere().isEmpty()) {
+                log.info("Alle brukere eksisterer i Arena allerede.");
+                return;
+            }
+
             log.info("Sender Arenadata: \n" + Json.pretty(arenaNyeBrukere));
             ResponseEntity<ArenaNyeBrukereResponse> response = arenaForvalterConsumer.postArenadata(arenaNyeBrukere);
             if (response.hasBody()) {
@@ -200,6 +208,21 @@ public class ArenaForvalterClient implements ClientRegister {
             });
             log.error("Feilet å legge inn ny testperson i Arena: ", e);
         }
+    }
+
+    private ArenaNyeBrukere filtrerEksisterendeBrukere(ArenaNyeBrukere arenaNyeBrukere) {
+        List<String> eksisterendeBrukere = new ArrayList<>();
+
+        arenaNyeBrukere.getNyeBrukere().forEach(arenaNyBruker -> {
+            if (isNull(arenaNyBruker.getKvalifiseringsgruppe()) && isNull(arenaNyBruker.getUtenServicebehov())) {
+                eksisterendeBrukere.add(arenaNyBruker.getPersonident());
+            }
+        });
+
+        return new ArenaNyeBrukere(arenaNyeBrukere.getNyeBrukere().stream()
+                .filter(arenaNyBruker -> eksisterendeBrukere.stream()
+                        .anyMatch(eksisterende -> arenaNyBruker.getPersonident().equals(eksisterende)))
+                .collect(Collectors.toList()));
     }
 
     private static void appendErrorText(StringBuilder status, RuntimeException e) {
