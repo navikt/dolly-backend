@@ -45,7 +45,7 @@ public class RsAareg {
 
         private List<RsPermisjon> permisjon;
 
-        private RsFartoy fartoy;
+        private List<RsFartoy> fartoy;
 
         private List<RsUtenlandsopphold> utenlandsopphold;
 
