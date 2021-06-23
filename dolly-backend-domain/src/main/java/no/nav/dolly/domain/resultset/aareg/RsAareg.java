@@ -8,7 +8,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.Objects.isNull;
 
 @Getter
 @Setter
@@ -52,5 +55,40 @@ public class RsAareg {
         private List<RsUtenlandsopphold> utenlandsopphold;
 
         private RsAktoer arbeidsgiver;
+
+        public List<RsAntallTimerIPerioden> getAntallTimerForTimeloennet() {
+            if (isNull(antallTimerForTimeloennet)) {
+                antallTimerForTimeloennet = new ArrayList<>();
+            }
+            return antallTimerForTimeloennet;
+        }
+
+        public List<RsPermittering> getPermittering() {
+            if (isNull(permittering)) {
+                permittering = new ArrayList<>();
+            }
+            return permittering;
+        }
+
+        public List<RsPermisjon> getPermisjon() {
+            if (isNull(permisjon)) {
+                permisjon = new ArrayList<>();
+            }
+            return permisjon;
+        }
+
+        public List<RsFartoy> getFartoy() {
+            if (isNull(fartoy)) {
+                fartoy = new ArrayList<>();
+            }
+            return fartoy;
+        }
+
+        public List<RsUtenlandsopphold> getUtenlandsopphold() {
+            if (isNull(utenlandsopphold)) {
+                utenlandsopphold = new ArrayList<>();
+            }
+            return utenlandsopphold;
+        }
     }
 }
