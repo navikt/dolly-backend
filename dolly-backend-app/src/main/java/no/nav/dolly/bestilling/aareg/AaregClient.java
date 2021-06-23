@@ -85,7 +85,7 @@ public class AaregClient implements ClientRegister {
                     nonNull(bestilling.getAareg().get(0)) ? bestilling.getAareg().get(0).getArbeidsforholdstype() : null);
 
             List<Arbeidsforhold> arbeidsforholdRequest =
-                    nonNull(bestilling.getAareg().get(0).getArbeidsforhold()) ? mapperFacade.mapAsList(bestilling.getAareg().get(0).getArbeidsforhold(), Arbeidsforhold.class) : emptyList();
+                    nonNull(bestilling.getAareg().get(0).getArbeidsforhold()) ? mapperFacade.mapAsList(bestilling.getAareg().get(0).getArbeidsforhold(), Arbeidsforhold.class, context) : emptyList();
             List<ArbeidsforholdResponse> eksisterendeArbeidsforhold = aaregConsumer.hentArbeidsforhold(dollyPerson.getHovedperson(), env);
 
             List<Arbeidsforhold> arbeidsforhold = AaregMergeUtil.merge(
