@@ -109,7 +109,7 @@ public class AaregMergeUtil {
                                 eksisterendeArbeidsforhold.get(i).getArbeidsforholdId() + i);
             }
             nyttArbeidsforhold.getPermisjon().forEach(permisjon ->
-                    permisjon.setPermisjonsId(Integer.toString(permisjonId.addAndGet(1))));
+                    permisjon.setPermisjonId(Integer.toString(permisjonId.addAndGet(1))));
             nyttArbeidsforhold.setArbeidstaker(RsPersonAareg.builder()
                     .ident(ident)
                     .build());

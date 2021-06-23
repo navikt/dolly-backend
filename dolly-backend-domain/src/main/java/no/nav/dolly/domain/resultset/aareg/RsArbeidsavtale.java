@@ -18,10 +18,19 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RsArbeidsavtale {
 
+    private Integer antallKonverterteTimer;
+
     @Schema(description = "Gyldige verdier finnes i kodeverk 'Arbeidstidsordninger'",
             type = "String",
             required = true)
     private String arbeidstidsordning;
+
+    private Double avtaltArbeidstimerPerUke;
+
+    @Schema(type = "LocalDateTime")
+    private LocalDateTime endringsdatoStillingsprosent;
+
+    private Double stillingsprosent;
 
     @Schema(description = "Gyldige verdier finnes i kodeverk 'Yrker'",
             type = "String",
@@ -31,15 +40,6 @@ public class RsArbeidsavtale {
     @Schema(description = "Gyldige verdier finnes i kodeverk 'AnsettelsesformAaareg'",
             type = "String")
     private String ansettelsesform;
-
-    private Double avtaltArbeidstimerPerUke;
-
-    private Double stillingsprosent;
-
-    private Integer antallKonverterteTimer;
-
-    @Schema(type = "LocalDateTime")
-    private LocalDateTime endringsdatoStillingsprosent;
 
     @Schema(type = "LocalDateTime")
     private LocalDateTime endringsdatoLoenn;

@@ -43,6 +43,8 @@ public class RsAareg {
 
         private RsArbeidsavtale arbeidsavtale;
 
+        private List<RsPermittering> permittering;
+
         private List<RsPermisjon> permisjon;
 
         private List<RsFartoy> fartoy;

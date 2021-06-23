@@ -12,6 +12,7 @@ import no.nav.dolly.domain.resultset.aareg.RsFartoy;
 import no.nav.dolly.domain.resultset.aareg.RsPeriodeAareg;
 import no.nav.dolly.domain.resultset.aareg.RsPersonAareg;
 import no.nav.dolly.domain.resultset.aareg.RsUtenlandsopphold;
+import no.nav.registre.testnorge.libs.dto.ameldingservice.v1.PermisjonDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,27 +26,27 @@ import static java.util.Objects.isNull;
 @AllArgsConstructor
 public class Arbeidsforhold {
 
+    private RsPeriodeAareg ansettelsesPeriode;
+
+    private List<RsAntallTimerIPerioden> antallTimerForTimeloennet;
+
+    private RsArbeidsavtale arbeidsavtale;
+
     private String arbeidsforholdID;
 
     private Long arbeidsforholdIDnav;
 
-    private RsPeriodeAareg ansettelsesPeriode;
-
     private String arbeidsforholdstype;
-
-    private List<RsAntallTimerIPerioden> antallTimerForTimeloennet;
-
-    private List<RsFartoy> fartoy;
-
-    private RsArbeidsavtale arbeidsavtale;
-
-    private List<Permisjon> permisjon;
-
-    private List<RsUtenlandsopphold> utenlandsopphold;
 
     private RsAktoer arbeidsgiver;
 
+    private List<RsFartoy> fartoy;
+
     private RsPersonAareg arbeidstaker;
+
+    private List<PermisjonDTO> permisjon;
+
+    private List<RsUtenlandsopphold> utenlandsopphold;
 
     public List<RsAntallTimerIPerioden> getAntallTimerForTimeloennet() {
         if (isNull(antallTimerForTimeloennet)) {
@@ -61,7 +62,7 @@ public class Arbeidsforhold {
         return utenlandsopphold;
     }
 
-    public List<Permisjon> getPermisjon() {
+    public List<PermisjonDTO> getPermisjon() {
         if (isNull(permisjon)) {
             permisjon = new ArrayList<>();
         }

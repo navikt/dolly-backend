@@ -109,18 +109,6 @@ public class AmeldingRequestMappingStrategy implements MappingStrategy {
                                         .build()))
                                 .build()
                         ));
-
-                        if (nonNull(rsArbeidsforholdAareg.getPermittering()) && !rsArbeidsforholdAareg.getPermittering().isEmpty()) {
-                            virksomhet.getPersoner().get(0).getArbeidsforhold().get(0).getPermisjoner().addAll(
-                                    mapperFacade.mapAsList(rsArbeidsforholdAareg.getPermittering(), PermisjonDTO.class)
-                            );
-                        }
-
-                        if (nonNull(rsArbeidsforholdAareg.getUtenlandsopphold()) && !rsArbeidsforholdAareg.getUtenlandsopphold().isEmpty()) {
-                            virksomhet.getPersoner().get(0).getArbeidsforhold().get(0).getInntekter().addAll(
-                                    mapperFacade.mapAsList(rsArbeidsforholdAareg.getUtenlandsopphold(), InntektDTO.class)
-                            );
-                        }
                     }
                 })
                 .byDefault()

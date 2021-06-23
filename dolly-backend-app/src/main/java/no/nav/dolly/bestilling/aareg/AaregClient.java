@@ -80,6 +80,10 @@ public class AaregClient implements ClientRegister {
     private void sendArbeidsforhold(RsDollyUtvidetBestilling bestilling, DollyPerson dollyPerson, boolean isOpprettEndre, StringBuilder result, String env) {
         try {
 
+            MappingContext context = new MappingContext.Factory().getContext();
+            context.setProperty("arbeidsforholdstype",
+                    nonNull(bestilling.getAareg().get(0)) ? bestilling.getAareg().get(0).getArbeidsforholdstype() : null);
+
             List<Arbeidsforhold> arbeidsforholdRequest =
                     nonNull(bestilling.getAareg().get(0).getArbeidsforhold()) ? mapperFacade.mapAsList(bestilling.getAareg().get(0).getArbeidsforhold(), Arbeidsforhold.class) : emptyList();
             List<ArbeidsforholdResponse> eksisterendeArbeidsforhold = aaregConsumer.hentArbeidsforhold(dollyPerson.getHovedperson(), env);
