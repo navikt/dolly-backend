@@ -60,7 +60,7 @@ public class AaregClientTest {
                 .statusPerMiljoe(status)
                 .build();
 
-        when(mapperFacade.mapAsList(anyList(), eq(Arbeidsforhold.class))).thenReturn(singletonList(new Arbeidsforhold()));
+        when(mapperFacade.mapAsList(anyList(), eq(Arbeidsforhold.class), any())).thenReturn(singletonList(new Arbeidsforhold()));
         when(aaregConsumer.hentArbeidsforhold(IDENT, ENV)).thenReturn(emptyList());
         when(aaregConsumer.opprettArbeidsforhold(any(AaregOpprettRequest.class))).thenReturn(aaregResponse);
 
@@ -81,7 +81,7 @@ public class AaregClientTest {
                 .statusPerMiljoe(status)
                 .build();
 
-        when(mapperFacade.mapAsList(anyList(), eq(Arbeidsforhold.class))).thenReturn(singletonList(new Arbeidsforhold()));
+        when(mapperFacade.mapAsList(anyList(), eq(Arbeidsforhold.class), any())).thenReturn(singletonList(new Arbeidsforhold()));
         when(aaregConsumer.hentArbeidsforhold(IDENT, ENV)).thenReturn(emptyList());
         when(aaregConsumer.opprettArbeidsforhold(any(AaregOpprettRequest.class))).thenReturn(aaregResponse);
 
