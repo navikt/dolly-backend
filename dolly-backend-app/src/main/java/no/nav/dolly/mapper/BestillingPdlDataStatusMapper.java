@@ -84,6 +84,7 @@ public final class BestillingPdlDataStatusMapper {
     }
 
     private static List<PdlInternalStatus> collectErrors(OrdreResponseDTO response) {
+
         return response.getHovedperson().getOrdrer().stream()
                 .filter(ordre -> !PdlArtifact.PDL_SLETTING.equals(ordre.getInfoElement()))
                 .filter(ordre -> ordre.getHendelser().stream().anyMatch(hendelse -> PdlStatus.FEIL == hendelse.getStatus()))
@@ -100,6 +101,7 @@ public final class BestillingPdlDataStatusMapper {
     }
 
     private static List<RsStatusRapport> formatStatus(Map<String, List<String>> meldingIdents, SystemTyper type) {
+
         return List.of(RsStatusRapport.builder()
                 .id(type)
                 .navn(type.getBeskrivelse())
