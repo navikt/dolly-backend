@@ -26,7 +26,6 @@ public class PdlDataOrdreCommand implements Callable<Mono<String>> {
                 .uri(PDL_FORVALTER_ORDRE_URL, ident)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(null)
                 .retrieve()
                 .bodyToMono(String.class);
     }

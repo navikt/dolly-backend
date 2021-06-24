@@ -40,32 +40,37 @@ public final class BestillingPdlDataStatusMapper {
         bestProgress.forEach(progress -> {
             if (nonNull(progress.getPdlDataStatus())) {
                 if (progress.getPdlDataStatus().contains("Teknisk feil")) {
-
                     addElement(meldingIdents, progress.getPdlDataStatus(), progress.getIdent());
+
                 } else {
-                    try {
-                        var response = objectMapper.readValue(progress.getPdlDataStatus(), OrdreResponseDTO.class);
-                        var errors = collectErrors(response);
-
-                        if (errors.isEmpty()) {
-                            addElement(meldingIdents, "OK", progress.getIdent());
-
-                        } else {
-                            errors.forEach(error ->
-                                    addElement(meldingIdents, format(ELEMENT_ERROR_FMT,
-                                            error.getArtifact(), error.getId(), error.getError()), progress.getIdent())
-                            );
-                        }
-
-                    } catch (JsonProcessingException e) {
-                        addElement(meldingIdents, JSON_PARSE_ERROR, progress.getIdent());
-                        log.error("Json parsing feilet: {}", e);
-                    }
+                    extractStatus(meldingIdents, progress, objectMapper);
                 }
             }
         });
 
         return meldingIdents.isEmpty() ? emptyList() : formatStatus(meldingIdents, PDL_DATA);
+    }
+
+    private static void extractStatus(Map<String, List<String>> meldingIdents, BestillingProgress progress, ObjectMapper objectMapper) {
+
+        try {
+            var response = objectMapper.readValue(progress.getPdlDataStatus(), OrdreResponseDTO.class);
+            var errors = collectErrors(response);
+
+            if (errors.isEmpty()) {
+                addElement(meldingIdents, "OK", progress.getIdent());
+
+            } else {
+                errors.forEach(error ->
+                        addElement(meldingIdents, format(ELEMENT_ERROR_FMT,
+                                error.getArtifact(), error.getId(), error.getError()), progress.getIdent())
+                );
+            }
+
+        } catch (JsonProcessingException e) {
+            addElement(meldingIdents, JSON_PARSE_ERROR, progress.getIdent());
+            log.error("Json parsing feilet: {}", e);
+        }
     }
 
     private static void addElement(Map<String, List<String>> rapport, String melding, String ident) {
