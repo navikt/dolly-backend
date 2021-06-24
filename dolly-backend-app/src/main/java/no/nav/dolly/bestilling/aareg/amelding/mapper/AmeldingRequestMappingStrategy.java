@@ -85,7 +85,9 @@ public class AmeldingRequestMappingStrategy implements MappingStrategy {
                                         .arbeidsforholdId(nonNull(rsArbeidsforholdAareg.getArbeidsforholdID()) ? rsArbeidsforholdAareg.getArbeidsforholdID() : "1")
                                         .arbeidsforholdType((String) context.getProperty("arbeidsforholdstype"))
                                         .arbeidstidsordning(rsArbeidsforholdAareg.getArbeidsavtale().getArbeidstidsordning())
-                                        .fartoey(nonNull(rsArbeidsforholdAareg.getFartoy()) ? mapperFacade.map(rsArbeidsforholdAareg.getFartoy(), FartoeyDTO.class) : null)
+                                        .fartoey(nonNull(rsArbeidsforholdAareg.getFartoy()) && !rsArbeidsforholdAareg.getFartoy().isEmpty()
+                                                ? mapperFacade.map(rsArbeidsforholdAareg.getFartoy().get(0), FartoeyDTO.class)
+                                                : null)
                                         .inntekter(
                                                 (nonNull(rsArbeidsforholdAareg.getUtenlandsopphold()) && !rsArbeidsforholdAareg.getUtenlandsopphold().isEmpty())
                                                         || (nonNull(rsArbeidsforholdAareg.getAntallTimerForTimeloennet()) && !rsArbeidsforholdAareg.getAntallTimerForTimeloennet().isEmpty())
