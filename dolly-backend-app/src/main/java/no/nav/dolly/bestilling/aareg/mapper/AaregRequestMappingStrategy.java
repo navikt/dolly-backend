@@ -7,14 +7,12 @@ import no.nav.dolly.bestilling.aareg.domain.Arbeidsforhold;
 import no.nav.dolly.domain.resultset.aareg.RsAareg.RsAaregArbeidsforhold;
 import no.nav.dolly.domain.resultset.aareg.RsAktoerPerson;
 import no.nav.dolly.domain.resultset.aareg.RsArbeidsavtale;
-import no.nav.dolly.domain.resultset.aareg.RsFartoy;
 import no.nav.dolly.domain.resultset.aareg.RsOrganisasjon;
 import no.nav.dolly.domain.resultset.aareg.RsPeriodeAareg;
 import no.nav.dolly.mapper.MappingStrategy;
 import no.nav.registre.testnorge.libs.dto.ameldingservice.v1.PermisjonDTO;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -51,11 +49,7 @@ public class AaregRequestMappingStrategy implements MappingStrategy {
                                 .build());
 
                         if (nonNull(rsArbeidsforhold.getFartoy()) && !rsArbeidsforhold.getFartoy().isEmpty()) {
-                            arbeidsforhold.setFartoy(Collections.singletonList(RsFartoy.builder()
-                                    .fartsomraade(rsArbeidsforhold.getFartoy().get(0).getFartsomraade())
-                                    .skipsregister(rsArbeidsforhold.getFartoy().get(0).getSkipsregister())
-                                    .skipstype(rsArbeidsforhold.getFartoy().get(0).getSkipstype())
-                                    .build()));
+                            arbeidsforhold.setFartoy(rsArbeidsforhold.getFartoy());
                         }
 
                         if (nonNull(rsArbeidsforhold.getUtenlandsopphold()) && !rsArbeidsforhold.getUtenlandsopphold().isEmpty()) {
