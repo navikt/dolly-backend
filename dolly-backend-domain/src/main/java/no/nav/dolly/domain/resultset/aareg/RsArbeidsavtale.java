@@ -27,8 +27,12 @@ public class RsArbeidsavtale {
 
     private Double avtaltArbeidstimerPerUke;
 
+    private String avloenningstype;
+
     @Schema(type = "LocalDateTime")
     private LocalDateTime endringsdatoStillingsprosent;
+
+    private LocalDateTime sisteLoennsendringsdato;
 
     private Double stillingsprosent;
 

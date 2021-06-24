@@ -32,14 +32,22 @@ public class AaregRequestMappingStrategy implements MappingStrategy {
                                         Arbeidsforhold arbeidsforhold, MappingContext context) {
 
                         arbeidsforhold.setArbeidsforholdID(rsArbeidsforhold.getArbeidsforholdId());
+
+                        if (nonNull(rsArbeidsforhold.getAntallTimerForTimeloennet()) && !rsArbeidsforhold.getAntallTimerForTimeloennet().isEmpty()) {
+                            arbeidsforhold.setAntallTimerForTimeloennet(rsArbeidsforhold.getAntallTimerForTimeloennet());
+                        }
+
                         arbeidsforhold.setArbeidsavtale(RsArbeidsavtale.builder()
-                                .ansettelsesform(rsArbeidsforhold.getArbeidsavtale().getAnsettelsesform())
                                 .antallKonverterteTimer(rsArbeidsforhold.getArbeidsavtale().getAntallKonverterteTimer())
                                 .arbeidstidsordning(rsArbeidsforhold.getArbeidsavtale().getArbeidstidsordning())
+                                .avloenningstype(rsArbeidsforhold.getArbeidsavtale().getAvloenningstype())
                                 .avtaltArbeidstimerPerUke(rsArbeidsforhold.getArbeidsavtale().getAvtaltArbeidstimerPerUke())
-                                .endringsdatoLoenn(rsArbeidsforhold.getArbeidsavtale().getEndringsdatoLoenn())
                                 .endringsdatoStillingsprosent(rsArbeidsforhold.getArbeidsavtale().getEndringsdatoStillingsprosent())
+                                .sisteLoennsendringsdato(rsArbeidsforhold.getArbeidsavtale().getSisteLoennsendringsdato())
                                 .stillingsprosent(rsArbeidsforhold.getArbeidsavtale().getStillingsprosent())
+                                .yrke(rsArbeidsforhold.getArbeidsavtale().getYrke())
+                                .endringsdatoLoenn(rsArbeidsforhold.getArbeidsavtale().getEndringsdatoLoenn())
+                                .ansettelsesform(rsArbeidsforhold.getArbeidsavtale().getAnsettelsesform())
                                 .build());
 
                         if (nonNull(rsArbeidsforhold.getFartoy()) && !rsArbeidsforhold.getFartoy().isEmpty()) {
@@ -74,6 +82,7 @@ public class AaregRequestMappingStrategy implements MappingStrategy {
                                     .build());
                         }
                         arbeidsforhold.setArbeidsforholdstype((String) context.getProperty("arbeidsforholdstype"));
+
                         arbeidsforhold.setPermisjon((nonNull(rsArbeidsforhold.getPermisjon()) && !rsArbeidsforhold.getPermisjon().isEmpty())
                                 || (nonNull(rsArbeidsforhold.getPermittering()) && !rsArbeidsforhold.getPermittering().isEmpty())
                                 ? Stream.concat(
