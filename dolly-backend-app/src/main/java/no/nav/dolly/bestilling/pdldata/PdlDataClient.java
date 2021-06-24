@@ -1,0 +1,57 @@
+package no.nav.dolly.bestilling.pdldata;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import no.nav.dolly.bestilling.ClientRegister;
+import no.nav.dolly.domain.jpa.BestillingProgress;
+import no.nav.dolly.domain.resultset.RsDollyUtvidetBestilling;
+import no.nav.dolly.domain.resultset.tpsf.DollyPerson;
+import no.nav.dolly.errorhandling.ErrorStatusDecoder;
+import no.nav.registre.testnorge.libs.dto.pdlforvalter.v1.PersonUpdateRequestDTO;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+import static java.util.Objects.nonNull;
+
+@Slf4j
+@Order(2)
+@Service
+@RequiredArgsConstructor
+public class PdlDataClient implements ClientRegister {
+
+    private final PdlDataConsumer pdlDataConsumer;
+    private final ErrorStatusDecoder errorStatusDecoder;
+
+    @Override
+    public void gjenopprett(RsDollyUtvidetBestilling bestilling, DollyPerson dollyPerson, BestillingProgress progress, boolean isOpprettEndre) {
+
+        if (nonNull(bestilling.getPdldata())) {
+            try {
+                pdlDataConsumer.oppdaterPdl(dollyPerson.getHovedperson(),
+                        PersonUpdateRequestDTO.builder()
+                                .person(bestilling.getPdldata())
+                                .build()).block();
+
+                progress.setPdlDataStatus(pdlDataConsumer.sendOrdre(dollyPerson.getHovedperson()).block());
+
+            } catch (JsonProcessingException | RuntimeException e) {
+
+                progress.setPdlDataStatus(errorStatusDecoder.decodeException(e));
+            }
+        }
+    }
+
+    @Override
+    public void release(List<String> identer) {
+
+        pdlDataConsumer.slettPdl(identer);
+    }
+
+    @Override
+    public boolean isTestnorgeRelevant() {
+        return false;
+    }
+}

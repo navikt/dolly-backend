@@ -27,7 +27,11 @@ consumers:
     name: testnav-inntektsmelding-service
     cluster: dev-gcp
     namespace: dolly
-
+  testnav-pdl-forvalter:
+    url: https://testnav-pdl-forvalter-dev.dev.intern.nav.no
+    name: testnav-pdl-forvalter-dev
+    cluster: dev-gcp
+    namespace: dolly
 
 #### APP DB ####
 ? app.datasource.onsHosts
