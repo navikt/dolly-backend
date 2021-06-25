@@ -39,11 +39,12 @@ public final class BestillingPdlDataStatusMapper {
 
         bestProgress.forEach(progress -> {
             if (nonNull(progress.getPdlDataStatus())) {
-                if (progress.getPdlDataStatus().contains("Teknisk feil")) {
-                    addElement(meldingIdents, progress.getPdlDataStatus(), progress.getIdent());
+
+                if (progress.getPdlDataStatus().contains("PDL_OPPRETT_PERSON")) {
+                    extractStatus(meldingIdents, progress, objectMapper);
 
                 } else {
-                    extractStatus(meldingIdents, progress, objectMapper);
+                    addElement(meldingIdents, progress.getPdlDataStatus(), progress.getIdent());
                 }
             }
         });
@@ -107,7 +108,7 @@ public final class BestillingPdlDataStatusMapper {
                 .navn(type.getBeskrivelse())
                 .statuser(meldingIdents.entrySet().stream()
                         .map(entry -> RsStatusRapport.Status.builder()
-                                .melding(entry.getKey())
+                                .melding(entry.getKey().replace(';', ',').replace('=', ':'))
                                 .identer(entry.getValue())
                                 .build())
                         .collect(Collectors.toList()))

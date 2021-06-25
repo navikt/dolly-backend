@@ -11,6 +11,7 @@ import no.nav.dolly.errorhandling.ErrorStatusDecoder;
 import no.nav.registre.testnorge.libs.dto.pdlforvalter.v1.PersonUpdateRequestDTO;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.List;
 
@@ -28,19 +29,24 @@ public class PdlDataClient implements ClientRegister {
     @Override
     public void gjenopprett(RsDollyUtvidetBestilling bestilling, DollyPerson dollyPerson, BestillingProgress progress, boolean isOpprettEndre) {
 
-        if (nonNull(bestilling.getPdldata())) {
-            try {
+        try {
+            if (nonNull(bestilling.getPdldata())) {
                 pdlDataConsumer.oppdaterPdl(dollyPerson.getHovedperson(),
                         PersonUpdateRequestDTO.builder()
                                 .person(bestilling.getPdldata())
-                                .build()).block();
-
-                progress.setPdlDataStatus(pdlDataConsumer.sendOrdre(dollyPerson.getHovedperson()).block());
-
-            } catch (JsonProcessingException | RuntimeException e) {
-
-                progress.setPdlDataStatus(errorStatusDecoder.decodeException(e));
+                                .build())
+                        .block();
             }
+
+            progress.setPdlDataStatus(pdlDataConsumer.sendOrdre(dollyPerson.getHovedperson()).block());
+
+        } catch (JsonProcessingException e) {
+
+            progress.setPdlDataStatus(errorStatusDecoder.decodeException(e));
+
+        } catch (WebClientResponseException e) {
+
+            progress.setPdlDataStatus(errorStatusDecoder.decodeRuntimeException(e));
         }
     }
 

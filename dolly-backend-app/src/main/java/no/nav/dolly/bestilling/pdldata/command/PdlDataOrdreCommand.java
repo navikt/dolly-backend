@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import java.util.concurrent.Callable;
@@ -27,6 +28,8 @@ public class PdlDataOrdreCommand implements Callable<Mono<String>> {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToMono(String.class);
+                .bodyToMono(String.class)
+                .onErrorResume(throwable -> throwable instanceof WebClientResponseException.BadRequest,
+                        throwable -> Mono.empty());
     }
 }
