@@ -29,7 +29,7 @@ public class PdlDataOrdreCommand implements Callable<Mono<String>> {
                 .contentType(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(String.class)
-                .onErrorResume(throwable -> throwable instanceof WebClientResponseException.BadRequest,
+                .onErrorResume(throwable -> throwable instanceof WebClientResponseException.NotFound,
                         throwable -> Mono.empty());
     }
 }
