@@ -33,6 +33,8 @@ import static java.util.Objects.nonNull;
 @Component
 public class AmeldingRequestMappingStrategy implements MappingStrategy {
 
+    private static final String PERMISJON_ID = "dolly-123456";
+
     @Override
     public void register(MapperFactory factory) {
         factory.classMap(RsAmeldingRequest.class, AMeldingDTO.class)
@@ -124,6 +126,7 @@ public class AmeldingRequestMappingStrategy implements MappingStrategy {
                 .customize(new CustomMapper<>() {
                     @Override
                     public void mapAtoB(RsPermisjon rsPermisjon, PermisjonDTO permisjonDTO, MappingContext context) {
+                        permisjonDTO.setPermisjonId(PERMISJON_ID);
                         permisjonDTO.setBeskrivelse(rsPermisjon.getPermisjon());
                         permisjonDTO.setPermisjonsprosent(rsPermisjon.getPermisjonsprosent().floatValue());
                         permisjonDTO.setStartdato(
@@ -142,6 +145,7 @@ public class AmeldingRequestMappingStrategy implements MappingStrategy {
         factory.classMap(RsPermittering.class, PermisjonDTO.class).customize(new CustomMapper<>() {
             @Override
             public void mapAtoB(RsPermittering rsPermittering, PermisjonDTO permisjonDTO, MappingContext context) {
+                permisjonDTO.setPermisjonId(PERMISJON_ID);
                 permisjonDTO.setBeskrivelse("permittering");
                 permisjonDTO.setPermisjonsprosent(rsPermittering.getPermitteringsprosent().floatValue());
                 permisjonDTO.setStartdato(
