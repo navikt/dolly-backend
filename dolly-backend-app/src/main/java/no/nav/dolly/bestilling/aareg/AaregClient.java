@@ -18,6 +18,7 @@ import no.nav.dolly.bestilling.aareg.util.AaregMergeUtil;
 import no.nav.dolly.domain.jpa.BestillingProgress;
 import no.nav.dolly.domain.jpa.TransaksjonMapping;
 import no.nav.dolly.domain.resultset.RsDollyUtvidetBestilling;
+import no.nav.dolly.domain.resultset.aareg.RsAmeldingRequest;
 import no.nav.dolly.domain.resultset.aareg.RsArbeidsforholdAareg;
 import no.nav.dolly.domain.resultset.aareg.RsArbeidsforholdAareg.RsArbeidsgiver;
 import no.nav.dolly.domain.resultset.tpsf.DollyPerson;
@@ -31,6 +32,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,14 +118,18 @@ public class AaregClient implements ClientRegister {
     private void sendAmelding(RsDollyUtvidetBestilling bestilling, DollyPerson dollyPerson, BestillingProgress progress, StringBuilder result, String env) {
         try {
             Map<String, AMeldingDTO> dtoMaanedMap = new HashMap<>();
+
+            Set<String> orgnumre = bestilling.getAareg().get(0).getAmelding().stream()
+                    .map(RsAmeldingRequest::getArbeidsforhold)
+                    .flatMap(Collection::stream)
+                    .map(RsArbeidsforholdAareg::getArbeidsgiver)
+                    .map(RsArbeidsgiver::getOrgnummer)
+                    .collect(Collectors.toSet());
+            List<OrganisasjonDTO> organisasjoner = organisasjonServiceConsumer.getOrganisasjoner(orgnumre, env);
+            log.info("Hentet organisajoner fra org service: \n" + Json.pretty(organisasjoner));
+
             bestilling.getAareg().get(0).getAmelding().forEach(amelding -> {
 
-                Set<String> orgnumre = amelding.getArbeidsforhold().stream()
-                        .map(RsArbeidsforholdAareg::getArbeidsgiver)
-                        .map(RsArbeidsgiver::getOrgnummer)
-                        .collect(Collectors.toSet());
-                List<OrganisasjonDTO> organisasjoner = organisasjonServiceConsumer.getOrganisasjoner(orgnumre, env);
-                log.info("Hentet organisajoner fra org service: \n" + Json.pretty(organisasjoner));
 
                 Map<String, String> opplysningspliktig = new HashMap<>();
                 orgnumre.forEach(orgnummer -> opplysningspliktig.put(orgnummer,
