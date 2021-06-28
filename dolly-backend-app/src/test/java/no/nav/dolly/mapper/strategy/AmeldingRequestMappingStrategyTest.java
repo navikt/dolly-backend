@@ -47,6 +47,7 @@ public class AmeldingRequestMappingStrategyTest {
     private static final String AKTOERTYPE = "ORG";
     private static final String ORGNUMMER = "805824352";
     private static final String JURIDISK_ENHET = "987654321";
+    private static final String PERMISJON_ID = "dolly-123456";
 
     private static final LocalDateTime ANSETTELSESPERIODEFOM = LocalDateTime.of(2001, 1, 1, 0, 0);
     private static final LocalDateTime ANSETTELSESPERIODETOM = LocalDateTime.of(2001, 6, 1, 0, 0);
@@ -140,6 +141,7 @@ public class AmeldingRequestMappingStrategyTest {
         List<PermisjonDTO> result = mapperFacade.mapAsList(List.of(permisjon), PermisjonDTO.class);
 
         assertThat(result.get(0), is(equalTo(PermisjonDTO.builder()
+                .permisjonId(PERMISJON_ID)
                 .permisjonsprosent(100F)
                 .beskrivelse(PERMISJON)
                 .startdato(LocalDate.of(2021, 5, 1))
@@ -152,7 +154,7 @@ public class AmeldingRequestMappingStrategyTest {
 
         final String PERMITTERING = "permittering";
 
-        RsPermittering permisjon = RsPermittering.builder()
+        RsPermittering permittering = RsPermittering.builder()
                 .permitteringsPeriode(RsPeriodeAareg.builder()
                         .fom(LocalDateTime.of(2021, 5, 1, 0, 0))
                         .tom(LocalDateTime.of(2021, 5, 10, 0, 0))
@@ -160,9 +162,10 @@ public class AmeldingRequestMappingStrategyTest {
                 .permitteringsprosent(BigDecimal.valueOf(100))
                 .build();
 
-        List<PermisjonDTO> result = mapperFacade.mapAsList(List.of(permisjon), PermisjonDTO.class);
+        List<PermisjonDTO> result = mapperFacade.mapAsList(List.of(permittering), PermisjonDTO.class);
 
         assertThat(result.get(0), is(equalTo(PermisjonDTO.builder()
+                .permisjonId(PERMISJON_ID)
                 .permisjonsprosent(100F)
                 .beskrivelse(PERMITTERING)
                 .startdato(LocalDate.of(2021, 5, 1))
