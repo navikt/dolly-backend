@@ -48,7 +48,7 @@ public class PdlDataConsumer {
         tokenService.generateToken(properties)
                 .flatMapMany(token -> identer.stream()
                         .map(ident -> Flux.from(new PdlDataSlettCommand(webClient, ident, token.getTokenValue()).call()))
-                        .reduce(null, Flux::concat))
+                        .reduce(Flux.empty(), Flux::concat))
                 .collectList()
                 .block();
     }

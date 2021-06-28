@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import java.util.concurrent.Callable;
@@ -25,6 +26,8 @@ public class PdlDataSlettCommand implements Callable<Mono<Void>> {
                 .uri(PDL_FORVALTER_URL, ident)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
-                .bodyToMono(Void.class);
+                .bodyToMono(Void.class)
+                .onErrorResume(throwable -> throwable instanceof WebClientResponseException.NotFound,
+                        throwable -> Mono.empty());
     }
 }
