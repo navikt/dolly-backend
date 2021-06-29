@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import no.nav.dolly.bestilling.aareg.AaregConsumer;
+import no.nav.dolly.bestilling.aareg.ArbeidsforholdServiceConsumer;
 import no.nav.dolly.bestilling.aareg.domain.ArbeidsforholdResponse;
 import no.nav.dolly.bestilling.inntektstub.InntektstubConsumer;
 import no.nav.dolly.bestilling.inntektstub.domain.ValiderInntekt;
@@ -53,6 +54,7 @@ public class OppslagController {
     private final KodeverkMapper kodeverkMapper;
     private final KodeverkConsumer kodeverkConsumer;
     private final AaregConsumer aaregConsumer;
+    private final ArbeidsforholdServiceConsumer arbeidsforholdServiceConsumer;
     private final PdlPersonConsumer pdlPersonConsumer;
     private final InntektstubConsumer inntektstubConsumer;
     private final FasteDatasettConsumer fasteDatasettConsumer;
@@ -131,7 +133,7 @@ public class OppslagController {
     @GetMapping("/aareg/arbeidsforhold")
     @Operation(description = "Hent arbeidsforhold fra aareg")
     public List<ArbeidsforholdResponse> getArbeidsforhold(@RequestParam String ident, @RequestParam String miljoe) {
-        return aaregConsumer.hentArbeidsforhold(ident, miljoe);
+        return arbeidsforholdServiceConsumer.hentArbeidsforhold(ident, miljoe);
     }
 
     @GetMapping("/orgnummer")

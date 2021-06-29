@@ -27,6 +27,11 @@ consumers:
     name: testnav-inntektsmelding-service
     cluster: dev-gcp
     namespace: dolly
+  testnav-arbeidsforhold-service:
+    url: https://testnav-arbeidsforhold-service.dev.intern.nav.no
+    name: testnav-arbeidsforhold-service
+    cluster: dev-gcp
+    namespace: dolly
   testnav-amelding-service:
     url: https://testnav-amelding-service.dev.intern.nav.no
     name: testnav-amelding-service
