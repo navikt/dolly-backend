@@ -40,17 +40,13 @@ public class AaregRequestMappingStrategy implements MappingStrategy {
                                 .arbeidstidsordning(rsArbeidsforhold.getArbeidsavtale().getArbeidstidsordning())
                                 .avloenningstype(rsArbeidsforhold.getArbeidsavtale().getAvloenningstype())
                                 .avtaltArbeidstimerPerUke(rsArbeidsforhold.getArbeidsavtale().getAvtaltArbeidstimerPerUke())
-                                .endringsdatoStillingsprosent(rsArbeidsforhold.getArbeidsavtale().getEndringsdatoStillingsprosent())
+                                .endringsdatoStillingsprosent(null)
                                 .sisteLoennsendringsdato(rsArbeidsforhold.getArbeidsavtale().getSisteLoennsendringsdato())
                                 .stillingsprosent(rsArbeidsforhold.getArbeidsavtale().getStillingsprosent())
                                 .yrke(rsArbeidsforhold.getArbeidsavtale().getYrke())
                                 .endringsdatoLoenn(rsArbeidsforhold.getArbeidsavtale().getEndringsdatoLoenn())
-                                .ansettelsesform(rsArbeidsforhold.getArbeidsavtale().getAnsettelsesform())
+                                .ansettelsesform(null)
                                 .build());
-
-                        if (nonNull(rsArbeidsforhold.getFartoy()) && !rsArbeidsforhold.getFartoy().isEmpty()) {
-                            arbeidsforhold.setFartoy(rsArbeidsforhold.getFartoy());
-                        }
 
                         if (nonNull(rsArbeidsforhold.getUtenlandsopphold()) && !rsArbeidsforhold.getUtenlandsopphold().isEmpty()) {
                             arbeidsforhold.setUtenlandsopphold(rsArbeidsforhold.getUtenlandsopphold());
@@ -72,13 +68,14 @@ public class AaregRequestMappingStrategy implements MappingStrategy {
                             arbeidsforhold.setAnsettelsesPeriode(RsPeriodeAareg.builder()
                                     .fom(rsArbeidsforhold.getAnsettelsesPeriode().getFom())
                                     .tom(rsArbeidsforhold.getAnsettelsesPeriode().getTom())
-                                    .periode(rsArbeidsforhold.getAnsettelsesPeriode().getPeriode())
+                                    .periode(null)
                                     .build());
                         }
                         arbeidsforhold.setArbeidsforholdstype((String) context.getProperty("arbeidsforholdstype"));
 
                         arbeidsforhold.setPermisjon((nonNull(rsArbeidsforhold.getPermisjon()) && !rsArbeidsforhold.getPermisjon().isEmpty())
-                                || (nonNull(rsArbeidsforhold.getPermittering()) && !rsArbeidsforhold.getPermittering().isEmpty())
+                                || (nonNull(rsArbeidsforhold.getPermittering())
+                                && !rsArbeidsforhold.getPermittering().isEmpty())
                                 ? Stream.concat(
                                 mapperFacade.mapAsList(rsArbeidsforhold.getPermisjon(), PermisjonDTO.class).stream(),
                                 mapperFacade.mapAsList(rsArbeidsforhold.getPermittering(), PermisjonDTO.class).stream())
