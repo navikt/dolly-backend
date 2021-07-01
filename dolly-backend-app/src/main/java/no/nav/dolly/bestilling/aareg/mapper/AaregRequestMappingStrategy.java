@@ -4,11 +4,11 @@ import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
 import no.nav.dolly.bestilling.aareg.domain.Arbeidsforhold;
+import no.nav.dolly.bestilling.aareg.domain.Arbeidsforhold.Periode;
 import no.nav.dolly.domain.resultset.aareg.RsAareg.RsAaregArbeidsforhold;
 import no.nav.dolly.domain.resultset.aareg.RsAktoerPerson;
 import no.nav.dolly.domain.resultset.aareg.RsArbeidsavtale;
 import no.nav.dolly.domain.resultset.aareg.RsOrganisasjon;
-import no.nav.dolly.domain.resultset.aareg.RsPeriodeAareg;
 import no.nav.dolly.mapper.MappingStrategy;
 import no.nav.registre.testnorge.libs.dto.ameldingservice.v1.PermisjonDTO;
 import org.springframework.stereotype.Component;
@@ -44,7 +44,7 @@ public class AaregRequestMappingStrategy implements MappingStrategy {
                                 .sisteLoennsendringsdato(rsArbeidsforhold.getArbeidsavtale().getSisteLoennsendringsdato())
                                 .stillingsprosent(rsArbeidsforhold.getArbeidsavtale().getStillingsprosent())
                                 .yrke(rsArbeidsforhold.getArbeidsavtale().getYrke())
-                                .endringsdatoLoenn(rsArbeidsforhold.getArbeidsavtale().getEndringsdatoLoenn())
+                                .endringsdatoLoenn(null)
                                 .ansettelsesform(null)
                                 .build());
 
@@ -65,10 +65,9 @@ public class AaregRequestMappingStrategy implements MappingStrategy {
                             arbeidsforhold.getArbeidsgiver().setAktoertype("PERS");
                         }
                         if (nonNull(rsArbeidsforhold.getAnsettelsesPeriode())) {
-                            arbeidsforhold.setAnsettelsesPeriode(RsPeriodeAareg.builder()
+                            arbeidsforhold.setAnsettelsesPeriode(Periode.builder()
                                     .fom(rsArbeidsforhold.getAnsettelsesPeriode().getFom())
                                     .tom(rsArbeidsforhold.getAnsettelsesPeriode().getTom())
-                                    .periode(null)
                                     .build());
                         }
                         arbeidsforhold.setArbeidsforholdstype((String) context.getProperty("arbeidsforholdstype"));

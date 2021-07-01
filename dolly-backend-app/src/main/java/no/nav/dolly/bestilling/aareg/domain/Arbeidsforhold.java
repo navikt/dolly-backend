@@ -1,5 +1,7 @@
 package no.nav.dolly.bestilling.aareg.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,12 +10,11 @@ import lombok.Setter;
 import no.nav.dolly.domain.resultset.aareg.RsAktoer;
 import no.nav.dolly.domain.resultset.aareg.RsAntallTimerIPerioden;
 import no.nav.dolly.domain.resultset.aareg.RsArbeidsavtale;
-import no.nav.dolly.domain.resultset.aareg.RsFartoy;
-import no.nav.dolly.domain.resultset.aareg.RsPeriodeAareg;
 import no.nav.dolly.domain.resultset.aareg.RsPersonAareg;
 import no.nav.dolly.domain.resultset.aareg.RsUtenlandsopphold;
 import no.nav.registre.testnorge.libs.dto.ameldingservice.v1.PermisjonDTO;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,27 +27,34 @@ import static java.util.Objects.isNull;
 @AllArgsConstructor
 public class Arbeidsforhold {
 
-    private RsPeriodeAareg ansettelsesPeriode;
-
+    private Periode ansettelsesPeriode;
     private List<RsAntallTimerIPerioden> antallTimerForTimeloennet;
-
     private RsArbeidsavtale arbeidsavtale;
-
     private String arbeidsforholdID;
-
     private Long arbeidsforholdIDnav;
-
     private String arbeidsforholdstype;
-
     private RsAktoer arbeidsgiver;
-
-    private List<RsFartoy> fartoy;
-
     private RsPersonAareg arbeidstaker;
-
     private List<PermisjonDTO> permisjon;
-
     private List<RsUtenlandsopphold> utenlandsopphold;
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class Periode {
+
+        @Schema(description = "Dato fra-og-med",
+                type = "LocalDateTime",
+                required = true)
+        private LocalDateTime fom;
+
+        @Schema(description = "Dato til-og-med",
+                type = "LocalDateTime")
+        private LocalDateTime tom;
+    }
 
     public List<RsAntallTimerIPerioden> getAntallTimerForTimeloennet() {
         if (isNull(antallTimerForTimeloennet)) {
