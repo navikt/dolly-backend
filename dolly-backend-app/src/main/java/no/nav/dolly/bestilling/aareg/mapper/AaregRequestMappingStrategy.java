@@ -70,7 +70,7 @@ public class AaregRequestMappingStrategy implements MappingStrategy {
                                     .tom(rsArbeidsforhold.getAnsettelsesPeriode().getTom())
                                     .build());
                         }
-                        arbeidsforhold.setArbeidsforholdstype((String) context.getProperty("arbeidsforholdstype"));
+                        arbeidsforhold.setArbeidsforholdstype(rsArbeidsforhold.getArbeidsforholdstype());
 
                         arbeidsforhold.setPermisjon((nonNull(rsArbeidsforhold.getPermisjon()) && !rsArbeidsforhold.getPermisjon().isEmpty())
                                 || (nonNull(rsArbeidsforhold.getPermittering())

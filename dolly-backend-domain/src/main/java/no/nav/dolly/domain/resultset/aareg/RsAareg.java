@@ -39,6 +39,7 @@ public class RsAareg {
     public static class RsAaregArbeidsforhold {
 
         private String arbeidsforholdId;
+        private String arbeidsforholdstype;
 
         private RsPeriodeAareg ansettelsesPeriode;
 
