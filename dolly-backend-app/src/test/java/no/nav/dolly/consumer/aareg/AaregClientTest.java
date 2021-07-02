@@ -167,11 +167,11 @@ public class AaregClientTest {
                         .build())
                 .arbeidsgiver(isOrgnummer ?
                         ArbeidsforholdResponse.Arbeidsgiver.builder()
-                                .type(Aktoer.Organisasjon)
+                                .type(Aktoer.ORGANISASJON)
                                 .organisasjonsnummer(ORGNUMMER)
                                 .build() :
                         ArbeidsforholdResponse.Arbeidsgiver.builder()
-                                .type(Aktoer.Person)
+                                .type(Aktoer.PERSON)
                                 .offentligIdent(IDENT)
                                 .build())
                 .arbeidsavtaler(singletonList(ArbeidsforholdResponse.Arbeidsavtale.builder()
