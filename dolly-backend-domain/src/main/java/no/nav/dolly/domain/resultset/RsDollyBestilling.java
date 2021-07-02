@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import no.nav.dolly.domain.resultset.aareg.RsAaregArbeidsforhold;
+import no.nav.dolly.domain.resultset.aareg.RsAareg;
 import no.nav.dolly.domain.resultset.arenaforvalter.Arenadata;
 import no.nav.dolly.domain.resultset.breg.RsBregdata;
 import no.nav.dolly.domain.resultset.dokarkiv.RsDokarkiv;
@@ -46,7 +46,7 @@ public class RsDollyBestilling {
 
     private List<RsInstdata> instdata;
 
-    private List<RsAaregArbeidsforhold> aareg;
+    private List<RsAareg> aareg;
 
     private List<OpprettSkattegrunnlag> sigrunstub;
 
@@ -66,7 +66,7 @@ public class RsDollyBestilling {
 
     private RsSykemelding sykemelding;
 
-    public List<RsAaregArbeidsforhold> getAareg() {
+    public List<RsAareg> getAareg() {
         if (isNull(aareg)) {
             aareg = new ArrayList<>();
         }
