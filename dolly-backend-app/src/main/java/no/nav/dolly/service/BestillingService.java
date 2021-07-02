@@ -313,7 +313,7 @@ public class BestillingService {
 
     private static void fixAaregAbstractClassProblem(List<RsAareg> aaregdata) {
 
-        if (!aaregdata.isEmpty() && nonNull(aaregdata.get(0).getArbeidsforhold()) && !aaregdata.get(0).getArbeidsforhold().isEmpty()) {
+        if (nonNull(aaregdata) && !aaregdata.isEmpty() && nonNull(aaregdata.get(0).getArbeidsforhold()) && !aaregdata.get(0).getArbeidsforhold().isEmpty()) {
             aaregdata.get(0).getArbeidsforhold().forEach(arbeidforhold -> {
                 log.info("Arbeidsforhold: " + Json.pretty(arbeidforhold));
                 if (nonNull(arbeidforhold.getArbeidsgiver())) {
