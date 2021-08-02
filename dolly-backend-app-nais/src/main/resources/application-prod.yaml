@@ -7,4 +7,4 @@ consumers:
   testnav-inntektsmelding-service:
     url: https://testnav-inntektsmelding-service.dolly.svc.cluster.local
   testnav-pdl-forvalter:
-    url: https://testnav-pdl-forvalter.dolly.svc.cluster.local
+    url: https://testnav-pdl-forvalter.dev.intern.nav.no
