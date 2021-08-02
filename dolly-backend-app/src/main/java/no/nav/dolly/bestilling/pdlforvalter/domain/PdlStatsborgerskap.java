@@ -1,21 +1,20 @@
 package no.nav.dolly.bestilling.pdlforvalter.domain;
 
-import java.time.LocalDate;
-
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+
+import java.time.LocalDate;
 
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PdlStatsborgerskap {
+public class PdlStatsborgerskap extends PdlOpplysning {
 
-    private String kilde;
     private String landkode;
     private LocalDate gyldigFom;
     private LocalDate gyldigTom;

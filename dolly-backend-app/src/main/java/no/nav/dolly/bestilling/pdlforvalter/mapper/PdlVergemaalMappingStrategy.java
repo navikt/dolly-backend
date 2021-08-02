@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
-import no.nav.dolly.bestilling.pdlforvalter.domain.Folkeregistermetadata;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlVergemaal;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlVergemaal.Omfang;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlVergemaal.Personnavn;

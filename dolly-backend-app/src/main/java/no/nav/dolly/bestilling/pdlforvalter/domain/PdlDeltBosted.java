@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -15,15 +16,14 @@ import static java.util.Objects.isNull;
 
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PdlDeltBosted {
+public class PdlDeltBosted extends PdlOpplysning {
 
     private String adresseIdentifikatorFraMatrikkelen;
     private String coAdressenavn;
-    private Folkeregistermetadata folkeregistermetadata;
     private String kilde;
     private String naerAdresseIdentifikatorFraMatrikkelen;
     private LocalDate sluttdatoForKontrakt;

@@ -3,7 +3,6 @@ package no.nav.dolly.bestilling.pdlforvalter.mapper;
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
-import no.nav.dolly.bestilling.pdlforvalter.domain.Folkeregistermetadata;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlInnflytting;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlInnflyttingHistorikk;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlUtflytting;

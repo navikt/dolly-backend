@@ -10,11 +10,10 @@ import static java.util.Objects.isNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PdlFamilierelasjon {
+public class PdlFamilierelasjon extends PdlOpplysning {
 
     public enum ROLLE {MOR, FAR, MEDMOR, BARN}
 
-    private String kilde;
     private ROLLE minRolleForPerson;
     private String relatertPerson;
     private ROLLE relatertPersonsRolle;

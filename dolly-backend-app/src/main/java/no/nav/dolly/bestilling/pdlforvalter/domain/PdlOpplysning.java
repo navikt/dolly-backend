@@ -1,6 +1,5 @@
 package no.nav.dolly.bestilling.pdlforvalter.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -8,9 +7,10 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
-public class PdlUtflytting extends PdlOpplysning {
+public abstract class PdlOpplysning {
 
-    private String tilflyttingsland;
-    private String tilflyttingsstedIUtlandet;
+    public enum Master {FREG, PDL}
+
+    private String kilde;
+    private Master master;
 }

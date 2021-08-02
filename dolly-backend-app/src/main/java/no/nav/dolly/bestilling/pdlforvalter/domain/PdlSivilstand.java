@@ -1,17 +1,15 @@
 package no.nav.dolly.bestilling.pdlforvalter.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PdlSivilstand {
+public class PdlSivilstand extends PdlOpplysning {
 
     public enum Sivilstand {
         UOPPGITT,
@@ -27,9 +25,7 @@ public class PdlSivilstand {
     }
 
     private LocalDate bekreftelsesdato;
-    private String kilde;
     private String kommune;
-    private String master;
     private String myndighet;
     private String relatertVedSivilstand;
     private LocalDate sivilstandsdato;
