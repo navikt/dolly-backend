@@ -1,11 +1,8 @@
 package no.nav.dolly.bestilling.pdlforvalter.domain;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
@@ -14,10 +11,9 @@ import java.util.List;
 import static java.util.Objects.isNull;
 
 @Data
-@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PdlTelefonnummer extends PdlOpplysning {
+public class PdlTelefonnummer {
 
     private List<Entry> telfonnumre;
 
@@ -28,12 +24,11 @@ public class PdlTelefonnummer extends PdlOpplysning {
         return telfonnumre;
     }
 
-    @Getter
-    @Setter
-    @Builder
+    @Data
+    @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Entry {
+    public static class Entry extends PdlOpplysning {
 
         private String landskode;
         private String nummer;

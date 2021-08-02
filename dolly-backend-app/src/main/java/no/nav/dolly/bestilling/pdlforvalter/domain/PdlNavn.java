@@ -2,21 +2,21 @@ package no.nav.dolly.bestilling.pdlforvalter.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
-@Getter
-@Setter
-@Builder
+@Data
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PdlNavn {
+public class PdlNavn extends PdlOpplysning {
 
     private String etternavn;
     private String forkortetNavn;
     private String fornavn;
-    private String kilde;
     private String mellomnavn;
     private OriginaltNavn originaltNavn;
 

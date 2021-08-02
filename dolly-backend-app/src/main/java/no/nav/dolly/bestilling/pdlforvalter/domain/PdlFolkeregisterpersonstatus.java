@@ -1,15 +1,13 @@
 package no.nav.dolly.bestilling.pdlforvalter.domain;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PdlFolkeregisterpersonstatus {
+public class PdlFolkeregisterpersonstatus extends PdlOpplysning {
 
     public enum Folkeregisterpersonstatus {
         BOSATT,
@@ -23,6 +21,5 @@ public class PdlFolkeregisterpersonstatus {
         INAKTIV
     }
 
-    private String kilde;
     private Folkeregisterpersonstatus status;
 }

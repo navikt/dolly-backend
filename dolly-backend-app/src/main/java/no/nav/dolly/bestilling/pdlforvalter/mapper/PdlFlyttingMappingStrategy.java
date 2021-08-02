@@ -11,10 +11,6 @@ import no.nav.dolly.domain.resultset.tpsf.Person;
 import no.nav.dolly.mapper.MappingStrategy;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-import static java.util.Objects.nonNull;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.resultset.tpsf.InnvandretUtvandret.InnUtvandret.INNVANDRET;
 import static no.nav.dolly.domain.resultset.tpsf.InnvandretUtvandret.InnUtvandret.UTVANDRET;
@@ -35,9 +31,6 @@ public class PdlFlyttingMappingStrategy implements MappingStrategy {
                                 historikk.getInnflyttinger().add(
                                         PdlInnflytting.builder()
                                                 .fraflyttingsland(innvandretUtvandret.getLandkode())
-                                                .folkeregistermetadata(Folkeregistermetadata.builder()
-                                                        .gyldighetstidspunkt(getDato(innvandretUtvandret.getFlyttedato()))
-                                                        .build())
                                                 .kilde(CONSUMER)
                                                 .build()
                                 );
@@ -58,9 +51,6 @@ public class PdlFlyttingMappingStrategy implements MappingStrategy {
                                 historikk.getUtflyttinger().add(
                                         PdlUtflytting.builder()
                                                 .tilflyttingsland(innvandretUtvandret.getLandkode())
-                                                .folkeregistermetadata(Folkeregistermetadata.builder()
-                                                        .gyldighetstidspunkt(getDato(innvandretUtvandret.getFlyttedato()))
-                                                        .build())
                                                 .kilde(CONSUMER)
                                                 .build()
                                 );
@@ -69,10 +59,5 @@ public class PdlFlyttingMappingStrategy implements MappingStrategy {
                     }
                 })
                 .register();
-    }
-
-    public static LocalDate getDato(LocalDateTime dateTime) {
-
-        return nonNull(dateTime) ? dateTime.toLocalDate() : null;
     }
 }

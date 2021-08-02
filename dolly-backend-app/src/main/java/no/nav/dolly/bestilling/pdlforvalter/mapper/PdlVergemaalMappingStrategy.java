@@ -16,8 +16,6 @@ import no.nav.dolly.domain.resultset.tpsf.Person;
 import no.nav.dolly.mapper.MappingStrategy;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-
 import static java.util.Objects.isNull;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 
@@ -69,9 +67,6 @@ public class PdlVergemaalMappingStrategy implements MappingStrategy {
 
                             PdlVergemaal pdlVergemaal = new PdlVergemaal();
                             pdlVergemaal.setEmbete(kodeverkConsumer.getKodeverkByName(EMBETE_KODEVERK).get(vergemaal.getEmbete()));
-                            pdlVergemaal.setFolkeregistermetadata(Folkeregistermetadata.builder()
-                                    .gyldighetstidspunkt(mapperFacade.map(vergemaal.getVedtakDato(), LocalDate.class))
-                                    .build());
                             pdlVergemaal.setKilde(CONSUMER);
                             pdlVergemaal.setType(getSakstype(vergemaal.getSakType()));
                             pdlVergemaal.setVergeEllerFullmektig(VergeEllerFullmektig.builder()

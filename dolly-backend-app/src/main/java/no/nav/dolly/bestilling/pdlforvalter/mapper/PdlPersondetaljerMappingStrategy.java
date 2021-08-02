@@ -8,6 +8,7 @@ import no.nav.dolly.bestilling.pdlforvalter.domain.PdlAdressebeskyttelse;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlDoedsfall;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlKjoenn;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlNavn;
+import no.nav.dolly.bestilling.pdlforvalter.domain.PdlOpplysning;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlOpprettPerson;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlStatsborgerskap;
 import no.nav.dolly.domain.resultset.tpsf.Person;
@@ -21,8 +22,6 @@ import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
-import static no.nav.dolly.bestilling.pdlforvalter.domain.PdlAdresse.Master.FREG;
-import static no.nav.dolly.bestilling.pdlforvalter.domain.PdlAdresse.Master.PDL;
 import static no.nav.dolly.bestilling.pdlforvalter.domain.PdlAdressebeskyttelse.AdresseBeskyttelse.FORTROLIG;
 import static no.nav.dolly.bestilling.pdlforvalter.domain.PdlAdressebeskyttelse.AdresseBeskyttelse.STRENGT_FORTROLIG;
 import static no.nav.dolly.bestilling.pdlforvalter.domain.PdlAdressebeskyttelse.AdresseBeskyttelse.STRENGT_FORTROLIG_UTLAND;
@@ -91,13 +90,13 @@ public class PdlPersondetaljerMappingStrategy implements MappingStrategy {
 
                         if ("SPSF".equals(person.getSpesreg())) {
                             adressebeskyttelse.setGradering(STRENGT_FORTROLIG);
-                            adressebeskyttelse.setMaster(FREG);
+                            adressebeskyttelse.setMaster(PdlOpplysning.Master.FREG);
                         } else if ("SPFO".equals(person.getSpesreg())) {
                             adressebeskyttelse.setGradering(FORTROLIG);
-                            adressebeskyttelse.setMaster(FREG);
+                            adressebeskyttelse.setMaster(PdlOpplysning.Master.FREG);
                         } else if ("SFU".equals(person.getSpesreg())) {
                             adressebeskyttelse.setGradering(STRENGT_FORTROLIG_UTLAND);
-                            adressebeskyttelse.setMaster(PDL);
+                            adressebeskyttelse.setMaster(PdlOpplysning.Master.PDL);
                         } else {
                             adressebeskyttelse.setGradering(UGRADERT);
                         }
