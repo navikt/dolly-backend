@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,6 +19,7 @@ public class PdlBostedadresse extends PdlAdresse {
 
     private UkjentBosted ukjentBosted;
     private PdlMatrikkeladresse matrikkeladresse;
+    private LocalDate angittFlyttedato;
 
     @Getter
     @Setter
