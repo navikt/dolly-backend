@@ -25,11 +25,7 @@ public class PdlSivilstand extends PdlOpplysning {
     }
 
     private LocalDate bekreftelsesdato;
-    private String kommune;
-    private String myndighet;
     private String relatertVedSivilstand;
     private LocalDate sivilstandsdato;
-    private String sted;
     private Sivilstand type;
-    private String utland;
 }

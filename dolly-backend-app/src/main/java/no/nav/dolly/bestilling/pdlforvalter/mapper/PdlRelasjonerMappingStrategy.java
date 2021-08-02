@@ -3,7 +3,7 @@ package no.nav.dolly.bestilling.pdlforvalter.mapper;
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
-import no.nav.dolly.bestilling.pdlforvalter.domain.PdlFamilierelasjon;
+import no.nav.dolly.bestilling.pdlforvalter.domain.PdlForelderBarnRelasjon;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlSivilstand;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlSivilstand.Sivilstand;
 import no.nav.dolly.bestilling.pdlforvalter.domain.SivilstandWrapper;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 
 import static java.util.Objects.isNull;
-import static no.nav.dolly.bestilling.pdlforvalter.domain.PdlFamilierelasjon.decode;
+import static no.nav.dolly.bestilling.pdlforvalter.domain.PdlForelderBarnRelasjon.decode;
 import static no.nav.dolly.bestilling.pdlforvalter.domain.PdlSivilstand.Sivilstand.ENKE_ELLER_ENKEMANN;
 import static no.nav.dolly.bestilling.pdlforvalter.domain.PdlSivilstand.Sivilstand.GIFT;
 import static no.nav.dolly.bestilling.pdlforvalter.domain.PdlSivilstand.Sivilstand.GJENLEVENDE_PARTNER;
@@ -35,10 +35,10 @@ public class PdlRelasjonerMappingStrategy implements MappingStrategy {
     @Override
     public void register(MapperFactory factory) {
 
-        factory.classMap(Relasjon.class, PdlFamilierelasjon.class)
+        factory.classMap(Relasjon.class, PdlForelderBarnRelasjon.class)
                 .customize(new CustomMapper<>() {
                     @Override
-                    public void mapAtoB(Relasjon relasjon, PdlFamilierelasjon familierelasjon, MappingContext context) {
+                    public void mapAtoB(Relasjon relasjon, PdlForelderBarnRelasjon familierelasjon, MappingContext context) {
 
                         familierelasjon.setRelatertPerson(relasjon.getPersonRelasjonMed().getIdent());
                         familierelasjon.setRelatertPersonsRolle(decode(relasjon.getRelasjonTypeNavn()));

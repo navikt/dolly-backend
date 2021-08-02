@@ -14,6 +14,7 @@ import java.time.LocalDate;
 public class PdlStatsborgerskap extends PdlOpplysning {
 
     private String landkode;
-    private LocalDate gyldigFom;
-    private LocalDate gyldigTom;
+    private LocalDate gyldigFraOgMed;
+    private LocalDate gyldigTilOgMed;
+    private LocalDate bekreftelsesdato;
 }

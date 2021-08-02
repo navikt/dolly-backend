@@ -55,7 +55,7 @@ public class PdlDoedsboMappingStrategy implements MappingStrategy {
                                     .build());
                         }
 
-                        kontaktinformasjonForDoedsbo.setUtstedtDato(nullcheckSetDefaultValue(kontaktinformasjonForDoedsbo.getUtstedtDato(), now()));
+                        kontaktinformasjonForDoedsbo.setAttestutstedelsesdato(nullcheckSetDefaultValue(kontaktinformasjonForDoedsbo.getAttestutstedelsesdato(), now()));
                         kontaktinformasjonForDoedsbo.setLandkode(blankcheckSetDefaultValue(kontaktinformasjonForDoedsbo.getLandkode(), "NOR"));
 
                         kontaktinformasjonForDoedsbo.setKilde(CONSUMER);

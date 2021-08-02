@@ -10,7 +10,7 @@ import static java.util.Objects.isNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PdlFamilierelasjon extends PdlOpplysning {
+public class PdlForelderBarnRelasjon extends PdlOpplysning {
 
     public enum ROLLE {MOR, FAR, MEDMOR, BARN}
 

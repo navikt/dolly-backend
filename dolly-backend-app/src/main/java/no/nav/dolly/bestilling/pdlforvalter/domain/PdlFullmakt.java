@@ -14,9 +14,9 @@ import java.util.List;
 @AllArgsConstructor
 public class PdlFullmakt extends PdlOpplysning {
 
-    private String fullmektig;
-    private LocalDate gyldigFom;
-    private LocalDate gyldigTom;
+    private String motpartsPersonident;
+    private LocalDate gyldigFraOgMed;
+    private LocalDate gyldigTilOgMed;
     private List<String> omraader;
 
 }

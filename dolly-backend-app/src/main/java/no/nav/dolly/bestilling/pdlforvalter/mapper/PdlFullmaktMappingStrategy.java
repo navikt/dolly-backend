@@ -25,11 +25,11 @@ public class PdlFullmaktMappingStrategy implements MappingStrategy {
                         person.getFullmakt().forEach(fullmakt -> {
 
                             PdlFullmakt pdlFullmakt = PdlFullmakt.builder()
-                                    .fullmektig(fullmakt.getFullmektig().getIdent())
+                                    .motpartsPersonident(fullmakt.getFullmektig().getIdent())
                                     .kilde(fullmakt.getKilde())
                                     .omraader(fullmakt.getOmraader())
-                                    .gyldigFom(fullmakt.getGyldigFom())
-                                    .gyldigTom(fullmakt.getGyldigTom())
+                                    .gyldigFraOgMed(fullmakt.getGyldigFom())
+                                    .gyldigTilOgMed(fullmakt.getGyldigTom())
                                     .build();
 
                             historikk.getFullmakter().add(pdlFullmakt);

@@ -13,9 +13,8 @@ public class PdlVegadresse extends PdlOpplysning {
 
     private String adressekode;
     private String adressenavn;
-    private String adressetilleggsnavn;
+    private String tilleggsnavn;
     private String bruksenhetsnummer;
-    private PdlAdresse.Bruksenhetstype bruksenhetstype;
     private String husbokstav;
     private String husnummer;
     private String kommunenummer;

@@ -139,7 +139,7 @@ public class PdlDoedsboMappingStrategyTest {
 
         assertThat(result.getKontaktinformasjonForDoedsbo().getAdresselinje1(), is(ADRESSELINJE_1));
         assertThat(result.getKontaktinformasjonForDoedsbo().getAdresselinje2(), is(ADRESSELINJE_2));
-        assertThat(result.getKontaktinformasjonForDoedsbo().getUtstedtDato(), is(UTSTEDT_DATO));
+        assertThat(result.getKontaktinformasjonForDoedsbo().getAttestutstedelsesdato(), is(UTSTEDT_DATO));
         assertThat(result.getKontaktinformasjonForDoedsbo().getSkifteform(), is(PdlSkifteform.OFFENTLIG));
         assertThat(result.getKontaktinformasjonForDoedsbo().getLandkode(), is(LANDKODE));
         assertThat(result.getKontaktinformasjonForDoedsbo().getPostnummer(), is(POSTNUMMER));

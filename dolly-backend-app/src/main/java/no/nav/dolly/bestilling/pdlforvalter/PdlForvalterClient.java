@@ -8,7 +8,7 @@ import no.nav.dolly.bestilling.pdlforvalter.domain.PdlAdressebeskyttelse;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlBostedsadresseHistorikk;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlDeltBosted.PdlDelteBosteder;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlDoedsfall;
-import no.nav.dolly.bestilling.pdlforvalter.domain.PdlFamilierelasjon;
+import no.nav.dolly.bestilling.pdlforvalter.domain.PdlForelderBarnRelasjon;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlFoedsel;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlFolkeregisterpersonstatus;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlForeldreansvar;
@@ -234,7 +234,7 @@ public class PdlForvalterClient implements ClientRegister {
 
         person.getRelasjoner().forEach(relasjon -> {
             if (!relasjon.isPartner() && nonNull(relasjon.getPersonRelasjonTil())) {
-                pdlForvalterConsumer.postFamilierelasjon(mapperFacade.map(relasjon, PdlFamilierelasjon.class),
+                pdlForvalterConsumer.postFamilierelasjon(mapperFacade.map(relasjon, PdlForelderBarnRelasjon.class),
                         person.getIdent());
             }
         });

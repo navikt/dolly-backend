@@ -32,8 +32,7 @@ public class PdlBostedsadresseMappingStrategy implements MappingStrategy {
 
         PdlBostedadresse bostedadresse = new PdlBostedadresse();
         bostedadresse.setKilde(CONSUMER);
-        bostedadresse.setGyldigFraOgMed(getDato(adresse.getFlyttedato()));
-        bostedadresse.setGyldigTilOgMed(getDato(adresse.getGyldigTilOgMed()));
+        bostedadresse.setAngittFlyttedato(getDato(adresse.getFlyttedato()));
         bostedadresse.setCoAdressenavn(getCoadresse(adresse));
         bostedadresse.setAdresseIdentifikatorFraMatrikkelen(adresse.getMatrikkelId());
         return bostedadresse;
