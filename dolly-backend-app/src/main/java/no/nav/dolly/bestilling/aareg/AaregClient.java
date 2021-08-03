@@ -124,7 +124,7 @@ public class AaregClient implements ClientRegister {
                     .map(RsArbeidsgiver::getOrgnummer)
                     .collect(Collectors.toSet());
             List<OrganisasjonDTO> organisasjoner = organisasjonServiceConsumer.getOrganisasjoner(orgnumre, env);
-            log.info("Hentet organisajoner fra org service: \n" + Json.pretty(organisasjoner));
+            log.info("Hentet organisajoner fra org-service: \n" + Json.pretty(organisasjoner));
 
             bestilling.getAareg().get(0).getAmelding().forEach(amelding -> {
 
