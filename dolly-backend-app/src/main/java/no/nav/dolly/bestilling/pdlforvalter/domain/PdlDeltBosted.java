@@ -24,7 +24,6 @@ public class PdlDeltBosted extends PdlOpplysning {
 
     private String adresseIdentifikatorFraMatrikkelen;
     private String coAdressenavn;
-    private String kilde;
     private String naerAdresseIdentifikatorFraMatrikkelen;
     private LocalDate sluttdatoForKontrakt;
     private LocalDate startdatoForKontrakt;

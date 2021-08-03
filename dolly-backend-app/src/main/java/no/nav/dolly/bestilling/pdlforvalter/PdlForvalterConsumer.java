@@ -217,7 +217,7 @@ public class PdlForvalterConsumer {
                 kontaktadresse, ident, "kontaktadresse");
     }
 
-    @Timed(name = "providers", tags = { "operation", "pdl_kontaktadresse" })
+    @Timed(name = "providers", tags = { "operation", "pdl_bostedadresse" })
     public ResponseEntity<JsonNode> postBostedadresse(PdlBostedadresse bostedadresse, String ident) {
 
         return postRequest(
