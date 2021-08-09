@@ -12,7 +12,6 @@ import no.nav.dolly.domain.jpa.BestillingProgress;
 import no.nav.dolly.domain.resultset.RsDollyBestillingRequest;
 import no.nav.dolly.domain.resultset.aareg.RsAareg;
 import no.nav.dolly.domain.resultset.aareg.RsAktoerPerson;
-import no.nav.dolly.domain.resultset.aareg.RsOrganisasjon;
 import no.nav.dolly.domain.resultset.tpsf.DollyPerson;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -83,42 +82,23 @@ public class AaregClientTest {
         when(aaregConsumer.hentArbeidsforhold(IDENT, ENV)).thenReturn(emptyList());
         when(aaregConsumer.opprettArbeidsforhold(any(AaregOpprettRequest.class))).thenReturn(aaregResponse);
 
+        BestillingProgress progress = new BestillingProgress();
+
         RsDollyBestillingRequest request = new RsDollyBestillingRequest();
         request.setAareg(singletonList(RsAareg.builder().build()));
         request.setEnvironments(singletonList("u2"));
         aaregClient.gjenopprett(request,
-                DollyPerson.builder().hovedperson(IDENT).build(), new BestillingProgress(), false);
+                DollyPerson.builder().hovedperson(IDENT).build(), progress, false);
 
         verify(aaregConsumer).opprettArbeidsforhold(any(AaregOpprettRequest.class));
     }
 
     @Test
-    public void gjenopprettArbeidsforhold_tidligereArbeidsforholdFinnes_arbeidsgiverHarOrgnummer() {
-        Map<String, String> status = new HashMap<>();
-        status.put(ENV, "OK");
-        AaregResponse aaregResponse = AaregResponse.builder()
-                .statusPerMiljoe(status)
-                .build();
-
-        when(aaregConsumer.hentArbeidsforhold(IDENT, ENV)).thenReturn(singletonList(buildArbeidsforhold(true)));
-
-        RsDollyBestillingRequest request = new RsDollyBestillingRequest();
-        request.setAareg(singletonList(RsAareg.builder()
-                .arbeidsgiver(RsOrganisasjon.builder().orgnummer(ORGNUMMER).build())
-                .build()));
-        request.setEnvironments(singletonList("u2"));
-        aaregClient.gjenopprett(request, DollyPerson.builder().hovedperson(IDENT).build(), new BestillingProgress(), false);
-    }
-
-    @Test
-    public void gjenopprettArbeidsforhold_tidligereArbeidsforholdFinnes_arbeidsgiverHarPersonnr() {
-        Map<String, String> status = new HashMap<>();
-        status.put(ENV, "OK");
-        AaregResponse aaregResponse = AaregResponse.builder()
-                .statusPerMiljoe(status)
-                .build();
+    public void gjenopprettArbeidsforhold_tidligereArbeidsforholdFinnes_returnsOK() {
 
         when(aaregConsumer.hentArbeidsforhold(IDENT, ENV)).thenReturn(singletonList(buildArbeidsforhold(false)));
+
+        BestillingProgress progress = new BestillingProgress();
 
         RsDollyBestillingRequest request = new RsDollyBestillingRequest();
         request.setAareg(singletonList(RsAareg.builder()
@@ -126,18 +106,15 @@ public class AaregClientTest {
                 .build()));
         request.setEnvironments(singletonList("u2"));
         aaregClient.gjenopprett(request,
-                DollyPerson.builder().hovedperson(IDENT).build(), new BestillingProgress(), false);
+                DollyPerson.builder().hovedperson(IDENT).build(), progress, false);
+
+        assertThat(progress.getAaregStatus(), is(equalTo("u2: arbforhold=0$OK")));
     }
 
     @Test
     public void gjenopprettArbeidsforhold_tidligereArbeidsforholdFinnes_sjekkReturStatus() {
 
         when(aaregConsumer.hentArbeidsforhold(IDENT, ENV)).thenReturn(singletonList(buildArbeidsforhold(false)));
-        Map<String, String> status = new HashMap<>();
-        status.put(ENV, "OK");
-        AaregResponse aaregResponse = AaregResponse.builder()
-                .statusPerMiljoe(status)
-                .build();
 
         BestillingProgress progress = new BestillingProgress();
 
