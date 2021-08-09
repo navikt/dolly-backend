@@ -82,13 +82,11 @@ public class AaregClientTest {
         when(aaregConsumer.hentArbeidsforhold(IDENT, ENV)).thenReturn(emptyList());
         when(aaregConsumer.opprettArbeidsforhold(any(AaregOpprettRequest.class))).thenReturn(aaregResponse);
 
-        BestillingProgress progress = new BestillingProgress();
-
         RsDollyBestillingRequest request = new RsDollyBestillingRequest();
         request.setAareg(singletonList(RsAareg.builder().build()));
         request.setEnvironments(singletonList("u2"));
         aaregClient.gjenopprett(request,
-                DollyPerson.builder().hovedperson(IDENT).build(), progress, false);
+                DollyPerson.builder().hovedperson(IDENT).build(), new BestillingProgress(), false);
 
         verify(aaregConsumer).opprettArbeidsforhold(any(AaregOpprettRequest.class));
     }
