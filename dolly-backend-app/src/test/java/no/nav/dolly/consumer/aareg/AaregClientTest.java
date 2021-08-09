@@ -11,7 +11,6 @@ import no.nav.dolly.bestilling.aareg.domain.ArbeidsforholdResponse;
 import no.nav.dolly.domain.jpa.BestillingProgress;
 import no.nav.dolly.domain.resultset.RsDollyBestillingRequest;
 import no.nav.dolly.domain.resultset.aareg.RsAareg;
-import no.nav.dolly.domain.resultset.aareg.RsAareg.RsAaregArbeidsforhold;
 import no.nav.dolly.domain.resultset.aareg.RsAktoerPerson;
 import no.nav.dolly.domain.resultset.aareg.RsOrganisasjon;
 import no.nav.dolly.domain.resultset.tpsf.DollyPerson;
@@ -22,7 +21,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.emptyList;
@@ -65,7 +63,7 @@ public class AaregClientTest {
         when(aaregConsumer.opprettArbeidsforhold(any(AaregOpprettRequest.class))).thenReturn(aaregResponse);
 
         RsDollyBestillingRequest request = new RsDollyBestillingRequest();
-        request.setAareg(singletonList(RsAareg.builder().arbeidsforhold(singletonList(RsAaregArbeidsforhold.builder().build())).build()));
+        request.setAareg(singletonList(RsAareg.builder().build()));
         request.setEnvironments(singletonList("u2"));
         aaregClient.gjenopprett(request,
                 DollyPerson.builder().hovedperson(IDENT).build(), new BestillingProgress(), false);
@@ -86,7 +84,7 @@ public class AaregClientTest {
         when(aaregConsumer.opprettArbeidsforhold(any(AaregOpprettRequest.class))).thenReturn(aaregResponse);
 
         RsDollyBestillingRequest request = new RsDollyBestillingRequest();
-        request.setAareg(singletonList(RsAareg.builder().arbeidsforhold(singletonList(RsAaregArbeidsforhold.builder().build())).build()));
+        request.setAareg(singletonList(RsAareg.builder().build()));
         request.setEnvironments(singletonList("u2"));
         aaregClient.gjenopprett(request,
                 DollyPerson.builder().hovedperson(IDENT).build(), new BestillingProgress(), false);
@@ -106,9 +104,7 @@ public class AaregClientTest {
 
         RsDollyBestillingRequest request = new RsDollyBestillingRequest();
         request.setAareg(singletonList(RsAareg.builder()
-                .arbeidsforhold(List.of(RsAaregArbeidsforhold.builder()
-                        .arbeidsgiver(RsOrganisasjon.builder().orgnummer(ORGNUMMER).build())
-                        .build()))
+                .arbeidsgiver(RsOrganisasjon.builder().orgnummer(ORGNUMMER).build())
                 .build()));
         request.setEnvironments(singletonList("u2"));
         aaregClient.gjenopprett(request, DollyPerson.builder().hovedperson(IDENT).build(), new BestillingProgress(), false);
@@ -126,9 +122,7 @@ public class AaregClientTest {
 
         RsDollyBestillingRequest request = new RsDollyBestillingRequest();
         request.setAareg(singletonList(RsAareg.builder()
-                .arbeidsforhold(List.of(RsAaregArbeidsforhold.builder()
-                        .arbeidsgiver(RsAktoerPerson.builder().ident(IDENT).build())
-                        .build()))
+                .arbeidsgiver(RsAktoerPerson.builder().ident(IDENT).build())
                 .build()));
         request.setEnvironments(singletonList("u2"));
         aaregClient.gjenopprett(request,
@@ -149,9 +143,7 @@ public class AaregClientTest {
 
         RsDollyBestillingRequest request = new RsDollyBestillingRequest();
         request.setAareg(singletonList(RsAareg.builder()
-                .arbeidsforhold(List.of(RsAaregArbeidsforhold.builder()
-                        .arbeidsgiver(RsAktoerPerson.builder().ident(IDENT).build())
-                        .build()))
+                .arbeidsgiver(RsAktoerPerson.builder().ident(IDENT).build())
                 .build()));
         request.setEnvironments(singletonList("u2"));
         aaregClient.gjenopprett(request, DollyPerson.builder().hovedperson(IDENT).build(), progress, false);
