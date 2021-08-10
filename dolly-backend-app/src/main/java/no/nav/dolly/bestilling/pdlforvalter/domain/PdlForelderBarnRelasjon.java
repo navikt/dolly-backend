@@ -2,17 +2,19 @@ package no.nav.dolly.bestilling.pdlforvalter.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import no.nav.dolly.domain.resultset.tpsf.Relasjon;
 
 import static java.util.Objects.isNull;
 
 @Data
+@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class PdlForelderBarnRelasjon extends PdlOpplysning {
-
-    public enum ROLLE {MOR, FAR, MEDMOR, BARN}
 
     private ROLLE minRolleForPerson;
     private String relatertPerson;
@@ -25,14 +27,16 @@ public class PdlForelderBarnRelasjon extends PdlOpplysning {
         }
 
         switch (rolle) {
-        case MOR:
-            return ROLLE.MOR;
-        case FAR:
-            return ROLLE.FAR;
-        default:
-        case FOEDSEL:
-        case BARN:
-            return ROLLE.BARN;
+            case MOR:
+                return ROLLE.MOR;
+            case FAR:
+                return ROLLE.FAR;
+            default:
+            case FOEDSEL:
+            case BARN:
+                return ROLLE.BARN;
         }
     }
+
+    public enum ROLLE {MOR, FAR, MEDMOR, BARN}
 }

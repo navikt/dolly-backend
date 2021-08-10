@@ -1,7 +1,9 @@
 package no.nav.dolly.bestilling.pdlforvalter.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
@@ -11,6 +13,7 @@ import java.util.List;
 import static java.util.Objects.isNull;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class PdlTelefonnummer {
@@ -26,6 +29,7 @@ public class PdlTelefonnummer {
 
     @Data
     @SuperBuilder
+    @EqualsAndHashCode(callSuper = true)
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Entry extends PdlOpplysning {

@@ -3,9 +3,9 @@ package no.nav.dolly.bestilling.pdlforvalter.domain;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,8 @@ import java.util.List;
 import static java.util.Objects.isNull;
 
 @Data
+@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -23,8 +25,7 @@ public class PdlKontaktadresse extends PdlAdresse {
     private UtenlandskAdresseIFrittFormat utenlandskAdresseIFrittFormat;
     private VegadresseForPost vegadresseForPost;
 
-    @Getter
-    @Setter
+    @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PostadresseIFrittFormat {
@@ -40,8 +41,7 @@ public class PdlKontaktadresse extends PdlAdresse {
         }
     }
 
-    @Getter
-    @Setter
+    @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Postboksadresse {
@@ -50,8 +50,7 @@ public class PdlKontaktadresse extends PdlAdresse {
         private String postnummer;
     }
 
-    @Getter
-    @Setter
+    @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UtenlandskAdresse {
@@ -69,8 +68,7 @@ public class PdlKontaktadresse extends PdlAdresse {
         private String regionDistriktOmraade;
     }
 
-    @Getter
-    @Setter
+    @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -89,8 +87,7 @@ public class PdlKontaktadresse extends PdlAdresse {
         }
     }
 
-    @Getter
-    @Setter
+    @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
