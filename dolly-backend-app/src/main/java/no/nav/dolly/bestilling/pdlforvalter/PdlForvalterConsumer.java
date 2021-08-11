@@ -55,7 +55,7 @@ public class PdlForvalterConsumer {
     private static final String PDL_BESTILLING_FALSK_IDENTITET_URL = PDL_BESTILLING_URL + "/falskidentitet";
     private static final String PDL_BESTILLING_OPPRETT_PERSON = PDL_BESTILLING_URL + "/opprettperson";
     private static final String PDL_BESTILLING_FOEDSEL_URL = PDL_BESTILLING_URL + "/foedsel";
-    private static final String PDL_BESTILLING_FAMILIERELASJON = PDL_BESTILLING_URL + "/familierelasjon";
+    private static final String PDL_BESTILLING_FORELDER_BARN_RELASJON = PDL_BESTILLING_URL + "/forelderbarnrelasjon";
     private static final String PDL_BESTILLING_DOEDSFALL_URL = PDL_BESTILLING_URL + "/doedsfall";
     private static final String PDL_BESTILLING_ADRESSEBESKYTTELSE_URL = PDL_BESTILLING_URL + "/adressebeskyttelse";
     private static final String PDL_BESTILLING_NAVN_URL = PDL_BESTILLING_URL + "/navn";
@@ -181,7 +181,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postFamilierelasjon(PdlForelderBarnRelasjon familierelasjonn, String ident) {
 
         return postRequest(
-                providersProps.getPdlForvalter().getUrl() + PDL_BESTILLING_FAMILIERELASJON,
+                providersProps.getPdlForvalter().getUrl() + PDL_BESTILLING_FORELDER_BARN_RELASJON,
                 familierelasjonn, ident, "familierelasjon");
     }
 
