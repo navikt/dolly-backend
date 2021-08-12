@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 @Slf4j
 @Service
@@ -84,7 +85,7 @@ public class InstdataClient implements ClientRegister {
         if (eksisterendeInstdata.hasBody() && eksisterendeInstdata.getBody().length > 0) {
 
             return instdataRequest.stream().filter(request -> Arrays.stream(eksisterendeInstdata.getBody())
-                    .noneMatch(eksisterende -> eksisterende.equals(request)))
+                            .noneMatch(eksisterende -> eksisterende.equals(request)))
                     .collect(Collectors.toList());
         } else {
 
@@ -119,7 +120,7 @@ public class InstdataClient implements ClientRegister {
                             .append("opphold=")
                             .append(i + 1)
                             .append('$')
-                            .append(CREATED.equals(response.getBody()[i].getStatus()) ? OK_RESULT :
+                            .append(CREATED.equals(response.getBody()[i].getStatus()) || OK.equals(response.getBody()[i].getStatus()) ? OK_RESULT :
                                     errorStatusDecoder.getErrorText(response.getBody()[i].getStatus(),
                                             response.getBody()[i].getFeilmelding()));
                 }
