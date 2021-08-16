@@ -12,6 +12,8 @@ spec:
         - application: dolly-frontend-dev
         - application: testnav-oversikt-frontend
           cluster: dev-gcp
+        - application: dolly-frontend-dev
+          cluster: dev-gcp
         - application: team-dolly-lokal-app
   webproxy: true
   azure:
@@ -30,6 +32,7 @@ spec:
   port: 8080
   ingresses:
     - https://dolly-backend-dev.dev.adeo.no
+    - https://dolly-backend-dev.dev-fss-pub.nais.io
   liveness:
     path: /internal/isAlive
     initialDelay: 20
