@@ -9,18 +9,17 @@ import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeDagpengerResponse;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.properties.ProvidersProps;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 
-import static java.lang.String.format;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
 import static no.nav.dolly.util.CallIdUtil.generateCallId;
 
-@Service
+@Component
 public class ArenaForvalterConsumer {
 
     private static final String ARENAFORVALTER_BRUKER = "/api/v1/bruker";
@@ -30,20 +29,18 @@ public class ArenaForvalterConsumer {
     private final WebClient webClient;
 
     public ArenaForvalterConsumer(ProvidersProps providersProps) {
-        this.providersProps = providersProps;
         this.webClient = WebClient.builder()
                 .baseUrl(providersProps.getArenaForvalter().getUrl())
                 .build();
     }
-
-    private final ProvidersProps providersProps;
 
     @Timed(name = "providers", tags = { "operation", "arena_getIdent" })
     public ResponseEntity<ArenaArbeidssokerBruker> getIdent(String ident) {
 
         return webClient.get().uri(
                         uriBuilder -> uriBuilder
-                                .path(format("%s?filter-personident=%s", ARENAFORVALTER_BRUKER, ident))
+                                .path(ARENAFORVALTER_BRUKER)
+                                .queryParam("filter-personident", ident)
                                 .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
@@ -55,12 +52,15 @@ public class ArenaForvalterConsumer {
 
         return webClient.delete().uri(
                         uriBuilder -> uriBuilder
-                                .path(format("%s%s?miljoe=%s&personident=%s", providersProps.getArenaForvalter().getUrl(), ARENAFORVALTER_BRUKER, environment, ident))
+                                .path(ARENAFORVALTER_BRUKER)
+                                .queryParam("miljoe", environment)
+                                .queryParam("personident", ident)
                                 .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .retrieve().toEntity(JsonNode.class).block();
-
+                .retrieve()
+                .toEntity(JsonNode.class)
+                .block();
     }
 
     @Timed(name = "providers", tags = { "operation", "arena_postBruker" })

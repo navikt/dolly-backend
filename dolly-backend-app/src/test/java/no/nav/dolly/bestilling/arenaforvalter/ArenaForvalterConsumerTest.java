@@ -1,45 +1,43 @@
 package no.nav.dolly.bestilling.arenaforvalter;
 
-import static java.util.Collections.singletonList;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
-
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.web.client.RestTemplate;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyBruker;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeBrukere;
 import no.nav.dolly.properties.ProvidersProps;
-import no.nav.dolly.security.sts.OidcTokenAuthentication;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static java.util.Collections.singletonList;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static wiremock.org.hamcrest.MatcherAssert.assertThat;
+
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
-@RestClientTest(ArenaForvalterConsumer.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestPropertySource(locations = "classpath:application-test.yaml")
+@AutoConfigureWireMock(port = 0)
 public class ArenaForvalterConsumerTest {
 
     private static final String IDENT = "12423353";
     private static final String ENV = "u2";
 
-    private MockRestServiceServer server;
-
-    @Autowired
-    private RestTemplate restTemplate;
-
-    @MockBean
+    @Mock
     private ProvidersProps providersProps;
 
     @Autowired
@@ -48,28 +46,30 @@ public class ArenaForvalterConsumerTest {
     @Before
     public void setup() {
 
+        WireMock.reset();
         when(providersProps.getArenaForvalter()).thenReturn(ProvidersProps.ArenaForvalter.builder().url("baseUrl").build());
-
-        server = MockRestServiceServer.createServer(restTemplate);
     }
 
     @Test
     public void deleteIdent() {
 
-        server.expect(requestTo("baseUrl/api/v1/bruker?miljoe=u2&personident=12423353"))
-                .andExpect(method(HttpMethod.DELETE))
-                .andRespond(withSuccess("[{}]", MediaType.APPLICATION_JSON));
+//        server.expect(requestTo("baseUrl/api/v1/bruker?miljoe=u2&personident=12423353"))
+//                .andExpect(method(HttpMethod.DELETE))
+//                .andRespond(withSuccess("[{}]", MediaType.APPLICATION_JSON));
 
-        arenaForvalterConsumer.deleteIdent(IDENT, ENV);
-        verify(providersProps).getArenaForvalter();
+        stubDeleteArenaForvalterBruker();
+
+        ResponseEntity<JsonNode> response = arenaForvalterConsumer.deleteIdent(IDENT, ENV);
+        assertThat("Response should be 200 successful", response.getStatusCode().is2xxSuccessful());
     }
+
 
     @Test
     public void postArenadata() {
 
-        server.expect(requestTo("baseUrl/api/v1/bruker"))
-                .andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess());
+//        server.expect(requestTo("baseUrl/api/v1/bruker"))
+//                .andExpect(method(HttpMethod.POST))
+//                .andRespond(withSuccess());
 
         arenaForvalterConsumer.postArenadata(ArenaNyeBrukere.builder()
                 .nyeBrukere(singletonList(ArenaNyBruker.builder().personident(IDENT).build()))
@@ -81,9 +81,9 @@ public class ArenaForvalterConsumerTest {
     @Test
     public void getIdent_OK() {
 
-        server.expect(requestTo("baseUrl/api/v1/bruker?filter-personident=12423353"))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(withSuccess());
+//        server.expect(requestTo("baseUrl/api/v1/bruker?filter-personident=12423353"))
+//                .andExpect(method(HttpMethod.GET))
+//                .andRespond(withSuccess());
 
         arenaForvalterConsumer.getIdent(IDENT);
 
@@ -93,12 +93,21 @@ public class ArenaForvalterConsumerTest {
     @Test
     public void getEnvironments() {
 
-        server.expect(requestTo("baseUrl/api/v1/miljoe"))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(withSuccess());
+//        server.expect(requestTo("baseUrl/api/v1/miljoe"))
+//                .andExpect(method(HttpMethod.GET))
+//                .andRespond(withSuccess());
 
         arenaForvalterConsumer.getEnvironments();
 
         verify(providersProps).getArenaForvalter();
+    }
+
+    private void stubDeleteArenaForvalterBruker() {
+
+        stubFor(delete(urlPathMatching("(.*)/arenaforvalter/api/v1/bruker"))
+                .withQueryParam("miljoe", equalTo(ENV))
+                .withQueryParam("personident", equalTo(IDENT))
+                .willReturn(ok()
+                        .withHeader("Content-Type", "application/json")));
     }
 }
