@@ -2,8 +2,10 @@ package no.nav.dolly.bestilling.arenaforvalter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import no.nav.dolly.domain.resultset.arenaforvalter.ArenaArbeidssokerBruker;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyBruker;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeBrukere;
+import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeBrukereResponse;
 import no.nav.dolly.properties.ProvidersProps;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,13 +19,16 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static java.util.Collections.singletonList;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static wiremock.org.hamcrest.MatcherAssert.assertThat;
 
@@ -53,10 +58,6 @@ public class ArenaForvalterConsumerTest {
     @Test
     public void deleteIdent() {
 
-//        server.expect(requestTo("baseUrl/api/v1/bruker?miljoe=u2&personident=12423353"))
-//                .andExpect(method(HttpMethod.DELETE))
-//                .andRespond(withSuccess("[{}]", MediaType.APPLICATION_JSON));
-
         stubDeleteArenaForvalterBruker();
 
         ResponseEntity<JsonNode> response = arenaForvalterConsumer.deleteIdent(IDENT, ENV);
@@ -67,39 +68,34 @@ public class ArenaForvalterConsumerTest {
     @Test
     public void postArenadata() {
 
-//        server.expect(requestTo("baseUrl/api/v1/bruker"))
-//                .andExpect(method(HttpMethod.POST))
-//                .andRespond(withSuccess());
+        stubPostArenaForvalterBruker();
 
-        arenaForvalterConsumer.postArenadata(ArenaNyeBrukere.builder()
-                .nyeBrukere(singletonList(ArenaNyBruker.builder().personident(IDENT).build()))
-                .build());
+        ResponseEntity<ArenaNyeBrukereResponse> response =
+                arenaForvalterConsumer.postArenadata(ArenaNyeBrukere.builder()
+                        .nyeBrukere(singletonList(ArenaNyBruker.builder().personident(IDENT).build()))
+                        .build());
 
-        verify(providersProps).getArenaForvalter();
+        assertThat("Response should be 200 successful", response.getStatusCode().is2xxSuccessful());
     }
 
     @Test
     public void getIdent_OK() {
 
-//        server.expect(requestTo("baseUrl/api/v1/bruker?filter-personident=12423353"))
-//                .andExpect(method(HttpMethod.GET))
-//                .andRespond(withSuccess());
+        stubGetArenaForvalterBruker();
 
-        arenaForvalterConsumer.getIdent(IDENT);
+        ResponseEntity<ArenaArbeidssokerBruker> response = arenaForvalterConsumer.getIdent(IDENT);
 
-        verify(providersProps).getArenaForvalter();
+        assertThat("Response should be 200 successful", response.getStatusCode().is2xxSuccessful());
     }
 
     @Test
     public void getEnvironments() {
 
-//        server.expect(requestTo("baseUrl/api/v1/miljoe"))
-//                .andExpect(method(HttpMethod.GET))
-//                .andRespond(withSuccess());
+        stubGetArenaMiljoer();
 
-        arenaForvalterConsumer.getEnvironments();
+        ResponseEntity<List<String>> response = arenaForvalterConsumer.getEnvironments();
 
-        verify(providersProps).getArenaForvalter();
+        assertThat("Response should be 200 successful", response.getStatusCode().is2xxSuccessful());
     }
 
     private void stubDeleteArenaForvalterBruker() {
@@ -107,6 +103,28 @@ public class ArenaForvalterConsumerTest {
         stubFor(delete(urlPathMatching("(.*)/arenaforvalter/api/v1/bruker"))
                 .withQueryParam("miljoe", equalTo(ENV))
                 .withQueryParam("personident", equalTo(IDENT))
+                .willReturn(ok()
+                        .withHeader("Content-Type", "application/json")));
+    }
+
+    private void stubPostArenaForvalterBruker() {
+
+        stubFor(post(urlPathMatching("(.*)/arenaforvalter/api/v1/bruker"))
+                .willReturn(ok()
+                        .withHeader("Content-Type", "application/json")));
+    }
+
+    private void stubGetArenaForvalterBruker() {
+
+        stubFor(get(urlPathMatching("(.*)/arenaforvalter/api/v1/bruker"))
+                .withQueryParam("filter-personident", equalTo(IDENT))
+                .willReturn(ok()
+                        .withHeader("Content-Type", "application/json")));
+    }
+
+    private void stubGetArenaMiljoer() {
+
+        stubFor(get(urlPathMatching("(.*)/arenaforvalter/api/v1/miljoe"))
                 .willReturn(ok()
                         .withHeader("Content-Type", "application/json")));
     }
