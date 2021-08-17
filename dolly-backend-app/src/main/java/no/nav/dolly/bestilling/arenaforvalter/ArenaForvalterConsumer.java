@@ -1,7 +1,6 @@
 package no.nav.dolly.bestilling.arenaforvalter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import lombok.RequiredArgsConstructor;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaArbeidssokerBruker;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaDagpenger;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeBrukere;
@@ -9,12 +8,10 @@ import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeBrukereResponse;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeDagpengerResponse;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.properties.ProvidersProps;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
-import java.net.URI;
 import java.util.List;
 
 import static java.lang.String.format;
@@ -24,58 +21,87 @@ import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
 import static no.nav.dolly.util.CallIdUtil.generateCallId;
 
 @Service
-@RequiredArgsConstructor
 public class ArenaForvalterConsumer {
 
     private static final String ARENAFORVALTER_BRUKER = "/api/v1/bruker";
     private static final String ARENAFORVALTER_DAGPENGER = "/api/v1/dagpenger";
     private static final String ARENAFORVALTER_ENVIRONMENTS = "/api/v1/miljoe";
 
-    private final RestTemplate restTemplate;
+    private final WebClient webClient;
+
+    public ArenaForvalterConsumer(ProvidersProps providersProps) {
+        this.providersProps = providersProps;
+        this.webClient = WebClient.builder()
+                .baseUrl(providersProps.getArenaForvalter().getUrl())
+                .build();
+    }
+
     private final ProvidersProps providersProps;
 
     @Timed(name = "providers", tags = { "operation", "arena_getIdent" })
     public ResponseEntity<ArenaArbeidssokerBruker> getIdent(String ident) {
-        return restTemplate.exchange(RequestEntity.get(
-                URI.create(format("%s%s?filter-personident=%s", providersProps.getArenaForvalter().getUrl(), ARENAFORVALTER_BRUKER, ident)))
+
+        return webClient.get().uri(
+                        uriBuilder -> uriBuilder
+                                .path(format("%s?filter-personident=%s", ARENAFORVALTER_BRUKER, ident))
+                                .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .build(), ArenaArbeidssokerBruker.class);
+                .retrieve().toEntity(ArenaArbeidssokerBruker.class).block();
     }
 
     @Timed(name = "providers", tags = { "operation", "arena_deleteIdent" })
-    public ResponseEntity deleteIdent(String ident, String environment) {
-        return restTemplate.exchange(RequestEntity.delete(
-                URI.create(format("%s%s?miljoe=%s&personident=%s", providersProps.getArenaForvalter().getUrl(), ARENAFORVALTER_BRUKER, environment, ident)))
+    public ResponseEntity<JsonNode> deleteIdent(String ident, String environment) {
+
+        return webClient.delete().uri(
+                        uriBuilder -> uriBuilder
+                                .path(format("%s%s?miljoe=%s&personident=%s", providersProps.getArenaForvalter().getUrl(), ARENAFORVALTER_BRUKER, environment, ident))
+                                .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .build(), JsonNode.class);
+                .retrieve().toEntity(JsonNode.class).block();
+
     }
 
     @Timed(name = "providers", tags = { "operation", "arena_postBruker" })
     public ResponseEntity<ArenaNyeBrukereResponse> postArenadata(ArenaNyeBrukere arenaNyeBrukere) {
-        return restTemplate.exchange(RequestEntity.post(
-                URI.create(providersProps.getArenaForvalter().getUrl() + ARENAFORVALTER_BRUKER))
+
+        return webClient.post().uri(
+                        uriBuilder -> uriBuilder
+                                .path(ARENAFORVALTER_BRUKER)
+                                .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .body(arenaNyeBrukere), ArenaNyeBrukereResponse.class);
+                .bodyValue(arenaNyeBrukere)
+                .retrieve()
+                .toEntity(ArenaNyeBrukereResponse.class)
+                .block();
     }
 
     @Timed(name = "providers", tags = { "operation", "arena_postDagpenger" })
     public ResponseEntity<ArenaNyeDagpengerResponse> postArenaDagpenger(ArenaDagpenger arenaDagpenger) {
-        return restTemplate.exchange(RequestEntity.post(
-                URI.create(providersProps.getArenaForvalter().getUrl() + ARENAFORVALTER_DAGPENGER))
+
+        return webClient.post().uri(
+                        uriBuilder -> uriBuilder
+                                .path(ARENAFORVALTER_DAGPENGER)
+                                .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .body(arenaDagpenger), ArenaNyeDagpengerResponse.class);
+                .bodyValue(arenaDagpenger)
+                .retrieve()
+                .toEntity(ArenaNyeDagpengerResponse.class)
+                .block();
     }
 
     @Timed(name = "providers", tags = { "operation", "arena_getEnvironments" })
-    public ResponseEntity<List> getEnvironments() {
-        return restTemplate.exchange(RequestEntity.get(
-                URI.create(providersProps.getArenaForvalter().getUrl() + ARENAFORVALTER_ENVIRONMENTS))
+    public ResponseEntity<List<String>> getEnvironments() {
+
+        return webClient.get().uri(
+                        uriBuilder -> uriBuilder
+                                .path(ARENAFORVALTER_ENVIRONMENTS)
+                                .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .build(), List.class);
+                .retrieve().toEntityList(String.class).block();
     }
 }

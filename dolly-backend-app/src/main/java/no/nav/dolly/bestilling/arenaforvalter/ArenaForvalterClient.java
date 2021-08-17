@@ -41,7 +41,7 @@ public class ArenaForvalterClient implements ClientRegister {
 
             StringBuilder status = new StringBuilder();
 
-            ResponseEntity<List> envResponse = arenaForvalterConsumer.getEnvironments();
+            ResponseEntity<List<String>> envResponse = arenaForvalterConsumer.getEnvironments();
             List<String> environments = envResponse.hasBody() ? envResponse.getBody() : emptyList();
 
             List<String> availEnvironments = new ArrayList<>(environments);
@@ -213,7 +213,8 @@ public class ArenaForvalterClient implements ClientRegister {
     private ArenaNyeBrukere filtrerEksisterendeBrukere(ArenaNyeBrukere arenaNyeBrukere) {
         List<String> eksisterendeBrukere = new ArrayList<>();
 
-        log.info("Liste over eksisterende brukere: ", Json.pretty(arenaForvalterConsumer.getIdent(arenaNyeBrukere.getNyeBrukere().get(0).getPersonident())));
+        ResponseEntity<ArenaArbeidssokerBruker> ident = arenaForvalterConsumer.getIdent(arenaNyeBrukere.getNyeBrukere().get(0).getPersonident());
+        log.info("Liste over eksisterende brukere: ", Json.pretty(ident.getBody()));
 
         arenaNyeBrukere.getNyeBrukere().forEach(arenaNyBruker -> {
             if (isNull(arenaNyBruker.getKvalifiseringsgruppe()) && isNull(arenaNyBruker.getUtenServicebehov())) {
