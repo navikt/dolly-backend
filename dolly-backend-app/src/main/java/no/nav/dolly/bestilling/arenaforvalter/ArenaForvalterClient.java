@@ -213,6 +213,8 @@ public class ArenaForvalterClient implements ClientRegister {
     private ArenaNyeBrukere filtrerEksisterendeBrukere(ArenaNyeBrukere arenaNyeBrukere) {
         List<String> eksisterendeBrukere = new ArrayList<>();
 
+        log.info("Liste over eksisterende brukere: ", Json.pretty(arenaForvalterConsumer.getIdent(arenaNyeBrukere.getNyeBrukere().get(0).getPersonident())));
+
         arenaNyeBrukere.getNyeBrukere().forEach(arenaNyBruker -> {
             if (isNull(arenaNyBruker.getKvalifiseringsgruppe()) && isNull(arenaNyBruker.getUtenServicebehov())) {
                 eksisterendeBrukere.add(arenaNyBruker.getPersonident());
