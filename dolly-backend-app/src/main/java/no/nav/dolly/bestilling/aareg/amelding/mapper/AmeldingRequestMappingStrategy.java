@@ -150,7 +150,7 @@ public class AmeldingRequestMappingStrategy implements MappingStrategy {
                     @Override
                     public void mapAtoB(RsPermittering rsPermittering, RsPermisjon rsPermisjon, MappingContext context) {
                         rsPermisjon.setPermisjonId(PERMISJON_ID);
-                        rsPermisjon.setBeskrivelse("permittering");
+                        rsPermisjon.setPermisjon("permittering");
                         rsPermisjon.setPermisjonsprosent(rsPermittering.getPermitteringsprosent());
                         rsPermisjon.setPermisjonsPeriode(RsPeriodeAareg.builder()
                                 .fom(nonNull(rsPermittering.getPermitteringsPeriode()) && nonNull(rsPermittering.getPermitteringsPeriode().getFom())

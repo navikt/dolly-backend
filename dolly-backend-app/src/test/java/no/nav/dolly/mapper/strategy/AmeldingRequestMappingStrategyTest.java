@@ -167,7 +167,7 @@ public class AmeldingRequestMappingStrategyTest {
         RsPermisjon expected = RsPermisjon.builder()
                 .permisjonId(PERMISJON_ID)
                 .permisjonsprosent(BigDecimal.valueOf(100))
-                .beskrivelse(PERMITTERING)
+                .permisjon(PERMITTERING)
                 .permisjonsPeriode(RsPeriodeAareg.builder()
                         .fom(LocalDateTime.of(2021, 5, 1, 0, 0))
                         .tom(LocalDateTime.of(2021, 5, 10, 0, 0))
@@ -176,7 +176,7 @@ public class AmeldingRequestMappingStrategyTest {
 
         assertThat(result.get(0).getPermisjonId(), is(equalTo(expected.getPermisjonId())));
         assertThat(result.get(0).getPermisjonsprosent(), is(equalTo(expected.getPermisjonsprosent())));
-        assertThat(result.get(0).getBeskrivelse(), is(equalTo(expected.getBeskrivelse())));
+        assertThat(result.get(0).getPermisjon(), is(equalTo(expected.getPermisjon())));
         assertThat(result.get(0).getPermisjonsPeriode().getFom(), is(equalTo(expected.getPermisjonsPeriode().getFom())));
         assertThat(result.get(0).getPermisjonsPeriode().getTom(), is(equalTo(expected.getPermisjonsPeriode().getTom())));
     }
