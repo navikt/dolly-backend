@@ -30,5 +30,4 @@ public class RsPermisjon {
 
     private String permisjonOgPermittering;
     private String permisjonId;
-    private String beskrivelse;
 }
