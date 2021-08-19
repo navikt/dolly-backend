@@ -198,7 +198,7 @@ public class ArenaForvalterClient implements ClientRegister {
                 }
             }
 
-        } catch (RuntimeException e) {
+        } catch (HttpClientErrorException e) {
 
             arenaNyeBrukere.getNyeBrukere().forEach(bruker -> {
                 status.append(',')
@@ -230,7 +230,7 @@ public class ArenaForvalterClient implements ClientRegister {
 
     private static void appendErrorText(StringBuilder status, RuntimeException e) {
         status.append("Feil: ")
-                .append(e.getMessage().replace(',', ';'));
+                .append(nonNull(e.getMessage()) ? e.getMessage().replace(',', ';') : e);
 
         if (e instanceof HttpClientErrorException) {
             status.append(" (")
