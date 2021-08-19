@@ -214,7 +214,9 @@ public class ArenaForvalterClient implements ClientRegister {
         List<String> eksisterendeBrukere = new ArrayList<>();
 
         ResponseEntity<ArenaArbeidssokerBruker> ident = arenaForvalterConsumer.getIdent(arenaNyeBrukere.getNyeBrukere().get(0).getPersonident());
-        log.info("Liste over eksisterende brukere: {}", Json.pretty(ident.getBody()));
+        if (nonNull(ident)) {
+            log.info("Liste over eksisterende brukere: {}", Json.pretty(ident.getBody()));
+        }
 
         arenaNyeBrukere.getNyeBrukere().forEach(arenaNyBruker -> {
             if (isNull(arenaNyBruker.getKvalifiseringsgruppe()) && isNull(arenaNyBruker.getUtenServicebehov())) {
