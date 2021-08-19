@@ -9,7 +9,6 @@ import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeDagpengerResponse;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.properties.ProvidersProps;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -96,7 +95,7 @@ public class ArenaForvalterConsumer {
     }
 
     @Timed(name = "providers", tags = { "operation", "arena_getEnvironments" })
-    public ResponseEntity<List<String>> getEnvironments() {
+    public List<String> getEnvironments() {
 
         return webClient.get().uri(
                         uriBuilder -> uriBuilder
@@ -104,6 +103,9 @@ public class ArenaForvalterConsumer {
                                 .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .retrieve().toEntityList(String.class).block();
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<String>>() {
+                })
+                .block();
     }
 }

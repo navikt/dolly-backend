@@ -19,8 +19,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.List;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -88,16 +86,6 @@ public class ArenaForvalterConsumerTest {
         assertThat("Response should be 200 successful", response.getStatusCode().is2xxSuccessful());
     }
 
-    @Test
-    public void getEnvironments() {
-
-        stubGetArenaMiljoer();
-
-        ResponseEntity<List<String>> response = arenaForvalterConsumer.getEnvironments();
-
-        assertThat("Response should be 200 successful", response.getStatusCode().is2xxSuccessful());
-    }
-
     private void stubDeleteArenaForvalterBruker() {
 
         stubFor(delete(urlPathMatching("(.*)/arenaforvalter/api/v1/bruker"))
@@ -118,13 +106,6 @@ public class ArenaForvalterConsumerTest {
 
         stubFor(get(urlPathMatching("(.*)/arenaforvalter/api/v1/bruker"))
                 .withQueryParam("filter-personident", equalTo(IDENT))
-                .willReturn(ok()
-                        .withHeader("Content-Type", "application/json")));
-    }
-
-    private void stubGetArenaMiljoer() {
-
-        stubFor(get(urlPathMatching("(.*)/arenaforvalter/api/v1/miljoe"))
                 .willReturn(ok()
                         .withHeader("Content-Type", "application/json")));
     }

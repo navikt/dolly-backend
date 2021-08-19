@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -41,8 +40,7 @@ public class ArenaForvalterClient implements ClientRegister {
 
             StringBuilder status = new StringBuilder();
 
-            ResponseEntity<List<String>> envResponse = arenaForvalterConsumer.getEnvironments();
-            List<String> environments = envResponse.hasBody() ? envResponse.getBody() : emptyList();
+            List<String> environments = arenaForvalterConsumer.getEnvironments();
 
             List<String> availEnvironments = new ArrayList<>(environments);
 
