@@ -1,6 +1,8 @@
 package no.nav.dolly.bestilling.arenaforvalter;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.swagger.v3.core.util.Json;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaArbeidssokerBruker;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaDagpenger;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeBrukere;
@@ -15,12 +17,14 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 
+import static java.util.Objects.nonNull;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
 import static no.nav.dolly.util.CallIdUtil.generateCallId;
 
 @Component
+@Slf4j
 public class ArenaForvalterConsumer {
 
     private static final String ARENAFORVALTER_BRUKER = "/api/v1/bruker";
@@ -38,7 +42,8 @@ public class ArenaForvalterConsumer {
     @Timed(name = "providers", tags = { "operation", "arena_getIdent" })
     public ResponseEntity<ArenaArbeidssokerBruker> getIdent(String ident) {
 
-        return webClient.get().uri(
+        log.info("Henter bruker på ident: {} fra arena-forvalteren", ident);
+        ResponseEntity<ArenaArbeidssokerBruker> response = webClient.get().uri(
                         uriBuilder -> uriBuilder
                                 .path(ARENAFORVALTER_BRUKER)
                                 .queryParam("filter-personident", ident)
@@ -46,6 +51,11 @@ public class ArenaForvalterConsumer {
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .retrieve().toEntity(ArenaArbeidssokerBruker.class).block();
+
+        if (nonNull(response) && response.hasBody()) {
+            log.info("Hentet bruker fra arena: {}", Json.pretty(response.getBody()));
+        }
+        return response;
     }
 
     @Timed(name = "providers", tags = { "operation", "arena_deleteIdent" })
