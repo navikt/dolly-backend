@@ -224,7 +224,7 @@ public class ArenaForvalterClient implements ClientRegister {
 
         return new ArenaNyeBrukere(arenaNyeBrukere.getNyeBrukere().stream()
                 .filter(arenaNyBruker -> eksisterendeBrukere.stream()
-                        .anyMatch(eksisterende -> arenaNyBruker.getPersonident().equals(eksisterende)))
+                        .noneMatch(eksisterende -> arenaNyBruker.getPersonident().equals(eksisterende)))
                 .collect(Collectors.toList()));
     }
 
