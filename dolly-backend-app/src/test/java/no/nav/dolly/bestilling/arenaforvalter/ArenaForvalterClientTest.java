@@ -3,6 +3,7 @@ package no.nav.dolly.bestilling.arenaforvalter;
 import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.domain.jpa.BestillingProgress;
 import no.nav.dolly.domain.resultset.RsDollyBestillingRequest;
+import no.nav.dolly.domain.resultset.arenaforvalter.ArenaKvalifiseringsgruppe;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyBruker;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeBrukere;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeBrukereResponse;
@@ -52,7 +53,9 @@ public class ArenaForvalterClientTest {
     @Before
     public void setup() {
         when(arenaForvalterConsumer.getEnvironments()).thenReturn(singletonList(ENV));
-        when(mapperFacade.map(any(Arenadata.class), eq(ArenaNyBruker.class))).thenReturn(new ArenaNyBruker());
+        when(mapperFacade.map(any(Arenadata.class), eq(ArenaNyBruker.class))).thenReturn(ArenaNyBruker.builder()
+                .kvalifiseringsgruppe(ArenaKvalifiseringsgruppe.IKVAL)
+                .build());
     }
 
     @Test
