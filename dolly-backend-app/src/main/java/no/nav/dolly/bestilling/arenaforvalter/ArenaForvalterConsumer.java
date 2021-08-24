@@ -40,7 +40,7 @@ public class ArenaForvalterConsumer {
     }
 
     @Timed(name = "providers", tags = { "operation", "arena_getIdent" })
-    public ResponseEntity<ArenaArbeidssokerBruker> getIdent(String ident) {
+    public ResponseEntity getIdent(String ident) {
 
         log.info("Henter bruker på ident: {} fra arena-forvalteren", ident);
         ResponseEntity<ArenaArbeidssokerBruker> response = webClient.get().uri(
@@ -59,7 +59,7 @@ public class ArenaForvalterConsumer {
     }
 
     @Timed(name = "providers", tags = { "operation", "arena_deleteIdent" })
-    public ResponseEntity<JsonNode> deleteIdent(String ident, String environment) {
+    public ResponseEntity deleteIdent(String ident, String environment) {
 
         return webClient.delete().uri(
                         uriBuilder -> uriBuilder
