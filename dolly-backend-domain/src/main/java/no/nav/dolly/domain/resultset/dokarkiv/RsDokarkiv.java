@@ -1,17 +1,17 @@
 package no.nav.dolly.domain.resultset.dokarkiv;
 
-import static java.util.Objects.isNull;
-
-import java.util.ArrayList;
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.Objects.isNull;
 
 @Getter
 @Setter
@@ -134,5 +134,15 @@ public class RsDokarkiv {
                 + "(for eksempel XML og JSON) som brukes for automatisk saksbehandling\n"
                 + "Alle dokumenter må ha én variant med variantFormat ARKIV.")
         private String variantformat;
+
+        @Override
+        public String toString() {
+            return "DokumentVariant{" +
+                    "filtype='" + filtype + '\'' +
+                    ", fysiskDokument='" + fysiskDokument.substring(0, 10) + "..." + '\'' +
+                    ", variantformat='" + variantformat + '\'' +
+                    '}';
+        }
     }
+
 }
