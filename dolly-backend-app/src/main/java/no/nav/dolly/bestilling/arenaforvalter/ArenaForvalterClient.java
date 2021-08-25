@@ -209,26 +209,15 @@ public class ArenaForvalterClient implements ClientRegister {
     }
 
     private ArenaNyeBrukere filtrerEksisterendeBrukere(ArenaNyeBrukere arenaNyeBrukere) {
-        List<String> eksisterendeBrukere = new ArrayList<>();
-
-        ResponseEntity<ArenaArbeidssokerBruker> ident = arenaForvalterConsumer.getIdent(arenaNyeBrukere.getNyeBrukere().get(0).getPersonident());
-        if (nonNull(ident)) {
-            log.info("Liste over eksisterende brukere: {}", Json.pretty(ident.getBody()));
-        }
-
-        arenaNyeBrukere.getNyeBrukere().forEach(arenaNyBruker -> {
-            if (isNull(arenaNyBruker.getKvalifiseringsgruppe()) && isNull(arenaNyBruker.getUtenServicebehov())) {
-                eksisterendeBrukere.add(arenaNyBruker.getPersonident());
-            }
-        });
 
         return new ArenaNyeBrukere(arenaNyeBrukere.getNyeBrukere().stream()
-                .filter(arenaNyBruker -> eksisterendeBrukere.stream()
-                        .noneMatch(eksisterende -> arenaNyBruker.getPersonident().equals(eksisterende)))
+                .filter(arenaNyBruker ->
+                        (!isNull(arenaNyBruker.getKvalifiseringsgruppe()) || !isNull(arenaNyBruker.getUtenServicebehov())))
                 .collect(Collectors.toList()));
     }
 
     private static void appendErrorText(StringBuilder status, RuntimeException e) {
+
         status.append("Feil: ")
                 .append(nonNull(e.getMessage()) ? e.getMessage().replace(',', ';') : e);
 
