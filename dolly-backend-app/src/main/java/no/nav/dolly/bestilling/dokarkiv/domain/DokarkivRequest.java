@@ -76,6 +76,14 @@ public class DokarkivRequest {
             }
             return dokumentvarianter;
         }
+
+        @Override
+        public String toString() {
+            return String.format("Dokument{tittel='%s', brevkode='%s', dokumentvariantListe=%s}",
+                    tittel,
+                    brevkode,
+                    dokumentvarianter.stream().map(DokumentVariant::toString));
+        }
     }
 
     @Getter
@@ -94,7 +102,7 @@ public class DokarkivRequest {
         public String toString() {
             return "DokumentVariant{" +
                     "filtype='" + filtype + '\'' +
-                    ", fysiskDokument='" + fysiskDokument.substring(0, 10) + "..." + '\'' +
+                    ", fysiskDok='" + fysiskDokument.substring(0, 10) + "..." + '\'' +
                     ", variantformat='" + variantformat + '\'' +
                     '}';
         }
