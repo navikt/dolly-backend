@@ -6,10 +6,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import no.nav.dolly.domain.resultset.dokarkiv.RsDokarkiv;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
@@ -17,6 +19,7 @@ import static java.util.Objects.isNull;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DokarkivRequest {
 
@@ -49,6 +52,7 @@ public class DokarkivRequest {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @ToString
     @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
     public static class AvsenderMottaker {
 
@@ -82,7 +86,7 @@ public class DokarkivRequest {
             return String.format("Dokument{tittel='%s', brevkode='%s', dokumentvariantListe=%s}",
                     tittel,
                     brevkode,
-                    dokumentvarianter.stream().map(DokumentVariant::toString));
+                    dokumentvarianter.stream().map(DokumentVariant::toString).collect(Collectors.toList()));
         }
     }
 
@@ -113,6 +117,7 @@ public class DokarkivRequest {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @ToString
     @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
     public static class Bruker {
 
@@ -125,6 +130,7 @@ public class DokarkivRequest {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @ToString
     @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
     public static class Sak {
 

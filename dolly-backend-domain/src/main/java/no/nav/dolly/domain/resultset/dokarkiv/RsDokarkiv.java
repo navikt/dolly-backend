@@ -7,9 +7,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
@@ -18,6 +20,7 @@ import static java.util.Objects.isNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class RsDokarkiv {
 
@@ -69,6 +72,7 @@ public class RsDokarkiv {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @ToString
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class AvsenderMottaker {
 
@@ -118,7 +122,7 @@ public class RsDokarkiv {
             return String.format("Dokument{tittel='%s', brevkode='%s', dokumentvariantListe=%s}",
                     tittel,
                     brevkode,
-                    dokumentvarianter.stream().map(DokumentVariant::toString));
+                    dokumentvarianter.stream().map(DokumentVariant::toString).collect(Collectors.toList()));
         }
 
         @Getter
