@@ -2,6 +2,7 @@ package no.nav.dolly.bestilling.dokarkiv;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
@@ -47,7 +48,9 @@ public class DokarkivClient implements ClientRegister {
         if (nonNull(bestilling.getDokarkiv())) {
 
             StringBuilder status = new StringBuilder();
+            log.info("Mottok dokarkiv bestilling fra frontend: {}", Json.pretty(bestilling.getDokarkiv()));
             DokarkivRequest dokarkivRequest = mapperFacade.map(bestilling.getDokarkiv(), DokarkivRequest.class);
+            log.info("Sender dokarkiv bestilling videre: {}", Json.pretty(dokarkivRequest));
 
             dollyPersonCache.fetchIfEmpty(dollyPerson);
             dokarkivRequest.getBruker().setId(dollyPerson.getHovedperson());
