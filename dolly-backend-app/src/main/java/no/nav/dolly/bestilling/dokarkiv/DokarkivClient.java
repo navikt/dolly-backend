@@ -48,9 +48,7 @@ public class DokarkivClient implements ClientRegister {
         if (nonNull(bestilling.getDokarkiv())) {
 
             StringBuilder status = new StringBuilder();
-            log.info("Mottok dokarkiv bestilling fra frontend: {}", bestilling.getDokarkiv().toString());
             DokarkivRequest dokarkivRequest = mapperFacade.map(bestilling.getDokarkiv(), DokarkivRequest.class);
-            log.info("Sender dokarkiv bestilling videre: {}", dokarkivRequest.toString());
 
             dollyPersonCache.fetchIfEmpty(dollyPerson);
             dokarkivRequest.getBruker().setId(dollyPerson.getHovedperson());
