@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,12 +15,10 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
-@Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@Data
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class RsDokarkiv {
 
@@ -67,12 +65,10 @@ public class RsDokarkiv {
         return dokumenter;
     }
 
-    @Getter
-    @Setter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @ToString
+    @Data
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class AvsenderMottaker {
 

@@ -3,10 +3,10 @@ package no.nav.dolly.bestilling.dokarkiv.domain;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import no.nav.dolly.domain.resultset.dokarkiv.RsDokarkiv;
 
 import java.util.ArrayList;
@@ -15,11 +15,9 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DokarkivRequest {
 
@@ -47,12 +45,10 @@ public class DokarkivRequest {
         return dokumenter;
     }
 
-    @Getter
-    @Setter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @ToString
+    @Data
     @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
     public static class AvsenderMottaker {
 
@@ -112,12 +108,10 @@ public class DokarkivRequest {
         }
     }
 
-    @Getter
-    @Setter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @ToString
+    @Data
     @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
     public static class Bruker {
 
@@ -125,12 +119,10 @@ public class DokarkivRequest {
         private IdType idType;
     }
 
-    @Getter
-    @Setter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @ToString
+    @Data
     @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
     public static class Sak {
 
