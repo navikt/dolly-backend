@@ -1,29 +1,30 @@
 package no.nav.dolly.mapper.strategy;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-
-import java.time.LocalDate;
+import ma.glasnost.orika.MapperFacade;
+import no.nav.dolly.bestilling.pdlforvalter.domain.PdlKontaktinformasjonForDoedsbo;
+import no.nav.dolly.bestilling.pdlforvalter.domain.Pdldata;
+import no.nav.dolly.bestilling.pdlforvalter.mapper.PdlKontaktinformasjonForDoedsboMappingStrategy;
+import no.nav.dolly.domain.resultset.pdlforvalter.PdlPersonnavn;
+import no.nav.dolly.domain.resultset.pdlforvalter.RsPdldata;
+import no.nav.dolly.domain.resultset.pdlforvalter.doedsbo.PdlSkifteform;
+import no.nav.dolly.domain.resultset.pdlforvalter.doedsbo.RsPdlAdvokat;
+import no.nav.dolly.domain.resultset.pdlforvalter.doedsbo.RsPdlKontaktinformasjonForDoedsbo;
+import no.nav.dolly.domain.resultset.pdlforvalter.doedsbo.RsPdlKontaktpersonMedIdNummer;
+import no.nav.dolly.domain.resultset.pdlforvalter.doedsbo.RsPdlOrganisasjon;
+import no.nav.dolly.domain.resultset.pdlforvalter.doedsbo.RsRsPdlKontaktpersonUtenIdNummer;
+import no.nav.dolly.mapper.utils.MapperTestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import ma.glasnost.orika.MapperFacade;
-import no.nav.dolly.bestilling.pdlforvalter.mapper.PdlDoedsboMappingStrategy;
-import no.nav.dolly.domain.resultset.pdlforvalter.PdlPersonnavn;
-import no.nav.dolly.domain.resultset.pdlforvalter.Pdldata;
-import no.nav.dolly.domain.resultset.pdlforvalter.RsPdldata;
-import no.nav.dolly.domain.resultset.pdlforvalter.doedsbo.PdlAdvokat;
-import no.nav.dolly.domain.resultset.pdlforvalter.doedsbo.PdlKontaktpersonMedIdNummer;
-import no.nav.dolly.domain.resultset.pdlforvalter.doedsbo.PdlOrganisasjon;
-import no.nav.dolly.domain.resultset.pdlforvalter.doedsbo.PdlSkifteform;
-import no.nav.dolly.domain.resultset.pdlforvalter.doedsbo.RsPdlKontaktinformasjonForDoedsbo;
-import no.nav.dolly.domain.resultset.pdlforvalter.doedsbo.RsPdlKontaktpersonUtenIdNummer;
-import no.nav.dolly.mapper.utils.MapperTestUtils;
+import java.time.LocalDate;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PdlDoedsboMappingStrategyTest {
+public class PdlKontaktinformasjonForDoedsboMappingStrategyTest {
 
     private static final String IDENT = "11111111111";
     private static final String FORNAVN = "Hans";
@@ -34,8 +35,6 @@ public class PdlDoedsboMappingStrategyTest {
     private static final String ADRESSELINJE_1 = "Utmyra 5";
     private static final String ADRESSELINJE_2 = "Postboks 375";
     private static final LocalDate FODSELSDATO = LocalDate.of(1985, 5, 7);
-    private static final LocalDate GYLDIG_FOM = LocalDate.of(2019, 1, 22);
-    private static final LocalDate GYLDIG_TOM = LocalDate.of(2019, 5, 22);
     private static final LocalDate UTSTEDT_DATO = LocalDate.now();
     private static final String LANDKODE = "POL";
     private static final String POSTNUMMER = "2345";
@@ -45,15 +44,15 @@ public class PdlDoedsboMappingStrategyTest {
 
     @Before
     public void setup() {
-        mapperFacade = MapperTestUtils.createMapperFacadeForMappingStrategy(new LocalDateCustomMapping(), new PdlDoedsboMappingStrategy());
+        mapperFacade = MapperTestUtils.createMapperFacadeForMappingStrategy(new LocalDateCustomMapping(), new PdlKontaktinformasjonForDoedsboMappingStrategy());
     }
 
     @Test
     public void mapDoedsboOrganisasjonSomAdressat() {
 
-        Pdldata result = mapperFacade.map(RsPdldata.builder()
+        var result = mapperFacade.map(RsPdldata.builder()
                 .kontaktinformasjonForDoedsbo(RsPdlKontaktinformasjonForDoedsbo.builder()
-                        .adressat(PdlOrganisasjon.builder()
+                        .adressat(RsPdlOrganisasjon.builder()
                                 .kontaktperson(PdlPersonnavn.builder()
                                         .fornavn(FORNAVN)
                                         .mellomnavn(MELLOMNAVN)
@@ -64,11 +63,11 @@ public class PdlDoedsboMappingStrategyTest {
                         .adresselinje2(ADRESSELINJE_2)
                         .build()).build(), Pdldata.class);
 
-        assertThat(result.getKontaktinformasjonForDoedsbo().getAdressat().getOrganisasjonSomAdressat().getOrganisasjonsnavn(), is(ORGANISAJON_NAVN));
-        assertThat(result.getKontaktinformasjonForDoedsbo().getAdressat().getOrganisasjonSomAdressat().getOrganisasjonsnummer(), is(ORGANISAJON_NUMMER));
-        assertThat(result.getKontaktinformasjonForDoedsbo().getAdressat().getOrganisasjonSomAdressat().getKontaktperson().getFornavn(), is(FORNAVN));
-        assertThat(result.getKontaktinformasjonForDoedsbo().getAdressat().getOrganisasjonSomAdressat().getKontaktperson().getMellomnavn(), is(MELLOMNAVN));
-        assertThat(result.getKontaktinformasjonForDoedsbo().getAdressat().getOrganisasjonSomAdressat().getKontaktperson().getEtternavn(), is(ETTERNAVN));
+        assertThat(result.getKontaktinformasjonForDoedsbo().getOrganisasjonSomKontakt().getOrganisasjonsnavn(), is(ORGANISAJON_NAVN));
+        assertThat(result.getKontaktinformasjonForDoedsbo().getOrganisasjonSomKontakt().getOrganisasjonsnummer(), is(ORGANISAJON_NUMMER));
+        assertThat(result.getKontaktinformasjonForDoedsbo().getOrganisasjonSomKontakt().getKontaktperson().getFornavn(), is(FORNAVN));
+        assertThat(result.getKontaktinformasjonForDoedsbo().getOrganisasjonSomKontakt().getKontaktperson().getMellomnavn(), is(MELLOMNAVN));
+        assertThat(result.getKontaktinformasjonForDoedsbo().getOrganisasjonSomKontakt().getKontaktperson().getEtternavn(), is(ETTERNAVN));
     }
 
     @Test
@@ -76,20 +75,22 @@ public class PdlDoedsboMappingStrategyTest {
 
         Pdldata result = mapperFacade.map(RsPdldata.builder()
                 .kontaktinformasjonForDoedsbo(RsPdlKontaktinformasjonForDoedsbo.builder()
-                        .adressat(PdlAdvokat.builder()
+                        .adressat(RsPdlAdvokat.builder()
                                 .kontaktperson(PdlPersonnavn.builder()
                                         .fornavn(FORNAVN)
                                         .mellomnavn(MELLOMNAVN)
                                         .etternavn(ETTERNAVN).build())
                                 .organisasjonsnavn(ORGANISAJON_NAVN)
-                                .organisasjonsnummer(ORGANISAJON_NUMMER).build())
+                                .organisasjonsnummer(ORGANISAJON_NUMMER)
+
+                                .build())
                         .build()).build(), Pdldata.class);
 
-        assertThat(result.getKontaktinformasjonForDoedsbo().getAdressat().getAdvokatSomAdressat().getOrganisasjonsnavn(), is(ORGANISAJON_NAVN));
-        assertThat(result.getKontaktinformasjonForDoedsbo().getAdressat().getAdvokatSomAdressat().getOrganisasjonsnummer(), is(ORGANISAJON_NUMMER));
-        assertThat(result.getKontaktinformasjonForDoedsbo().getAdressat().getAdvokatSomAdressat().getKontaktperson().getFornavn(), is(FORNAVN));
-        assertThat(result.getKontaktinformasjonForDoedsbo().getAdressat().getAdvokatSomAdressat().getKontaktperson().getMellomnavn(), is(MELLOMNAVN));
-        assertThat(result.getKontaktinformasjonForDoedsbo().getAdressat().getAdvokatSomAdressat().getKontaktperson().getEtternavn(), is(ETTERNAVN));
+        assertThat(result.getKontaktinformasjonForDoedsbo().getAdvokatSomKontakt().getOrganisasjonsnavn(), is(ORGANISAJON_NAVN));
+        assertThat(result.getKontaktinformasjonForDoedsbo().getAdvokatSomKontakt().getOrganisasjonsnummer(), is(ORGANISAJON_NUMMER));
+        assertThat(result.getKontaktinformasjonForDoedsbo().getAdvokatSomKontakt().getKontaktperson().getFornavn(), is(FORNAVN));
+        assertThat(result.getKontaktinformasjonForDoedsbo().getAdvokatSomKontakt().getKontaktperson().getMellomnavn(), is(MELLOMNAVN));
+        assertThat(result.getKontaktinformasjonForDoedsbo().getAdvokatSomKontakt().getKontaktperson().getEtternavn(), is(ETTERNAVN));
     }
 
     @Test
@@ -97,11 +98,11 @@ public class PdlDoedsboMappingStrategyTest {
 
         Pdldata result = mapperFacade.map(RsPdldata.builder()
                 .kontaktinformasjonForDoedsbo(RsPdlKontaktinformasjonForDoedsbo.builder()
-                        .adressat(PdlKontaktpersonMedIdNummer.builder()
+                        .adressat(RsPdlKontaktpersonMedIdNummer.builder()
                                 .idnummer(IDENT).build())
                         .build()).build(), Pdldata.class);
 
-        assertThat(result.getKontaktinformasjonForDoedsbo().getAdressat().getKontaktpersonMedIdNummerSomAdressat().getIdnummer(), is(IDENT));
+        assertThat(result.getKontaktinformasjonForDoedsbo().getPersonSomKontakt().getIdentifikasjonsnummer(), is(IDENT));
     }
 
     @Test
@@ -109,7 +110,7 @@ public class PdlDoedsboMappingStrategyTest {
 
         Pdldata result = mapperFacade.map(RsPdldata.builder()
                 .kontaktinformasjonForDoedsbo(RsPdlKontaktinformasjonForDoedsbo.builder()
-                        .adressat(RsPdlKontaktpersonUtenIdNummer.builder()
+                        .adressat(RsRsPdlKontaktpersonUtenIdNummer.builder()
                                 .navn(PdlPersonnavn.builder()
                                         .fornavn(FORNAVN)
                                         .mellomnavn(MELLOMNAVN)
@@ -117,10 +118,10 @@ public class PdlDoedsboMappingStrategyTest {
                                 .foedselsdato(FODSELSDATO.atStartOfDay()).build())
                         .build()).build(), Pdldata.class);
 
-        assertThat(result.getKontaktinformasjonForDoedsbo().getAdressat().getKontaktpersonUtenIdNummerSomAdressat().getFoedselsdato(), is(FODSELSDATO));
-        assertThat(result.getKontaktinformasjonForDoedsbo().getAdressat().getKontaktpersonUtenIdNummerSomAdressat().getNavn().getFornavn(), is(FORNAVN));
-        assertThat(result.getKontaktinformasjonForDoedsbo().getAdressat().getKontaktpersonUtenIdNummerSomAdressat().getNavn().getMellomnavn(), is(MELLOMNAVN));
-        assertThat(result.getKontaktinformasjonForDoedsbo().getAdressat().getKontaktpersonUtenIdNummerSomAdressat().getNavn().getEtternavn(), is(ETTERNAVN));
+        assertThat(result.getKontaktinformasjonForDoedsbo().getPersonSomKontakt().getFoedselsdato(), is(FODSELSDATO));
+        assertThat(result.getKontaktinformasjonForDoedsbo().getPersonSomKontakt().getNavn().getFornavn(), is(FORNAVN));
+        assertThat(result.getKontaktinformasjonForDoedsbo().getPersonSomKontakt().getNavn().getMellomnavn(), is(MELLOMNAVN));
+        assertThat(result.getKontaktinformasjonForDoedsbo().getPersonSomKontakt().getNavn().getEtternavn(), is(ETTERNAVN));
     }
 
     @Test
@@ -128,6 +129,7 @@ public class PdlDoedsboMappingStrategyTest {
 
         Pdldata result = mapperFacade.map(RsPdldata.builder()
                 .kontaktinformasjonForDoedsbo(RsPdlKontaktinformasjonForDoedsbo.builder()
+                        .adressat(RsPdlAdvokat.builder().build())
                         .adresselinje1(ADRESSELINJE_1)
                         .adresselinje2(ADRESSELINJE_2)
                         .utstedtDato(UTSTEDT_DATO.atStartOfDay())
@@ -137,12 +139,12 @@ public class PdlDoedsboMappingStrategyTest {
                         .poststedsnavn(POSTSTED)
                         .build()).build(), Pdldata.class);
 
-        assertThat(result.getKontaktinformasjonForDoedsbo().getAdresselinje1(), is(ADRESSELINJE_1));
-        assertThat(result.getKontaktinformasjonForDoedsbo().getAdresselinje2(), is(ADRESSELINJE_2));
+        assertThat(result.getKontaktinformasjonForDoedsbo().getAdresse().getAdresselinje1(), is(ADRESSELINJE_1));
+        assertThat(result.getKontaktinformasjonForDoedsbo().getAdresse().getAdresselinje2(), is(ADRESSELINJE_2));
         assertThat(result.getKontaktinformasjonForDoedsbo().getAttestutstedelsesdato(), is(UTSTEDT_DATO));
-        assertThat(result.getKontaktinformasjonForDoedsbo().getSkifteform(), is(PdlSkifteform.OFFENTLIG));
-        assertThat(result.getKontaktinformasjonForDoedsbo().getLandkode(), is(LANDKODE));
-        assertThat(result.getKontaktinformasjonForDoedsbo().getPostnummer(), is(POSTNUMMER));
-        assertThat(result.getKontaktinformasjonForDoedsbo().getPoststedsnavn(), is(POSTSTED));
+        assertThat(result.getKontaktinformasjonForDoedsbo().getSkifteform(), is(PdlKontaktinformasjonForDoedsbo.PdlSkifteform.OFFENTLIG));
+        assertThat(result.getKontaktinformasjonForDoedsbo().getAdresse().getLandkode(), is(LANDKODE));
+        assertThat(result.getKontaktinformasjonForDoedsbo().getAdresse().getPostnummer(), is(POSTNUMMER));
+        assertThat(result.getKontaktinformasjonForDoedsbo().getAdresse().getPoststedsnavn(), is(POSTSTED));
     }
 }

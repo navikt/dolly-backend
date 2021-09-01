@@ -25,7 +25,7 @@ public abstract class PdlOpplysning {
     @NoArgsConstructor
     @AllArgsConstructor
     @JsonInclude(Include.NON_NULL)
-    public class Folkeregistermetadata {
+    public static class Folkeregistermetadata {
 
         private LocalDate ajourholdstidspunkt;
         private LocalDate gyldighetstidspunkt;

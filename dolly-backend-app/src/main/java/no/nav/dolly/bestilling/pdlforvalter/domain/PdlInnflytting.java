@@ -13,6 +13,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class PdlInnflytting extends PdlOpplysning {
 
+    private Folkeregistermetadata folkeregistermetadata;
     private String fraflyttingsland;
     private String fraflyttingsstedIUtlandet;
 }

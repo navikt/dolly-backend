@@ -19,13 +19,14 @@ public abstract class PdlOpplysning {
 
     private String kilde;
     private Master master;
+    private Folkeregistermetadata folkeregistermetadata;
 
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     @JsonInclude(Include.NON_NULL)
-    public class Folkeregistermetadata {
+    public static class Folkeregistermetadata {
 
         private LocalDate ajourholdstidspunkt;
         private LocalDate gyldighetstidspunkt;
