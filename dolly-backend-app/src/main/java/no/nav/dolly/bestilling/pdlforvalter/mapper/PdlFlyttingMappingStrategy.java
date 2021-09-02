@@ -6,6 +6,7 @@ import ma.glasnost.orika.MappingContext;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlInnflytting;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlInnflyttingHistorikk;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlOpplysning;
+import no.nav.dolly.bestilling.pdlforvalter.domain.PdlOpplysning.Master;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlUtflytting;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlUtflyttingHistorikk;
 import no.nav.dolly.domain.resultset.tpsf.Person;
@@ -45,6 +46,7 @@ public class PdlFlyttingMappingStrategy implements MappingStrategy {
                                                         .gyldighetstidspunkt(getDate(innvandretUtvandret.getFlyttedato()))
                                                         .build())
                                                 .kilde(CONSUMER)
+                                                .master(Master.FREG)
                                                 .build()
                                 );
                             }
@@ -66,6 +68,7 @@ public class PdlFlyttingMappingStrategy implements MappingStrategy {
                                                 .tilflyttingsland(innvandretUtvandret.getLandkode())
                                                 .utflyttingsdato(getDate(innvandretUtvandret.getFlyttedato()))
                                                 .kilde(CONSUMER)
+                                                .master(Master.FREG)
                                                 .build()
                                 );
                             }

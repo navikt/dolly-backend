@@ -6,9 +6,13 @@ import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlFullmakt;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlFullmaktHistorikk;
+import no.nav.dolly.bestilling.pdlforvalter.domain.PdlOpplysning.Master;
 import no.nav.dolly.domain.resultset.tpsf.Person;
 import no.nav.dolly.mapper.MappingStrategy;
+import no.nav.dolly.util.NullcheckUtil;
 import org.springframework.stereotype.Component;
+
+import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 
 @Component
 @RequiredArgsConstructor
@@ -26,7 +30,8 @@ public class PdlFullmaktMappingStrategy implements MappingStrategy {
 
                             PdlFullmakt pdlFullmakt = PdlFullmakt.builder()
                                     .motpartsPersonident(fullmakt.getFullmektig().getIdent())
-                                    .kilde(fullmakt.getKilde())
+                                    .kilde(NullcheckUtil.nullcheckSetDefaultValue(fullmakt.getKilde(), CONSUMER))
+                                    .master(Master.FREG)
                                     .omraader(fullmakt.getOmraader())
                                     .gyldigFraOgMed(fullmakt.getGyldigFom())
                                     .gyldigTilOgMed(fullmakt.getGyldigTom())

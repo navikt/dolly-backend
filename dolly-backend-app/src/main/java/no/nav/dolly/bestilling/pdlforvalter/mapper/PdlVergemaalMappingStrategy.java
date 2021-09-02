@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
+import no.nav.dolly.bestilling.pdlforvalter.domain.PdlOpplysning.Master;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlVergemaal;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlVergemaal.Omfang;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlVergemaal.Personnavn;
@@ -68,6 +69,7 @@ public class PdlVergemaalMappingStrategy implements MappingStrategy {
                             PdlVergemaal pdlVergemaal = new PdlVergemaal();
                             pdlVergemaal.setEmbete(kodeverkConsumer.getKodeverkByName(EMBETE_KODEVERK).get(vergemaal.getEmbete()));
                             pdlVergemaal.setKilde(CONSUMER);
+                            pdlVergemaal.setMaster(Master.FREG);
                             pdlVergemaal.setType(getSakstype(vergemaal.getSakType()));
                             pdlVergemaal.setVergeEllerFullmektig(VergeEllerFullmektig.builder()
                                     .motpartsPersonident(vergemaal.getVerge().getIdent())

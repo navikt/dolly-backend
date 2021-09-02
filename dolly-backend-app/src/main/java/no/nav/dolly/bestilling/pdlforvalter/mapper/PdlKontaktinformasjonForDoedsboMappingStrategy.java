@@ -5,6 +5,7 @@ import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlKontaktinformasjonForDoedsbo;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlKontaktinformasjonForDoedsbo.PersonSomKontakt;
+import no.nav.dolly.bestilling.pdlforvalter.domain.PdlOpplysning.Master;
 import no.nav.dolly.domain.resultset.pdlforvalter.doedsbo.RsPdlKontaktinformasjonForDoedsbo;
 import no.nav.dolly.domain.resultset.pdlforvalter.doedsbo.RsPdlKontaktpersonMedIdNummer;
 import no.nav.dolly.mapper.MappingStrategy;
@@ -57,6 +58,7 @@ public class PdlKontaktinformasjonForDoedsboMappingStrategy implements MappingSt
                                 .toLocalDate());
 
                         destinasjon.setKilde(CONSUMER);
+                        destinasjon.setMaster(Master.FREG);
                     }
                 })
                 .byDefault()
