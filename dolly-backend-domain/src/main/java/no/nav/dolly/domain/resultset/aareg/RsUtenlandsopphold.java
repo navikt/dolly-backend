@@ -1,7 +1,6 @@
 package no.nav.dolly.domain.resultset.aareg;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +17,7 @@ import lombok.Setter;
 public class RsUtenlandsopphold {
 
     @Schema(required = true)
-    private RsPeriode periode;
+    private RsPeriodeAareg periode;
 
     @Schema(description = "Gyldige verdier finnes i kodeverk 'LandkoderISO2'",
             required = true)

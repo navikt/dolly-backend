@@ -1,22 +1,5 @@
 package no.nav.dolly.bestilling.aareg;
 
-import static java.lang.String.format;
-import static java.util.Collections.emptyList;
-import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
-import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
-import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.aareg.domain.AaregOpprettRequest;
@@ -24,6 +7,23 @@ import no.nav.dolly.bestilling.aareg.domain.AaregResponse;
 import no.nav.dolly.bestilling.aareg.domain.ArbeidsforholdResponse;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.properties.ProvidersProps;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestTemplate;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import static java.lang.String.format;
+import static java.util.Collections.emptyList;
+import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
+import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
+import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
 
 @Slf4j
 @Component
@@ -59,7 +59,7 @@ public class AaregConsumer {
                             .build(), ArbeidsforholdResponse[].class);
 
             return response.hasBody() ? new ArrayList<>(List.of(response.getBody())) : emptyList();
-        } catch (HttpClientErrorException e) {
+        } catch (HttpServerErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                 return emptyList();
             } else {

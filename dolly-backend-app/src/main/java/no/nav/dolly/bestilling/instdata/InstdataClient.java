@@ -1,14 +1,5 @@
 package no.nav.dolly.bestilling.instdata;
 
-import static org.springframework.http.HttpStatus.CREATED;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
@@ -19,6 +10,16 @@ import no.nav.dolly.domain.resultset.RsDollyUtvidetBestilling;
 import no.nav.dolly.domain.resultset.inst.Instdata;
 import no.nav.dolly.domain.resultset.tpsf.DollyPerson;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 @Slf4j
 @Service
@@ -46,7 +47,7 @@ public class InstdataClient implements ClientRegister {
 
                 List<Instdata> instdataListe = mapperFacade.mapAsList(bestilling.getInstdata(), Instdata.class);
                 instdataListe.forEach(instdata ->
-                        instdata.setPersonident(dollyPerson.getHovedperson())
+                        instdata.setNorskident(dollyPerson.getHovedperson())
                 );
 
                 environments.forEach(environment -> {
@@ -79,12 +80,12 @@ public class InstdataClient implements ClientRegister {
 
     private List<Instdata> filterInstdata(List<Instdata> instdataRequest, String miljoe) {
 
-        ResponseEntity<Instdata[]> eksisterendeInstdata = instdataConsumer.getInstdata(instdataRequest.get(0).getPersonident(), miljoe);
+        ResponseEntity<Instdata[]> eksisterendeInstdata = instdataConsumer.getInstdata(instdataRequest.get(0).getNorskident(), miljoe);
 
         if (eksisterendeInstdata.hasBody() && eksisterendeInstdata.getBody().length > 0) {
 
             return instdataRequest.stream().filter(request -> Arrays.stream(eksisterendeInstdata.getBody())
-                    .noneMatch(eksisterende -> eksisterende.equals(request)))
+                            .noneMatch(eksisterende -> eksisterende.equals(request)))
                     .collect(Collectors.toList());
         } else {
 
@@ -119,7 +120,7 @@ public class InstdataClient implements ClientRegister {
                             .append("opphold=")
                             .append(i + 1)
                             .append('$')
-                            .append(CREATED.equals(response.getBody()[i].getStatus()) ? OK_RESULT :
+                            .append(CREATED.equals(response.getBody()[i].getStatus()) || OK.equals(response.getBody()[i].getStatus()) ? OK_RESULT :
                                     errorStatusDecoder.getErrorText(response.getBody()[i].getStatus(),
                                             response.getBody()[i].getFeilmelding()));
                 }
