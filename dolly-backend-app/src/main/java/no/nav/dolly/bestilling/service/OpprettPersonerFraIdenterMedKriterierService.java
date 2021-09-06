@@ -28,11 +28,13 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import static java.util.Objects.nonNull;
+import static org.apache.logging.log4j.util.Strings.isNotBlank;
 
 @Service
 public class OpprettPersonerFraIdenterMedKriterierService extends DollyBestillingService {
 
     private BestillingService bestillingService;
+    private IdentService identService;
     private ErrorStatusDecoder errorStatusDecoder;
     private MapperFacade mapperFacade;
     private TpsfService tpsfService;
@@ -88,6 +90,11 @@ public class OpprettPersonerFraIdenterMedKriterierService extends DollyBestillin
                                             .hovedperson(leverteIdenter.get(0))
                                             .master(Testident.Master.TPSF)
                                             .build();
+
+                                    if (isNotBlank(bestKriterier.getBeskrivelse())) {
+                                        identService.setIdentBeskrivelse(bestKriterier.getBeskrivelse(), dollyPerson.getHovedperson());
+                                    }
+
                                     gjenopprettNonTpsf(dollyPerson, bestKriterier, progress, false);
                                 } else {
                                     progress.setFeil("NA:Feil= Ident er ikke tilgjengelig; " + identStatus.getStatus());
