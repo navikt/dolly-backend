@@ -1,5 +1,6 @@
 package no.nav.dolly.provider.api;
 
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -148,6 +149,7 @@ public class TestgruppeController {
     public RsBestillingStatus opprettIdentBestilling(@PathVariable("gruppeId") Long gruppeId, @RequestBody RsDollyBestillingRequest request) {
         Bestilling bestilling = bestillingService.saveBestilling(gruppeId, request, request.getTpsf(),
                 request.getAntall(), null, request.getNavSyntetiskIdent());
+        log.info("Bestillingsrequest fra frontend: {}", Json.pretty(request));
         opprettPersonerByKriterierService.executeAsync(bestilling);
         return mapperFacade.map(bestilling, RsBestillingStatus.class);
     }
