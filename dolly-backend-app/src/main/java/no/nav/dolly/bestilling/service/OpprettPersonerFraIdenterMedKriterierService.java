@@ -1,6 +1,7 @@
 package no.nav.dolly.bestilling.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.bestilling.ClientRegister;
 import no.nav.dolly.bestilling.tpsf.TpsfResponseHandler;
@@ -30,6 +31,7 @@ import java.util.concurrent.ExecutorService;
 import static java.util.Objects.nonNull;
 import static org.apache.logging.log4j.util.Strings.isNotBlank;
 
+@Slf4j
 @Service
 public class OpprettPersonerFraIdenterMedKriterierService extends DollyBestillingService {
 
@@ -92,6 +94,7 @@ public class OpprettPersonerFraIdenterMedKriterierService extends DollyBestillin
                                             .build();
 
                                     if (isNotBlank(bestKriterier.getBeskrivelse())) {
+                                        log.info("sender med kommentar: {} på ident: {}", bestKriterier.getBeskrivelse(), dollyPerson.getHovedperson());
                                         identService.setIdentBeskrivelse(bestKriterier.getBeskrivelse(), dollyPerson.getHovedperson());
                                     }
 
