@@ -115,6 +115,8 @@ public class Bestilling {
     @OneToMany(mappedBy = "bestillingId", fetch = FetchType.LAZY)
     private List<TransaksjonMapping> transaksjonmapping;
 
+    private String beskrivelse;
+
     public List<BestillingProgress> getProgresser() {
         if (isNull(progresser)) {
             progresser = new ArrayList<>();
