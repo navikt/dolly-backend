@@ -1,7 +1,9 @@
 package no.nav.dolly.provider.api;
 
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.bestilling.service.GjenopprettBestillingService;
 import no.nav.dolly.domain.MalbestillingNavn;
@@ -35,6 +37,7 @@ import static no.nav.dolly.config.CachingConfig.CACHE_GRUPPE;
 @Transactional
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping(value = "/api/v1/bestilling", produces = MediaType.APPLICATION_JSON_VALUE)
 public class BestillingController {
 
@@ -79,7 +82,9 @@ public class BestillingController {
     @Operation(description = "Hent mal-bestilling")
     public RsMalBestillingWrapper getMalBestillinger() {
 
-        return malBestillingService.getMalBestillinger();
+        RsMalBestillingWrapper malBestillinger = malBestillingService.getMalBestillinger();
+        log.info(Json.pretty(malBestillinger));
+        return malBestillinger;
     }
 
     @DeleteMapping("/malbestilling/{id}")
