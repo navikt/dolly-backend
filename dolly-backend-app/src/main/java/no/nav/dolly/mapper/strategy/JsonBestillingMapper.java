@@ -39,6 +39,7 @@ public class JsonBestillingMapper {
 
     public RsDollyBestillingRequest mapBestillingRequest(String jsonInput) {
         try {
+            log.info("Jsoninput: {}", jsonInput);
             return objectMapper.readValue(nonNull(jsonInput) ? jsonInput : "{}", RsDollyBestillingRequest.class);
         } catch (IOException e) {
             log.error("Mapping av JSON fra database bestKriterier feilet. {}", e.getMessage(), e);
