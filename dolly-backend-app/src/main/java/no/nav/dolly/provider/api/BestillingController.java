@@ -76,7 +76,7 @@ public class BestillingController {
         return mapperFacade.map(bestilling, RsBestillingStatus.class);
     }
 
-    @Cacheable(value = CACHE_BESTILLING)
+//    @Cacheable(value = CACHE_BESTILLING)
     @GetMapping("/malbestilling")
     @Operation(description = "Hent mal-bestilling")
     public RsMalBestillingWrapper getMalBestillinger() {

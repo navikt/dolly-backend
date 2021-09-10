@@ -1,6 +1,7 @@
 package no.nav.dolly.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.domain.jpa.Bestilling;
 import no.nav.dolly.domain.jpa.Bruker;
@@ -12,10 +13,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class MalBestillingService {
 
@@ -37,9 +40,7 @@ public class MalBestillingService {
 
             RsMalBestillingWrapper.RsBestilling rsBestilling = mapperFacade.map(bestilling, RsMalBestillingWrapper.RsBestilling.class);
 
-            if (nonNull(rsBestilling.getArenaforvalter())) {
-                setArenaforvalterEmptyListsToNull(rsBestilling);
-            }
+            setArenaforvalterEmptyListsToNull(rsBestilling);
 
             RsMalBestillingWrapper.RsMalBestilling malBestilling = RsMalBestillingWrapper.RsMalBestilling.builder()
                     .malNavn(bestilling.getMalBestillingNavn())
@@ -60,6 +61,10 @@ public class MalBestillingService {
     }
 
     private void setArenaforvalterEmptyListsToNull(RsMalBestillingWrapper.RsBestilling rsBestilling) {
+        log.info("rsbestilling arena: {}", rsBestilling.getArenaforvalter());
+        if (isNull(rsBestilling.getArenaforvalter())) {
+            return;
+        }
         if (rsBestilling.getArenaforvalter().getAap().isEmpty()) {
             rsBestilling.getArenaforvalter().setAap(null);
         }
