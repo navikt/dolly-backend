@@ -52,6 +52,8 @@ import static no.nav.dolly.domain.resultset.SystemTyper.AAREG;
 @RequiredArgsConstructor
 public class AaregClient implements ClientRegister {
 
+    private static final int NOT_FOUND = -1;
+
     private final AaregConsumer aaregConsumer;
     private final AmeldingConsumer ameldingConsumer;
     private final TransaksjonMappingService transaksjonMappingService;
@@ -150,7 +152,7 @@ public class AaregClient implements ClientRegister {
             Map<String, ResponseEntity<Void>> response = ameldingConsumer.putAmeldingList(dtoMaanedMap, env);
             response.forEach((maaned, resp) -> {
                 log.info("Response fra Amelding service: " + Json.pretty(resp));
-                if (resp.getStatusCode().is2xxSuccessful()) {
+                if (resp.getStatusCode().is2xxSuccessful() && result.indexOf("OK") == NOT_FOUND) {
                     appendResult((singletonMap(env, "OK")), "1", result);
                     saveTransaksjonId(resp, maaned, dollyPerson.getHovedperson(), progress.getBestilling().getId(), env);
 
