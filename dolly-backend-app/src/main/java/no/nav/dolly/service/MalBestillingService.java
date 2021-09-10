@@ -67,6 +67,7 @@ public class MalBestillingService {
         }
         log.info("rsbestilling arena før filtrering: {}", Json.pretty(rsBestilling.getArenaforvalter()));
         if (rsBestilling.getArenaforvalter().getAap().isEmpty()) {
+            log.info("AAP var tom, setter til null...");
             rsBestilling.getArenaforvalter().setAap(null);
         }
         if (rsBestilling.getArenaforvalter().getAap115().isEmpty()) {
