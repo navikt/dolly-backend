@@ -65,7 +65,7 @@ public class MalBestillingService {
         if (isNull(rsBestilling.getArenaforvalter())) {
             return;
         }
-        log.info("rsbestilling arena: {}", Json.pretty(rsBestilling.getArenaforvalter()));
+        log.info("rsbestilling arena før filtrering: {}", Json.pretty(rsBestilling.getArenaforvalter()));
         if (rsBestilling.getArenaforvalter().getAap().isEmpty()) {
             rsBestilling.getArenaforvalter().setAap(null);
         }
@@ -75,6 +75,7 @@ public class MalBestillingService {
         if (rsBestilling.getArenaforvalter().getDagpenger().isEmpty()) {
             rsBestilling.getArenaforvalter().setDagpenger(null);
         }
+        log.info("Etter filtrering: {}", Json.pretty(rsBestilling.getArenaforvalter()));
     }
 
     private static String getUserId(Bruker bruker) {
