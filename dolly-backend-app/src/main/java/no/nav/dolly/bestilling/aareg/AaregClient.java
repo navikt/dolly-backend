@@ -152,12 +152,15 @@ public class AaregClient implements ClientRegister {
             Map<String, ResponseEntity<Void>> response = ameldingConsumer.putAmeldingList(dtoMaanedMap, env);
             response.forEach((maaned, resp) -> {
                 log.info("Response fra Amelding service: " + Json.pretty(resp));
-                if (resp.getStatusCode().is2xxSuccessful() && result.indexOf("OK") == NOT_FOUND) {
-                    appendResult((singletonMap(env, "OK")), "1", result);
-                    saveTransaksjonId(resp, maaned, dollyPerson.getHovedperson(), progress.getBestilling().getId(), env);
-
+                if (resp.getStatusCode().is2xxSuccessful()) {
+                    if (result.indexOf("OK") == NOT_FOUND) {
+                        appendResult((singletonMap(env, "OK")), "1", result);
+                        saveTransaksjonId(resp, maaned, dollyPerson.getHovedperson(), progress.getBestilling().getId(), env);
+                    }
                 } else {
-                    appendResult((singletonMap(env, resp.getStatusCode().getReasonPhrase())), "1", result);
+                    if (result.indexOf(resp.getStatusCode().getReasonPhrase()) == NOT_FOUND) {
+                        appendResult((singletonMap(env, resp.getStatusCode().getReasonPhrase())), "1", result);
+                    }
                 }
             });
         } catch (RuntimeException e) {
