@@ -1,19 +1,19 @@
 package no.nav.dolly.service;
 
-import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.TreeSet;
-import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
 import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.domain.jpa.Bestilling;
 import no.nav.dolly.domain.jpa.Bruker;
 import no.nav.dolly.domain.resultset.entity.bestilling.RsMalBestillingWrapper;
 import no.nav.dolly.domain.resultset.entity.bruker.RsBrukerUtenFavoritter;
+import org.springframework.stereotype.Service;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.TreeSet;
+
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Service
 @RequiredArgsConstructor
@@ -35,12 +35,18 @@ public class MalBestillingService {
                         .thenComparing(RsMalBestillingWrapper.RsMalBestilling::getId)));
         bestillinger.forEach(bestilling -> {
 
+            RsMalBestillingWrapper.RsBestilling rsBestilling = mapperFacade.map(bestilling, RsMalBestillingWrapper.RsBestilling.class);
+
+            if (nonNull(rsBestilling.getArenaforvalter())) {
+                setArenaforvalterEmptyListsToNull(rsBestilling);
+            }
+
             RsMalBestillingWrapper.RsMalBestilling malBestilling = RsMalBestillingWrapper.RsMalBestilling.builder()
                     .malNavn(bestilling.getMalBestillingNavn())
                     .bruker(mapperFacade.map(nonNull(bestilling.getBruker()) ? bestilling.getBruker() :
                             Bruker.builder().brukerId(COMMON).brukernavn(COMMON).build(), RsBrukerUtenFavoritter.class))
                     .id(bestilling.getId())
-                    .bestilling(mapperFacade.map(bestilling, RsMalBestillingWrapper.RsBestilling.class))
+                    .bestilling(rsBestilling)
                     .build();
 
             malBestillingWrapper.getMalbestillinger().putIfAbsent(getUserId(bestilling.getBruker()),
@@ -51,6 +57,18 @@ public class MalBestillingService {
         });
 
         return malBestillingWrapper;
+    }
+
+    private void setArenaforvalterEmptyListsToNull(RsMalBestillingWrapper.RsBestilling rsBestilling) {
+        if (rsBestilling.getArenaforvalter().getAap().isEmpty()) {
+            rsBestilling.getArenaforvalter().setAap(null);
+        }
+        if (rsBestilling.getArenaforvalter().getAap115().isEmpty()) {
+            rsBestilling.getArenaforvalter().setAap115(null);
+        }
+        if (rsBestilling.getArenaforvalter().getDagpenger().isEmpty()) {
+            rsBestilling.getArenaforvalter().setDagpenger(null);
+        }
     }
 
     private static String getUserId(Bruker bruker) {

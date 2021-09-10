@@ -1,6 +1,5 @@
 package no.nav.dolly.provider.api;
 
-import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +59,7 @@ public class BestillingController {
         return mapperFacade.mapAsList(bestillingService.fetchBestillingerByGruppeId(gruppeId), RsBestillingStatus.class);
     }
 
-    @CacheEvict(value = {CACHE_BESTILLING, CACHE_GRUPPE}, allEntries = true)
+    @CacheEvict(value = { CACHE_BESTILLING, CACHE_GRUPPE }, allEntries = true)
     @DeleteMapping("/stop/{bestillingId}")
     @Operation(description = "Stopp en Bestilling med bestillingsId")
     public RsBestillingStatus stopBestillingProgress(@PathVariable("bestillingId") Long bestillingId) {
@@ -68,7 +67,7 @@ public class BestillingController {
         return mapperFacade.map(bestilling, RsBestillingStatus.class);
     }
 
-    @CacheEvict(value = {CACHE_BESTILLING, CACHE_GRUPPE}, allEntries = true)
+    @CacheEvict(value = { CACHE_BESTILLING, CACHE_GRUPPE }, allEntries = true)
     @PostMapping("/gjenopprett/{bestillingId}")
     @Operation(description = "Gjenopprett en bestilling med bestillingsId, for en liste med miljoer")
     public RsBestillingStatus gjenopprettBestilling(@PathVariable("bestillingId") Long bestillingId, @RequestParam(value = "miljoer", required = false) String miljoer) {
@@ -82,9 +81,7 @@ public class BestillingController {
     @Operation(description = "Hent mal-bestilling")
     public RsMalBestillingWrapper getMalBestillinger() {
 
-        RsMalBestillingWrapper malBestillinger = malBestillingService.getMalBestillinger();
-        log.info(Json.pretty(malBestillinger));
-        return malBestillinger;
+        return malBestillingService.getMalBestillinger();
     }
 
     @DeleteMapping("/malbestilling/{id}")
