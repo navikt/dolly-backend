@@ -1,5 +1,6 @@
 package no.nav.dolly.service;
 
+import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
@@ -64,7 +65,7 @@ public class MalBestillingService {
         if (isNull(rsBestilling.getArenaforvalter())) {
             return;
         }
-        log.info("rsbestilling arena: {}", rsBestilling.getArenaforvalter());
+        log.info("rsbestilling arena: {}", Json.pretty(rsBestilling.getArenaforvalter()));
         if (rsBestilling.getArenaforvalter().getAap().isEmpty()) {
             rsBestilling.getArenaforvalter().setAap(null);
         }
