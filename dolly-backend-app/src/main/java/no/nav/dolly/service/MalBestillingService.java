@@ -61,10 +61,10 @@ public class MalBestillingService {
     }
 
     private void setArenaforvalterEmptyListsToNull(RsMalBestillingWrapper.RsBestilling rsBestilling) {
-        log.info("rsbestilling arena: {}", rsBestilling.getArenaforvalter());
         if (isNull(rsBestilling.getArenaforvalter())) {
             return;
         }
+        log.info("rsbestilling arena: {}", rsBestilling.getArenaforvalter());
         if (rsBestilling.getArenaforvalter().getAap().isEmpty()) {
             rsBestilling.getArenaforvalter().setAap(null);
         }
