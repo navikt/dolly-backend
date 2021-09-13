@@ -1,7 +1,6 @@
 package no.nav.dolly.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.domain.jpa.Bestilling;
 import no.nav.dolly.domain.jpa.Bruker;
@@ -17,7 +16,6 @@ import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class MalBestillingService {
 
@@ -37,14 +35,12 @@ public class MalBestillingService {
                         .thenComparing(RsMalBestillingWrapper.RsMalBestilling::getId)));
         bestillinger.forEach(bestilling -> {
 
-            RsMalBestillingWrapper.RsBestilling rsBestilling = mapperFacade.map(bestilling, RsMalBestillingWrapper.RsBestilling.class);
-
             RsMalBestillingWrapper.RsMalBestilling malBestilling = RsMalBestillingWrapper.RsMalBestilling.builder()
                     .malNavn(bestilling.getMalBestillingNavn())
                     .bruker(mapperFacade.map(nonNull(bestilling.getBruker()) ? bestilling.getBruker() :
                             Bruker.builder().brukerId(COMMON).brukernavn(COMMON).build(), RsBrukerUtenFavoritter.class))
                     .id(bestilling.getId())
-                    .bestilling(rsBestilling)
+                    .bestilling(mapperFacade.map(bestilling, RsMalBestillingWrapper.RsBestilling.class))
                     .build();
 
             malBestillingWrapper.getMalbestillinger().putIfAbsent(getUserId(bestilling.getBruker()),

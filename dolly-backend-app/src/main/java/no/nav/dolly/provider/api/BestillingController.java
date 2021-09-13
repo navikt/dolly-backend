@@ -2,7 +2,6 @@ package no.nav.dolly.provider.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.bestilling.service.GjenopprettBestillingService;
 import no.nav.dolly.domain.MalbestillingNavn;
@@ -36,7 +35,6 @@ import static no.nav.dolly.config.CachingConfig.CACHE_GRUPPE;
 @Transactional
 @RestController
 @RequiredArgsConstructor
-@Slf4j
 @RequestMapping(value = "/api/v1/bestilling", produces = MediaType.APPLICATION_JSON_VALUE)
 public class BestillingController {
 
