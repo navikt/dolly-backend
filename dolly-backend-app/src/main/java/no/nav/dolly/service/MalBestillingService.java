@@ -1,6 +1,5 @@
 package no.nav.dolly.service;
 
-import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
@@ -14,7 +13,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -41,8 +39,6 @@ public class MalBestillingService {
 
             RsMalBestillingWrapper.RsBestilling rsBestilling = mapperFacade.map(bestilling, RsMalBestillingWrapper.RsBestilling.class);
 
-            setArenaforvalterEmptyListsToNull(rsBestilling);
-
             RsMalBestillingWrapper.RsMalBestilling malBestilling = RsMalBestillingWrapper.RsMalBestilling.builder()
                     .malNavn(bestilling.getMalBestillingNavn())
                     .bruker(mapperFacade.map(nonNull(bestilling.getBruker()) ? bestilling.getBruker() :
@@ -59,24 +55,6 @@ public class MalBestillingService {
         });
 
         return malBestillingWrapper;
-    }
-
-    private void setArenaforvalterEmptyListsToNull(RsMalBestillingWrapper.RsBestilling rsBestilling) {
-        if (isNull(rsBestilling.getArenaforvalter())) {
-            return;
-        }
-        log.info("rsbestilling arena før filtrering: {}", Json.pretty(rsBestilling.getArenaforvalter()));
-        if (rsBestilling.getArenaforvalter().getAap().isEmpty()) {
-            log.info("AAP var tom, setter til null...");
-            rsBestilling.getArenaforvalter().setAap(null);
-        }
-        if (rsBestilling.getArenaforvalter().getAap115().isEmpty()) {
-            rsBestilling.getArenaforvalter().setAap115(null);
-        }
-        if (rsBestilling.getArenaforvalter().getDagpenger().isEmpty()) {
-            rsBestilling.getArenaforvalter().setDagpenger(null);
-        }
-        log.info("Etter filtrering: {}", Json.pretty(rsBestilling.getArenaforvalter()));
     }
 
     private static String getUserId(Bruker bruker) {
