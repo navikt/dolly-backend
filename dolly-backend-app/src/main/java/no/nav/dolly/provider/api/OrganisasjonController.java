@@ -32,7 +32,7 @@ import static no.nav.dolly.config.CachingConfig.CACHE_ORG_BESTILLING;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "api/v2/organisasjon")
+@RequestMapping(value = "api/v1/organisasjon")
 public class OrganisasjonController {
 
     private final OrganisasjonClient organisasjonClient;
