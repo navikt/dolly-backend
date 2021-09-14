@@ -1,19 +1,6 @@
 package no.nav.dolly.bestilling.organisasjonforvalter;
 
-import static java.lang.String.format;
-import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
-import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
-import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-
-import java.util.List;
-import java.util.UUID;
-
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.BestillingRequest;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.BestillingResponse;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployRequest;
@@ -23,14 +10,25 @@ import no.nav.dolly.config.credentials.OrganisasjonForvalterProperties;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.security.oauth2.domain.AccessToken;
 import no.nav.dolly.security.oauth2.service.TokenService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.List;
+import java.util.UUID;
+
+import static java.lang.String.format;
+import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
+import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
+import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Slf4j
 @Service
 public class OrganisasjonConsumer {
 
-    private static final String ORGANISASJON_FORVALTER_URL = "/api/v1/organisasjon";
-    private static final String ORGANISASJON_BESTILLING_URL = ORGANISASJON_FORVALTER_URL + "/bestilling";
-    private static final String ORGANISASJON_DEPLOYMENT_URL = ORGANISASJON_FORVALTER_URL + "/deployment";
+    private static final String ORGANISASJON_FORVALTER_URL = "/api/v2/organisasjoner";
+    private static final String ORGANISASJON_DEPLOYMENT_URL = ORGANISASJON_FORVALTER_URL + "/ordre";
     private static final String BEARER = "Bearer ";
 
     private final TokenService tokenService;
@@ -45,7 +43,7 @@ public class OrganisasjonConsumer {
                 .build();
     }
 
-    @Timed(name = "providers", tags = {"operation", "organisasjon-hent"})
+    @Timed(name = "providers", tags = { "operation", "organisasjon-hent" })
     public OrganisasjonDetaljer hentOrganisasjon(List<String> orgnumre) {
         var navCallId = getNavCallId();
         log.info("Organisasjon hent request sendt, callId: {}, consumerId: {}", navCallId, CONSUMER);
@@ -65,13 +63,13 @@ public class OrganisasjonConsumer {
     }
 
 
-    @Timed(name = "providers", tags = {"operation", "organisasjon-opprett"})
+    @Timed(name = "providers", tags = { "operation", "organisasjon-opprett" })
     public ResponseEntity<BestillingResponse> postOrganisasjon(BestillingRequest bestillingRequest) {
         var navCallId = getNavCallId();
         log.info("Organisasjon oppretting sendt, callId: {}, consumerId: {}", navCallId, CONSUMER);
         return tokenService.generateToken(serviceProperties).flatMap(accessToken -> webClient
                 .post()
-                .uri(uriBuilder -> uriBuilder.path(ORGANISASJON_BESTILLING_URL).build())
+                .uri(uriBuilder -> uriBuilder.path(ORGANISASJON_FORVALTER_URL).build())
                 .header(AUTHORIZATION, BEARER + accessToken.getTokenValue())
                 .header(HEADER_NAV_CALL_ID, navCallId)
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
@@ -81,7 +79,7 @@ public class OrganisasjonConsumer {
         ).block();
     }
 
-    @Timed(name = "providers", tags = {"operation", "organisasjon-deploy"})
+    @Timed(name = "providers", tags = { "operation", "organisasjon-deploy" })
     public ResponseEntity<DeployResponse> deployOrganisasjon(DeployRequest request) {
         var navCallId = getNavCallId();
         log.info("Organisasjon deploy sendt, callId: {}, consumerId: {}", navCallId, CONSUMER);
