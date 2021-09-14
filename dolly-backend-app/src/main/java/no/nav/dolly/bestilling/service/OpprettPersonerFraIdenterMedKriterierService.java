@@ -29,14 +29,12 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import static java.util.Objects.nonNull;
-import static org.apache.logging.log4j.util.Strings.isNotBlank;
 
 @Slf4j
 @Service
 public class OpprettPersonerFraIdenterMedKriterierService extends DollyBestillingService {
 
     private BestillingService bestillingService;
-    private IdentService identService;
     private ErrorStatusDecoder errorStatusDecoder;
     private MapperFacade mapperFacade;
     private TpsfService tpsfService;
@@ -93,10 +91,6 @@ public class OpprettPersonerFraIdenterMedKriterierService extends DollyBestillin
                                             .master(Testident.Master.TPSF)
                                             .build();
 
-                                    if (isNotBlank(bestKriterier.getBeskrivelse())) {
-                                        log.info("sender med kommentar: {} på ident: {}", bestKriterier.getBeskrivelse(), dollyPerson.getHovedperson());
-                                        identService.setIdentBeskrivelse(bestKriterier.getBeskrivelse(), dollyPerson.getHovedperson());
-                                    }
 
                                     gjenopprettNonTpsf(dollyPerson, bestKriterier, progress, false);
                                 } else {
