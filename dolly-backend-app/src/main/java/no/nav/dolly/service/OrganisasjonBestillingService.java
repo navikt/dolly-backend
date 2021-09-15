@@ -3,6 +3,7 @@ package no.nav.dolly.service;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.organisasjonforvalter.OrganisasjonConsumer;
@@ -94,7 +95,8 @@ public class OrganisasjonBestillingService {
             return RsOrganisasjonBestillingStatus.builder().build();
         }
 
-        return RsOrganisasjonBestillingStatus.builder()
+
+        RsOrganisasjonBestillingStatus organisasjonBestillingStatus = RsOrganisasjonBestillingStatus.builder()
                 .status(BestillingOrganisasjonStatusMapper.buildOrganisasjonStatusMap(bestillingProgress))
                 .bestilling(jsonBestillingMapper.mapOrganisasjonBestillingRequest(bestilling.getBestKriterier()))
                 .sistOppdatert(bestilling.getSistOppdatert())
@@ -105,6 +107,10 @@ public class OrganisasjonBestillingService {
                 .environments(Arrays.asList(bestilling.getMiljoer().split(",")))
                 .antallLevert(isTrue(bestilling.getFerdig()) && isBlank(bestilling.getFeil()) ? 1 : 0)
                 .build();
+
+        log.info("Returnerer OrganisasjonBestilling status: {}", Json.pretty());
+
+        return organisasjonBestillingStatus;
     }
 
     public List<RsOrganisasjonBestillingStatus> fetchBestillingStatusByBrukerId(String brukerId) {
