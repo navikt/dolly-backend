@@ -74,7 +74,6 @@ public class OrganisasjonController {
     }
 
     @GetMapping("/bestilling")
-    @Cacheable(value = CACHE_ORG_BESTILLING)
     @Operation(description = "Hent status på bestilling basert på bestillingId")
     public RsOrganisasjonBestillingStatus hentBestilling(
             @Parameter(description = "ID på bestilling av organisasjon", example = "123") @RequestParam Long bestillingId) {
