@@ -69,6 +69,7 @@ public class OrganisasjonBestillingService {
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, format("Fant ikke bestilling på bestillingId %d", bestillingId)));
 
         OrganisasjonBestillingProgress bestillingProgress;
+        OrganisasjonDeployStatus organisasjonDeployStatus = null;
 
         try {
             List<OrganisasjonBestillingProgress> bestillingProgressList = progressService.fetchOrganisasjonBestillingProgressByBestillingsId(bestillingId);
@@ -79,10 +80,11 @@ public class OrganisasjonBestillingService {
             bestillingProgress = bestillingProgressList.get(0);
 
             if (nonNull(bestilling.getFerdig()) && isFalse(bestilling.getFerdig())) {
-                OrganisasjonDeployStatus organisasjonDeployStatus = organisasjonConsumer.hentOrganisasjonStatus(Collections.singletonList(bestillingProgress.getOrganisasjonsnummer()));
+                organisasjonDeployStatus = organisasjonConsumer.hentOrganisasjonStatus(Collections.singletonList(bestillingProgress.getOrganisasjonsnummer()));
 
                 log.info("Organisasjon deploy status: {}", Json.pretty(organisasjonDeployStatus));
-                if (DEPLOY_ENDED_STATUS_LIST.stream().anyMatch(status -> status.equals(organisasjonDeployStatus.getStatus()))) {
+                OrganisasjonDeployStatus finalOrganisasjonDeployStatus = organisasjonDeployStatus;
+                if (DEPLOY_ENDED_STATUS_LIST.stream().anyMatch(status -> status.equals(finalOrganisasjonDeployStatus.getStatus()))) {
                     if (ERROR.equals(organisasjonDeployStatus.getStatus()) || FAILED.equals(organisasjonDeployStatus.getStatus())) {
                         bestilling.setFeil(organisasjonDeployStatus.getError());
                     }
@@ -96,7 +98,7 @@ public class OrganisasjonBestillingService {
         }
 
         RsOrganisasjonBestillingStatus organisasjonBestillingStatus = RsOrganisasjonBestillingStatus.builder()
-                .status(BestillingOrganisasjonStatusMapper.buildOrganisasjonStatusMap(bestillingProgress))
+                .status(BestillingOrganisasjonStatusMapper.buildOrganisasjonStatusMap(bestillingProgress, nonNull(organisasjonDeployStatus) ? organisasjonDeployStatus.getDetails() : null))
                 .bestilling(jsonBestillingMapper.mapOrganisasjonBestillingRequest(bestilling.getBestKriterier()))
                 .sistOppdatert(bestilling.getSistOppdatert())
                 .organisasjonNummer(bestillingProgress.getOrganisasjonsnummer())
@@ -135,7 +137,7 @@ public class OrganisasjonBestillingService {
                                     "Fant ikke noen bestillinger med bestillingId: " + bestillingStatus.getBestillingId())
                     );
                     statusListe.add(RsOrganisasjonBestillingStatus.builder()
-                            .status(BestillingOrganisasjonStatusMapper.buildOrganisasjonStatusMap(bestillingStatus))
+                            .status(BestillingOrganisasjonStatusMapper.buildOrganisasjonStatusMap(bestillingStatus, null))
                             .bestilling(jsonBestillingMapper.mapOrganisasjonBestillingRequest(orgBestilling.getBestKriterier()))
                             .sistOppdatert(orgBestilling.getSistOppdatert())
                             .organisasjonNummer(bestillingStatus.getOrganisasjonsnummer())
