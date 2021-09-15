@@ -90,6 +90,7 @@ public class OrganisasjonBestillingService {
 
         } catch (HttpClientErrorException e) {
             log.info("Status ikke opprettet for bestilling enda");
+            return RsOrganisasjonBestillingStatus.builder().build();
         }
 
         return RsOrganisasjonBestillingStatus.builder()
