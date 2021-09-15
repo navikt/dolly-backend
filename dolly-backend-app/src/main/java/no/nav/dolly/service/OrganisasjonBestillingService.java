@@ -67,7 +67,7 @@ public class OrganisasjonBestillingService {
         OrganisasjonBestilling bestilling = bestillingRepository.findById(bestillingId)
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, format("Fant ikke bestilling på bestillingId %d", bestillingId)));
 
-        OrganisasjonBestillingProgress bestillingProgress = null;
+        OrganisasjonBestillingProgress bestillingProgress;
 
         try {
             List<OrganisasjonBestillingProgress> bestillingProgressList = progressService.fetchOrganisasjonBestillingProgressByBestillingsId(bestillingId);
