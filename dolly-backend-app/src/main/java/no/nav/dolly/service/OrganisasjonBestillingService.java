@@ -76,7 +76,7 @@ public class OrganisasjonBestillingService {
             }
             bestillingProgress = bestillingProgressList.get(0);
 
-            if (!bestilling.getFerdig()) {
+            if (nonNull(bestilling) && !bestilling.getFerdig()) {
                 OrganisasjonDeployStatus organisasjonDeployStatus = organisasjonConsumer.hentOrganisasjonStatus(Collections.singletonList(bestillingProgress.getOrganisasjonsnummer()));
 
                 log.info("Organisasjon deploy status: {}", organisasjonDeployStatus);
