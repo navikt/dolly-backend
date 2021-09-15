@@ -39,6 +39,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonStatusDTO.Status.COMPLETED;
 import static no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonStatusDTO.Status.ERROR;
+import static no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonStatusDTO.Status.FAILED;
 import static no.nav.dolly.config.CachingConfig.CACHE_ORG_BESTILLING;
 import static no.nav.dolly.util.CurrentAuthentication.getUserId;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
@@ -80,6 +81,9 @@ public class OrganisasjonBestillingService {
 
                 log.info("Organisasjon deploy status: {}", organisasjonDeployStatus);
                 if (DEPLOY_ENDED_STATUS_LIST.stream().anyMatch(status -> status.equals(organisasjonDeployStatus.getStatus()))) {
+                    if (ERROR.equals(organisasjonDeployStatus.getStatus()) || FAILED.equals(organisasjonDeployStatus.getStatus())) {
+                        bestilling.setFeil(organisasjonDeployStatus.getError());
+                    }
                     bestilling.setFerdig(true);
                 }
             }
@@ -119,21 +123,21 @@ public class OrganisasjonBestillingService {
         List<RsOrganisasjonBestillingStatus> statusListe = new ArrayList<>();
         bestillingProgress.forEach(bestillingStatus -> {
 
-            OrganisasjonBestilling orgBestilling = bestillingRepository.findById(bestillingStatus.getBestillingId()).orElseThrow(() ->
-                    new HttpClientErrorException(HttpStatus.BAD_REQUEST,
-                            "Fant ikke noen bestillinger med bestillingId: " + bestillingStatus.getBestillingId())
-            );
-            statusListe.add(RsOrganisasjonBestillingStatus.builder()
-                    .status(BestillingOrganisasjonStatusMapper.buildOrganisasjonStatusMap(bestillingStatus))
-                    .bestilling(jsonBestillingMapper.mapOrganisasjonBestillingRequest(orgBestilling.getBestKriterier()))
-                    .sistOppdatert(orgBestilling.getSistOppdatert())
-                    .organisasjonNummer(bestillingStatus.getOrganisasjonsnummer())
-                    .id(bestillingStatus.getBestillingId())
-                    .ferdig(isTrue(orgBestilling.getFerdig()))
-                    .feil(orgBestilling.getFeil())
-                    .environments(Arrays.asList(orgBestilling.getMiljoer().split(",")))
-                    .antallLevert(isTrue(orgBestilling.getFerdig()) && isBlank(orgBestilling.getFeil()) ? 1 : 0)
-                    .build());
+                    OrganisasjonBestilling orgBestilling = bestillingRepository.findById(bestillingStatus.getBestillingId()).orElseThrow(() ->
+                            new HttpClientErrorException(HttpStatus.BAD_REQUEST,
+                                    "Fant ikke noen bestillinger med bestillingId: " + bestillingStatus.getBestillingId())
+                    );
+                    statusListe.add(RsOrganisasjonBestillingStatus.builder()
+                            .status(BestillingOrganisasjonStatusMapper.buildOrganisasjonStatusMap(bestillingStatus))
+                            .bestilling(jsonBestillingMapper.mapOrganisasjonBestillingRequest(orgBestilling.getBestKriterier()))
+                            .sistOppdatert(orgBestilling.getSistOppdatert())
+                            .organisasjonNummer(bestillingStatus.getOrganisasjonsnummer())
+                            .id(bestillingStatus.getBestillingId())
+                            .ferdig(isTrue(orgBestilling.getFerdig()))
+                            .feil(orgBestilling.getFeil())
+                            .environments(Arrays.asList(orgBestilling.getMiljoer().split(",")))
+                            .antallLevert(isTrue(orgBestilling.getFerdig()) && isBlank(orgBestilling.getFeil()) ? 1 : 0)
+                            .build());
 
                 }
         );
