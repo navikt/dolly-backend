@@ -81,7 +81,7 @@ public class OrganisasjonBestillingService {
             if (nonNull(bestilling.getFerdig()) && isFalse(bestilling.getFerdig())) {
                 OrganisasjonDeployStatus organisasjonDeployStatus = organisasjonConsumer.hentOrganisasjonStatus(Collections.singletonList(bestillingProgress.getOrganisasjonsnummer()));
 
-                log.info("Organisasjon deploy status: {}", organisasjonDeployStatus);
+                log.info("Organisasjon deploy status: {}", Json.pretty(organisasjonDeployStatus));
                 if (DEPLOY_ENDED_STATUS_LIST.stream().anyMatch(status -> status.equals(organisasjonDeployStatus.getStatus()))) {
                     if (ERROR.equals(organisasjonDeployStatus.getStatus()) || FAILED.equals(organisasjonDeployStatus.getStatus())) {
                         bestilling.setFeil(organisasjonDeployStatus.getError());
@@ -95,7 +95,6 @@ public class OrganisasjonBestillingService {
             return RsOrganisasjonBestillingStatus.builder().build();
         }
 
-
         RsOrganisasjonBestillingStatus organisasjonBestillingStatus = RsOrganisasjonBestillingStatus.builder()
                 .status(BestillingOrganisasjonStatusMapper.buildOrganisasjonStatusMap(bestillingProgress))
                 .bestilling(jsonBestillingMapper.mapOrganisasjonBestillingRequest(bestilling.getBestKriterier()))
@@ -108,7 +107,7 @@ public class OrganisasjonBestillingService {
                 .antallLevert(isTrue(bestilling.getFerdig()) && isBlank(bestilling.getFeil()) ? 1 : 0)
                 .build();
 
-        log.info("Returnerer OrganisasjonBestilling status: {}", Json.pretty());
+        log.info("Returnerer OrganisasjonBestilling status: {}", Json.pretty(organisasjonBestillingStatus));
 
         return organisasjonBestillingStatus;
     }
