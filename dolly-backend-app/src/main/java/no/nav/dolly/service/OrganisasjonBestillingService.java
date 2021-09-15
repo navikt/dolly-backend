@@ -5,6 +5,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.dolly.bestilling.organisasjonforvalter.OrganisasjonConsumer;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonDeployStatus;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonStatusDTO.Status;
 import no.nav.dolly.domain.jpa.OrganisasjonBestilling;
 import no.nav.dolly.domain.jpa.OrganisasjonBestillingProgress;
 import no.nav.dolly.domain.jpa.OrganisasjonNummer;
@@ -32,7 +35,10 @@ import java.util.stream.Collectors;
 import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.time.LocalDateTime.now;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonStatusDTO.Status.COMPLETED;
+import static no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonStatusDTO.Status.ERROR;
 import static no.nav.dolly.config.CachingConfig.CACHE_ORG_BESTILLING;
 import static no.nav.dolly.util.CurrentAuthentication.getUserId;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
@@ -44,8 +50,11 @@ import static org.apache.logging.log4j.util.Strings.isBlank;
 @RequiredArgsConstructor
 public class OrganisasjonBestillingService {
 
+    private static final List<Status> DEPLOY_ENDED_STATUS_LIST = List.of(COMPLETED, ERROR);
+
     private final OrganisasjonBestillingRepository bestillingRepository;
     private final OrganisasjonProgressService progressService;
+    private final OrganisasjonConsumer organisasjonConsumer;
     private final OrganisasjonNummerService organisasjonNummerService;
     private final BrukerService brukerService;
     private final ObjectMapper objectMapper;
@@ -56,20 +65,34 @@ public class OrganisasjonBestillingService {
         OrganisasjonBestilling bestilling = bestillingRepository.findById(bestillingId)
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, format("Fant ikke bestilling på bestillingId %d", bestillingId)));
 
-        List<OrganisasjonBestillingProgress> bestillingProgressList = new ArrayList<>();
+        OrganisasjonBestillingProgress bestillingProgress = null;
 
         try {
-            bestillingProgressList = progressService.fetchOrganisasjonBestillingProgressByBestillingsId(bestillingId);
+            List<OrganisasjonBestillingProgress> bestillingProgressList = progressService.fetchOrganisasjonBestillingProgressByBestillingsId(bestillingId);
+
+            if (isNull(bestillingProgressList) || bestillingProgressList.isEmpty()) {
+                throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
+            }
+            bestillingProgress = bestillingProgressList.get(0);
+
+            if (!bestilling.getFerdig()) {
+                OrganisasjonDeployStatus organisasjonDeployStatus = organisasjonConsumer.hentOrganisasjonStatus(Collections.singletonList(bestillingProgress.getOrganisasjonsnummer()));
+
+                log.info("Organisasjon deploy status: {}", organisasjonDeployStatus);
+                if (DEPLOY_ENDED_STATUS_LIST.stream().anyMatch(status -> status.equals(organisasjonDeployStatus.getStatus()))) {
+                    bestilling.setFerdig(true);
+                }
+            }
 
         } catch (HttpClientErrorException e) {
             log.info("Status ikke opprettet for bestilling enda");
         }
 
         return RsOrganisasjonBestillingStatus.builder()
-                .status(BestillingOrganisasjonStatusMapper.buildOrganisasjonStatusMap(!bestillingProgressList.isEmpty() ? bestillingProgressList.get(0) : null))
+                .status(BestillingOrganisasjonStatusMapper.buildOrganisasjonStatusMap(bestillingProgress))
                 .bestilling(jsonBestillingMapper.mapOrganisasjonBestillingRequest(bestilling.getBestKriterier()))
                 .sistOppdatert(bestilling.getSistOppdatert())
-                .organisasjonNummer(!bestillingProgressList.isEmpty() ? bestillingProgressList.get(0).getOrganisasjonsnummer() : null)
+                .organisasjonNummer(bestillingProgress.getOrganisasjonsnummer())
                 .id(bestillingId)
                 .ferdig(isTrue(bestilling.getFerdig()))
                 .feil(bestilling.getFeil())
@@ -102,15 +125,15 @@ public class OrganisasjonBestillingService {
             );
             statusListe.add(RsOrganisasjonBestillingStatus.builder()
                     .status(BestillingOrganisasjonStatusMapper.buildOrganisasjonStatusMap(bestillingStatus))
-                            .bestilling(jsonBestillingMapper.mapOrganisasjonBestillingRequest(orgBestilling.getBestKriterier()))
-                            .sistOppdatert(orgBestilling.getSistOppdatert())
-                            .organisasjonNummer(bestillingStatus.getOrganisasjonsnummer())
-                            .id(bestillingStatus.getBestillingId())
-                            .ferdig(isTrue(orgBestilling.getFerdig()))
-                            .feil(orgBestilling.getFeil())
-                            .environments(Arrays.asList(orgBestilling.getMiljoer().split(",")))
-                            .antallLevert(isTrue(orgBestilling.getFerdig()) && isBlank(orgBestilling.getFeil()) ? 1 : 0)
-                            .build());
+                    .bestilling(jsonBestillingMapper.mapOrganisasjonBestillingRequest(orgBestilling.getBestKriterier()))
+                    .sistOppdatert(orgBestilling.getSistOppdatert())
+                    .organisasjonNummer(bestillingStatus.getOrganisasjonsnummer())
+                    .id(bestillingStatus.getBestillingId())
+                    .ferdig(isTrue(orgBestilling.getFerdig()))
+                    .feil(orgBestilling.getFeil())
+                    .environments(Arrays.asList(orgBestilling.getMiljoer().split(",")))
+                    .antallLevert(isTrue(orgBestilling.getFerdig()) && isBlank(orgBestilling.getFeil()) ? 1 : 0)
+                    .build());
 
                 }
         );

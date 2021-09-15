@@ -5,6 +5,7 @@ import no.nav.dolly.bestilling.organisasjonforvalter.domain.BestillingRequest;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.BestillingResponse;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployRequest;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.DeployResponse;
+import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonDeployStatus;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonDetaljer;
 import no.nav.dolly.config.credentials.OrganisasjonForvalterProperties;
 import no.nav.dolly.metrics.Timed;
@@ -29,6 +30,7 @@ public class OrganisasjonConsumer {
 
     private static final String ORGANISASJON_FORVALTER_URL = "/api/v2/organisasjoner";
     private static final String ORGANISASJON_DEPLOYMENT_URL = ORGANISASJON_FORVALTER_URL + "/ordre";
+    private static final String ORGANISASJON_STATUS_URL = ORGANISASJON_FORVALTER_URL + "/ordrestatus";
     private static final String BEARER = "Bearer ";
 
     private final TokenService tokenService;
@@ -59,6 +61,25 @@ public class OrganisasjonConsumer {
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .retrieve()
                 .bodyToMono(OrganisasjonDetaljer.class)
+        ).block();
+    }
+
+    @Timed(name = "providers", tags = { "operation", "organisasjon-hent" })
+    public OrganisasjonDeployStatus hentOrganisasjonStatus(List<String> orgnumre) {
+        var navCallId = getNavCallId();
+        log.info("Organisasjon hent request sendt, callId: {}, consumerId: {}", navCallId, CONSUMER);
+
+        return tokenService.generateToken(serviceProperties).flatMap(accessToken -> webClient
+                .get()
+                .uri(uriBuilder ->
+                        uriBuilder.path(ORGANISASJON_STATUS_URL)
+                                .queryParam("orgnumre", orgnumre)
+                                .build())
+                .header(AUTHORIZATION, BEARER + accessToken.getTokenValue())
+                .header(HEADER_NAV_CALL_ID, navCallId)
+                .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
+                .retrieve()
+                .bodyToMono(OrganisasjonDeployStatus.class)
         ).block();
     }
 
