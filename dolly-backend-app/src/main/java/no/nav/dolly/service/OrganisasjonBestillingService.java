@@ -42,6 +42,7 @@ import static no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonS
 import static no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonStatusDTO.Status.FAILED;
 import static no.nav.dolly.config.CachingConfig.CACHE_ORG_BESTILLING;
 import static no.nav.dolly.util.CurrentAuthentication.getUserId;
+import static org.apache.commons.lang3.BooleanUtils.isFalse;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.apache.logging.log4j.util.Strings.isBlank;
 
@@ -76,7 +77,7 @@ public class OrganisasjonBestillingService {
             }
             bestillingProgress = bestillingProgressList.get(0);
 
-            if (nonNull(bestilling) && !bestilling.getFerdig()) {
+            if (nonNull(bestilling.getFerdig()) && isFalse(bestilling.getFerdig())) {
                 OrganisasjonDeployStatus organisasjonDeployStatus = organisasjonConsumer.hentOrganisasjonStatus(Collections.singletonList(bestillingProgress.getOrganisasjonsnummer()));
 
                 log.info("Organisasjon deploy status: {}", organisasjonDeployStatus);
