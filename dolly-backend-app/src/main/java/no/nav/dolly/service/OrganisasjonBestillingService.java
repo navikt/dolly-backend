@@ -55,7 +55,7 @@ import static org.apache.logging.log4j.util.Strings.isBlank;
 @RequiredArgsConstructor
 public class OrganisasjonBestillingService {
 
-    private static final List<Status> DEPLOY_ENDED_STATUS_LIST = List.of(COMPLETED, ERROR);
+    private static final List<Status> DEPLOY_ENDED_STATUS_LIST = List.of(COMPLETED, ERROR, FAILED);
 
     private final OrganisasjonBestillingRepository bestillingRepository;
     private final OrganisasjonProgressService progressService;
@@ -84,10 +84,11 @@ public class OrganisasjonBestillingService {
             if (nonNull(bestilling.getFerdig()) && isFalse(bestilling.getFerdig())) {
                 OrganisasjonDeployStatus organisasjonDeployStatus = organisasjonConsumer.hentOrganisasjonStatus(Collections.singletonList(bestillingProgress.getOrganisasjonsnummer()));
 
-                log.info("Organisasjon deploy status: {}", Json.pretty(organisasjonDeployStatus));
+                log.info("Organisasjon deploy status map: {}", Json.pretty(organisasjonDeployStatus));
                 List<OrgStatus> organisasjonStatusList = organisasjonDeployStatus.getOrgStatus().values().stream().findFirst().orElse(emptyList());
                 orgStatus = organisasjonStatusList.isEmpty() ? new OrgStatus() : organisasjonStatusList.get(0);
                 OrgStatus finalOrgStatus = orgStatus;
+                log.info("Organisasjon deploy status: {}", Json.pretty(finalOrgStatus));
 
                 if (DEPLOY_ENDED_STATUS_LIST.stream().anyMatch(status -> status.equals(finalOrgStatus.getStatus()))) {
                     if (ERROR.equals(orgStatus.getStatus()) || FAILED.equals(orgStatus.getStatus())) {
