@@ -11,13 +11,11 @@ import no.nav.dolly.config.credentials.OrganisasjonForvalterProperties;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.security.oauth2.domain.AccessToken;
 import no.nav.dolly.security.oauth2.service.TokenService;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -67,7 +65,7 @@ public class OrganisasjonConsumer {
     }
 
     @Timed(name = "providers", tags = { "operation", "organisasjon-hent" })
-    public Map<String, OrganisasjonDeployStatus> hentOrganisasjonStatus(List<String> orgnumre) {
+    public OrganisasjonDeployStatus hentOrganisasjonStatus(List<String> orgnumre) {
         var navCallId = getNavCallId();
         log.info("Organisasjon hent request sendt, callId: {}, consumerId: {}", navCallId, CONSUMER);
 
@@ -81,8 +79,7 @@ public class OrganisasjonConsumer {
                 .header(HEADER_NAV_CALL_ID, navCallId)
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<Map<String, OrganisasjonDeployStatus>>() {
-                })
+                .bodyToMono(OrganisasjonDeployStatus.class)
         ).block();
     }
 
