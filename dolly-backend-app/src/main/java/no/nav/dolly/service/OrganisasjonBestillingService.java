@@ -92,9 +92,9 @@ public class OrganisasjonBestillingService {
 
                 if (DEPLOY_ENDED_STATUS_LIST.stream().anyMatch(status -> status.equals(finalOrgStatus.getStatus()))) {
                     if (ERROR.equals(orgStatus.getStatus()) || FAILED.equals(orgStatus.getStatus())) {
-                        bestilling.setFeil(orgStatus.getError());
+                        setBestillingFeil(bestilling.getId(), orgStatus.getError());
                     }
-                    bestilling.setFerdig(true);
+                    setBestillingFerdig(bestilling.getId());
                 }
             }
 
@@ -180,7 +180,6 @@ public class OrganisasjonBestillingService {
                 OrganisasjonBestilling.builder()
                         .antall(1)
                         .sistOppdatert(now())
-                        .ferdig(Boolean.FALSE)
                         .miljoer(join(",", request.getEnvironments()))
                         .bestKriterier(toJson(request.getOrganisasjon()))
                         .bruker(brukerService.fetchOrCreateBruker(getUserId()))
@@ -195,6 +194,7 @@ public class OrganisasjonBestillingService {
                 OrganisasjonBestilling.builder()
                         .antall(1)
                         .sistOppdatert(now())
+                        .ferdig(status.getFerdig())
                         .miljoer(join(",", status.getEnvironments()))
                         .bestKriterier(toJson(status.getBestilling()))
                         .bruker(brukerService.fetchOrCreateBruker(getUserId()))
