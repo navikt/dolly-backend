@@ -3,4 +3,4 @@
 ------------------------------
 
 alter table organisasjon_bestilling
-    alter column ferdig set default false
+    alter column ferdig set default false;
