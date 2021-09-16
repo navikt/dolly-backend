@@ -79,11 +79,13 @@ public class OrganisasjonBestillingService {
             }
             bestillingProgress = bestillingProgressList.get(0);
 
+            log.info("Bestilling (sjekk om ferdig): {}", Json.pretty(bestilling));
+
             if (nonNull(bestilling.getFerdig()) && isFalse(bestilling.getFerdig())) {
                 organisasjonDeployStatus = organisasjonConsumer.hentOrganisasjonStatus(Collections.singletonList(bestillingProgress.getOrganisasjonsnummer()));
 
-                log.info("Organisasjon deploy status: {}", Json.pretty(organisasjonDeployStatus));
                 OrganisasjonDeployStatus finalOrganisasjonDeployStatus = organisasjonDeployStatus;
+                log.info("Organisasjon deploy status: {}", Json.pretty(finalOrganisasjonDeployStatus));
                 if (DEPLOY_ENDED_STATUS_LIST.stream().anyMatch(status -> status.equals(finalOrganisasjonDeployStatus.getStatus()))) {
                     if (ERROR.equals(organisasjonDeployStatus.getStatus()) || FAILED.equals(organisasjonDeployStatus.getStatus())) {
                         bestilling.setFeil(organisasjonDeployStatus.getError());
