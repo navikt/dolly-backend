@@ -56,7 +56,7 @@ public class OrganisasjonBestilling {
     @Column(name = "feil")
     private String feil;
 
-    @Column(name = "ferdig", columnDefinition = "boolean default false")
+    @Column(name = "ferdig", columnDefinition = "Boolean default false")
     private Boolean ferdig = false;
 
     @Column(name = "opprettet_fra_id")
