@@ -3,7 +3,6 @@ package no.nav.dolly.service;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.organisasjonforvalter.OrganisasjonConsumer;
@@ -84,14 +83,13 @@ public class OrganisasjonBestillingService {
             if (nonNull(bestilling) && isNotTrue(bestilling.getFerdig())) {
                 OrganisasjonDeployStatus organisasjonDeployStatus = organisasjonConsumer.hentOrganisasjonStatus(Collections.singletonList(bestillingProgress.getOrganisasjonsnummer()));
 
-                log.info("Organisasjon deploy status map: {}", Json.pretty(organisasjonDeployStatus));
                 List<OrgStatus> organisasjonStatusList = organisasjonDeployStatus.getOrgStatus().values().stream().findFirst().orElse(emptyList());
                 orgStatus = organisasjonStatusList.isEmpty() ? new OrgStatus() : organisasjonStatusList.get(0);
                 OrgStatus finalOrgStatus = orgStatus;
-                log.info("Organisasjon deploy status: {}", Json.pretty(finalOrgStatus));
 
                 if (DEPLOY_ENDED_STATUS_LIST.stream().anyMatch(status -> status.equals(finalOrgStatus.getStatus()))) {
                     if (ERROR.equals(orgStatus.getStatus()) || FAILED.equals(orgStatus.getStatus())) {
+                        log.error("Error i organisasjonForvalter: {}", orgStatus.getError());
                         setBestillingFeil(bestilling.getId(), orgStatus.getError());
                     }
                     setBestillingFerdig(bestilling.getId());
@@ -103,7 +101,7 @@ public class OrganisasjonBestillingService {
             return RsOrganisasjonBestillingStatus.builder().build();
         }
 
-        RsOrganisasjonBestillingStatus organisasjonBestillingStatus = RsOrganisasjonBestillingStatus.builder()
+        return RsOrganisasjonBestillingStatus.builder()
                 .status(BestillingOrganisasjonStatusMapper.buildOrganisasjonStatusMap(bestillingProgress, nonNull(orgStatus) ? orgStatus.getDetails() : null))
                 .bestilling(jsonBestillingMapper.mapOrganisasjonBestillingRequest(bestilling.getBestKriterier()))
                 .sistOppdatert(bestilling.getSistOppdatert())
@@ -114,10 +112,6 @@ public class OrganisasjonBestillingService {
                 .environments(Arrays.asList(bestilling.getMiljoer().split(",")))
                 .antallLevert(isTrue(bestilling.getFerdig()) && isBlank(bestilling.getFeil()) ? 1 : 0)
                 .build();
-
-        log.info("Returnerer OrganisasjonBestilling status: {}", Json.pretty(organisasjonBestillingStatus));
-
-        return organisasjonBestillingStatus;
     }
 
     public List<RsOrganisasjonBestillingStatus> fetchBestillingStatusByBrukerId(String brukerId) {
