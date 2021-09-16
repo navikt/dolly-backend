@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -69,6 +70,7 @@ public class OrganisasjonBestillingService {
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, format("Fant ikke bestilling på bestillingId %d", bestillingId)));
 
         OrganisasjonBestillingProgress bestillingProgress;
+        Map<String, OrganisasjonDeployStatus> organisasjonDeployStatusMap = null;
         OrganisasjonDeployStatus organisasjonDeployStatus = null;
 
         try {
@@ -80,9 +82,10 @@ public class OrganisasjonBestillingService {
             bestillingProgress = bestillingProgressList.get(0);
 
             if (nonNull(bestilling.getFerdig()) && isFalse(bestilling.getFerdig())) {
-                organisasjonDeployStatus = organisasjonConsumer.hentOrganisasjonStatus(Collections.singletonList(bestillingProgress.getOrganisasjonsnummer()));
+                organisasjonDeployStatusMap = organisasjonConsumer.hentOrganisasjonStatus(Collections.singletonList(bestillingProgress.getOrganisasjonsnummer()));
+                organisasjonDeployStatus = organisasjonDeployStatusMap.values().stream().findFirst().orElse(new OrganisasjonDeployStatus());
 
-                log.info("Organisasjon deploy status: {}", Json.pretty(organisasjonDeployStatus));
+                log.info("Organisasjon deploy status: {}", Json.pretty(organisasjonDeployStatusMap));
                 OrganisasjonDeployStatus finalOrganisasjonDeployStatus = organisasjonDeployStatus;
                 if (DEPLOY_ENDED_STATUS_LIST.stream().anyMatch(status -> status.equals(finalOrganisasjonDeployStatus.getStatus()))) {
                     if (ERROR.equals(organisasjonDeployStatus.getStatus()) || FAILED.equals(organisasjonDeployStatus.getStatus())) {
