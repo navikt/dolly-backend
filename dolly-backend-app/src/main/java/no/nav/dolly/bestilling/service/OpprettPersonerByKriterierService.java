@@ -94,7 +94,7 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
 
                                 if (isNotBlank(bestKriterier.getBeskrivelse())) {
                                     log.info("sender med kommentar: {} på ident: {}", bestKriterier.getBeskrivelse(), dollyPerson.getHovedperson());
-                                    identService.setIdentBeskrivelse(bestKriterier.getBeskrivelse(), dollyPerson.getHovedperson());
+                                    identService.setIdentBeskrivelse(dollyPerson.getHovedperson(), bestKriterier.getBeskrivelse());
                                 }
 
                                 gjenopprettNonTpsf(dollyPerson, bestKriterier, progress, false);
