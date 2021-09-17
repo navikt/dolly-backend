@@ -93,7 +93,7 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
                                 sendIdenterTilTPS(new ArrayList<>(List.of(bestilling.getMiljoer().split(","))),
                                         leverteIdenter, bestilling.getGruppe(), progress);
 
-                                log.info("Bestilte kriterier: {} ", bestKriterier);
+                                log.info("Bestilte kriterier: {} ", Json.pretty(bestKriterier));
 
                                 if (isNotBlank(bestKriterier.getBeskrivelse())) {
                                     log.info("sender med kommentar: {} på ident: {}", bestKriterier.getBeskrivelse(), dollyPerson.getHovedperson());
