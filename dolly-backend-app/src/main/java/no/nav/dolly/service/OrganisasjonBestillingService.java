@@ -64,6 +64,7 @@ public class OrganisasjonBestillingService {
     private final ObjectMapper objectMapper;
     private final JsonBestillingMapper jsonBestillingMapper;
 
+    @Transactional
     public RsOrganisasjonBestillingStatus fetchBestillingStatusById(Long bestillingId) {
 
         OrganisasjonBestilling bestilling = bestillingRepository.findById(bestillingId)
@@ -80,20 +81,8 @@ public class OrganisasjonBestillingService {
             }
             bestillingProgress = bestillingProgressList.get(0);
 
-            if (nonNull(bestilling) && isNotTrue(bestilling.getFerdig())) {
-                OrganisasjonDeployStatus organisasjonDeployStatus = organisasjonConsumer.hentOrganisasjonStatus(Collections.singletonList(bestillingProgress.getOrganisasjonsnummer()));
-
-                List<OrgStatus> organisasjonStatusList = organisasjonDeployStatus.getOrgStatus().values().stream().findFirst().orElse(emptyList());
-                orgStatus = organisasjonStatusList.isEmpty() ? new OrgStatus() : organisasjonStatusList.get(0);
-                OrgStatus finalOrgStatus = orgStatus;
-
-                if (DEPLOY_ENDED_STATUS_LIST.stream().anyMatch(status -> status.equals(finalOrgStatus.getStatus()))) {
-                    if (ERROR.equals(orgStatus.getStatus()) || FAILED.equals(orgStatus.getStatus())) {
-                        log.error("Error i organisasjonForvalter: {}", orgStatus.getError());
-                        setBestillingFeil(bestilling.getId(), orgStatus.getError());
-                    }
-                    setBestillingFerdig(bestilling.getId());
-                }
+            if (isNotTrue(bestilling.getFerdig())) {
+                orgStatus = getOrgforvalterStatus(bestilling, bestillingProgress);
             }
 
         } catch (HttpClientErrorException e) {
@@ -113,6 +102,7 @@ public class OrganisasjonBestillingService {
                 .antallLevert(isTrue(bestilling.getFerdig()) && isBlank(bestilling.getFeil()) ? 1 : 0)
                 .build();
     }
+
 
     public List<RsOrganisasjonBestillingStatus> fetchBestillingStatusByBrukerId(String brukerId) {
 
@@ -233,6 +223,24 @@ public class OrganisasjonBestillingService {
         progressService.deleteByOrgnummer(orgnummer);
 
         bestillinger.forEach(bestillingRepository::deleteBestillingWithNoChildren);
+    }
+
+    private OrgStatus getOrgforvalterStatus(OrganisasjonBestilling bestilling, OrganisasjonBestillingProgress bestillingProgress) {
+        OrgStatus orgStatus;
+        OrganisasjonDeployStatus organisasjonDeployStatus = organisasjonConsumer.hentOrganisasjonStatus(Collections.singletonList(bestillingProgress.getOrganisasjonsnummer()));
+
+        List<OrgStatus> organisasjonStatusList = organisasjonDeployStatus.getOrgStatus().values().stream().findFirst().orElse(emptyList());
+        orgStatus = organisasjonStatusList.isEmpty() ? new OrgStatus() : organisasjonStatusList.get(0);
+        OrgStatus finalOrgStatus = orgStatus;
+
+        if (DEPLOY_ENDED_STATUS_LIST.stream().anyMatch(status -> status.equals(finalOrgStatus.getStatus()))) {
+            if (ERROR.equals(orgStatus.getStatus()) || FAILED.equals(orgStatus.getStatus())) {
+                log.error("Error i organisasjonForvalter: {}", orgStatus.getError());
+                setBestillingFeil(bestilling.getId(), orgStatus.getError());
+            }
+            setBestillingFerdig(bestilling.getId());
+        }
+        return orgStatus;
     }
 
     private String toJson(Object object) {
