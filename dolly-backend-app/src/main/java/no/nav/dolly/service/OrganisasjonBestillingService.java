@@ -37,7 +37,6 @@ import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.time.LocalDateTime.now;
 import static java.util.Collections.emptyList;
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonStatusDTO.Status.COMPLETED;
 import static no.nav.dolly.bestilling.organisasjonforvalter.domain.OrganisasjonStatusDTO.Status.ERROR;
@@ -76,7 +75,7 @@ public class OrganisasjonBestillingService {
         try {
             List<OrganisasjonBestillingProgress> bestillingProgressList = progressService.fetchOrganisasjonBestillingProgressByBestillingsId(bestillingId);
 
-            if (isNull(bestillingProgressList) || bestillingProgressList.isEmpty()) {
+            if (bestillingProgressList.isEmpty()) {
                 throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
             }
             bestillingProgress = bestillingProgressList.get(0);
