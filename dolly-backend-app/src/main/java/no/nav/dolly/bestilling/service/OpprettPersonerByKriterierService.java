@@ -1,7 +1,6 @@
 package no.nav.dolly.bestilling.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.v3.core.util.Json;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.bestilling.ClientRegister;
@@ -58,6 +57,7 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
         this.bestillingService = bestillingService;
         this.errorStatusDecoder = errorStatusDecoder;
         this.mapperFacade = mapperFacade;
+        this.identService = identService;
         this.tpsfService = tpsfService;
         this.dollyForkJoinPool = dollyForkJoinPool;
     }
@@ -66,7 +66,6 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
     public void executeAsync(Bestilling bestilling) {
 
         RsDollyBestillingRequest bestKriterier = getDollyBestillingRequest(bestilling);
-        log.info("Best Kriterier: {}", Json.pretty(bestKriterier));
 
         if (nonNull(bestKriterier)) {
 
@@ -92,8 +91,6 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
 
                                 sendIdenterTilTPS(new ArrayList<>(List.of(bestilling.getMiljoer().split(","))),
                                         leverteIdenter, bestilling.getGruppe(), progress);
-
-                                log.info("Bestilte kriterier: {} ", Json.pretty(bestKriterier));
 
                                 if (isNotBlank(bestKriterier.getBeskrivelse())) {
                                     log.info("sender med kommentar: {} på ident: {}", bestKriterier.getBeskrivelse(), dollyPerson.getHovedperson());
