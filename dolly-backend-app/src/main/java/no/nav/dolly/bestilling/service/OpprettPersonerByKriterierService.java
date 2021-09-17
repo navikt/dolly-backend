@@ -104,7 +104,7 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
                                 progress = BestillingProgress.builder()
                                         .bestilling(bestilling)
                                         .ident("?")
-                                        .feil("NA:" + errorStatusDecoder.decodeRuntimeException(e))
+                                        .feil("NA: " + errorStatusDecoder.decodeRuntimeException(e))
                                         .master(TPSF)
                                         .build();
                             } finally {
