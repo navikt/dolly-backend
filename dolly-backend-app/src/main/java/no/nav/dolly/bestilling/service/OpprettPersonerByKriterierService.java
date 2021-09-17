@@ -93,7 +93,6 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
                                         leverteIdenter, bestilling.getGruppe(), progress);
 
                                 if (isNotBlank(bestKriterier.getBeskrivelse())) {
-                                    log.info("sender med kommentar: {} på ident: {}", bestKriterier.getBeskrivelse(), dollyPerson.getHovedperson());
                                     identService.setIdentBeskrivelse(dollyPerson.getHovedperson(), bestKriterier.getBeskrivelse());
                                 }
 

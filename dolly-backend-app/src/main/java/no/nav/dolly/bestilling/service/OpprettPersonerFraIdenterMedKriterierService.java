@@ -1,7 +1,6 @@
 package no.nav.dolly.bestilling.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.bestilling.ClientRegister;
 import no.nav.dolly.bestilling.tpsf.TpsfResponseHandler;
@@ -30,7 +29,6 @@ import java.util.concurrent.ExecutorService;
 
 import static java.util.Objects.nonNull;
 
-@Slf4j
 @Service
 public class OpprettPersonerFraIdenterMedKriterierService extends DollyBestillingService {
 
