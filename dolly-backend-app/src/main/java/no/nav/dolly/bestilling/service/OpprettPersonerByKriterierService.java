@@ -93,7 +93,7 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
                                         leverteIdenter, bestilling.getGruppe(), progress);
 
                                 if (isNotBlank(bestKriterier.getBeskrivelse())) {
-                                    identService.setIdentBeskrivelse(dollyPerson.getHovedperson(), bestKriterier.getBeskrivelse());
+                                    identService.saveIdentBeskrivelse(dollyPerson.getHovedperson(), bestKriterier.getBeskrivelse());
                                 }
 
                                 gjenopprettNonTpsf(dollyPerson, bestKriterier, progress, false);
