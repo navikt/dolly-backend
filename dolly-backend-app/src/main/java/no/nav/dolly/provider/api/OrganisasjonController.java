@@ -50,7 +50,7 @@ public class OrganisasjonController {
     }
 
     @PutMapping("/gjenopprett/{bestillingId}")
-    @CacheEvict(value = CACHE_ORG_BESTILLING, key = "{bestillingId}")
+    @CacheEvict(value = CACHE_ORG_BESTILLING, allEntries = true)
     @Operation(description = "Gjenopprett organisasjon")
     public RsOrganisasjonBestillingStatus gjenopprettOrganisasjon(@PathVariable("bestillingId") Long bestillingId, @RequestParam(value = "miljoer", required = false) String miljoer) {
 
