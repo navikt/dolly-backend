@@ -31,7 +31,7 @@ public class ProvidersProps {
     private FasteDatasett fasteDatasett = new FasteDatasett();
     private Pensjonforvalter pensjonforvalter = new Pensjonforvalter();
     private Inntektsmelding inntektsmelding = new Inntektsmelding();
-    private IdentPool identPool = new IdentPool();
+    private GenererNavnService genererNavnService = new GenererNavnService();
     private Brregstub brregstub = new Brregstub();
     private Aktoerregister aktoerregister = new Aktoerregister();
     private Dokarkiv dokarkiv = new Dokarkiv();
@@ -215,7 +215,7 @@ public class ProvidersProps {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class IdentPool {
+    public static class GenererNavnService {
 
         private String url;
     }
