@@ -1,6 +1,5 @@
 package no.nav.dolly.provider.api;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -154,7 +153,6 @@ public class OppslagController {
     }
 
     @GetMapping("/personnavn")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     @Operation(description = "Henter et gitt antall syntetiske personnavn")
     public ResponseEntity<List<Navn>> getPersonnavn(@RequestParam(required = false, defaultValue = "10") Integer antall) {
         return genererNavnConsumer.getPersonnavn(antall);
