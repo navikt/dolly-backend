@@ -19,6 +19,7 @@ import no.nav.dolly.consumer.kodeverk.KodeverkConsumer;
 import no.nav.dolly.consumer.kodeverk.KodeverkMapper;
 import no.nav.dolly.consumer.kodeverk.domain.KodeverkBetydningerResponse;
 import no.nav.dolly.consumer.pdlperson.PdlPersonConsumer;
+import no.nav.dolly.domain.PdlPerson.Navn;
 import no.nav.dolly.domain.resultset.SystemTyper;
 import no.nav.dolly.domain.resultset.kodeverk.KodeverkAdjusted;
 import no.nav.dolly.service.InntektsmeldingEnumService;
@@ -153,7 +154,7 @@ public class OppslagController {
 
     @GetMapping("/personnavn")
     @Operation(description = "Henter et gitt antall syntetiske personnavn")
-    public ResponseEntity<JsonNode> getPersonnavn(@RequestParam(required = false, defaultValue = "10") Integer antall) {
+    public ResponseEntity<List<Navn>> getPersonnavn(@RequestParam(required = false, defaultValue = "10") Integer antall) {
         return genererNavnConsumer.getPersonnavn(antall);
     }
 
