@@ -11,7 +11,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Component
 public class GenererNavnConsumer {
 
-    private static final String FIKTIVE_NAVN_URL = "/api/v1/navn?antall=10";
+    private static final String FIKTIVE_NAVN_URL = "/api/v1/navn";
 
     private final WebClient webClient;
 
@@ -20,10 +20,11 @@ public class GenererNavnConsumer {
                 .baseUrl(providersProps.getGenererNavnService().getUrl()).build();
     }
 
-    public ResponseEntity<JsonNode> getPersonnavn() {
+    public ResponseEntity<JsonNode> getPersonnavn(Integer antall) {
 
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.path(FIKTIVE_NAVN_URL)
+                        .queryParam("antall", antall)
                         .build())
                 .retrieve()
                 .toEntity(JsonNode.class).block();

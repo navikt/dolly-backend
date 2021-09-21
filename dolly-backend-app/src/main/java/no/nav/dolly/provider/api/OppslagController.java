@@ -152,9 +152,9 @@ public class OppslagController {
     }
 
     @GetMapping("/personnavn")
-    @Operation(description = "Henter 10 syntetiske personnavn")
-    public ResponseEntity getPersonnavn() {
-        return genererNavnConsumer.getPersonnavn();
+    @Operation(description = "Henter et gitt antall syntetiske personnavn")
+    public ResponseEntity<JsonNode> getPersonnavn(@RequestParam(required = false, defaultValue = "10") Integer antall) {
+        return genererNavnConsumer.getPersonnavn(antall);
     }
 
     @GetMapping("/inntektsmelding/{enumtype}")
