@@ -28,7 +28,7 @@ consumers:
     url: https://testnav-inntektsmelding-service.dev.intern.nav.no
     cluster: dev-gcp
   testnav-generer-navn-service:
-    name: testnav-generer-navn-service
+    name: generer-navn-service
     namespace: dolly
     url: https://generer-navn-service.dev.intern.nav.no
     cluster: dev-gcp
