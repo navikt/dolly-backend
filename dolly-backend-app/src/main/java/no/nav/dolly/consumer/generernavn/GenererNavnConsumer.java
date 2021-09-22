@@ -6,7 +6,6 @@ import ma.glasnost.orika.MapperFacade;
 import no.nav.dolly.config.credentials.GenererNavnServiceProperties;
 import no.nav.dolly.consumer.generernavn.command.GenererNavnCommand;
 import no.nav.dolly.domain.PdlPerson.Navn;
-import no.nav.dolly.properties.ProvidersProps;
 import no.nav.dolly.security.oauth2.config.NaisServerProperties;
 import no.nav.dolly.security.oauth2.service.TokenService;
 import org.springframework.http.HttpStatus;
@@ -31,12 +30,12 @@ public class GenererNavnConsumer {
     private final NaisServerProperties serverProperties;
     private final MapperFacade mapper;
 
-    public GenererNavnConsumer(ProvidersProps providersProps, TokenService tokenService, GenererNavnServiceProperties serverProperties, MapperFacade mapperFacade) {
+    public GenererNavnConsumer(TokenService tokenService, GenererNavnServiceProperties serverProperties, MapperFacade mapperFacade) {
         this.tokenService = tokenService;
         this.serverProperties = serverProperties;
         this.mapper = mapperFacade;
         this.webClient = WebClient.builder()
-                .baseUrl(providersProps.getGenererNavnService().getUrl()).build();
+                .baseUrl(serverProperties.getUrl()).build();
     }
 
     public ResponseEntity<List<Navn>> getPersonnavn(Integer antall) {

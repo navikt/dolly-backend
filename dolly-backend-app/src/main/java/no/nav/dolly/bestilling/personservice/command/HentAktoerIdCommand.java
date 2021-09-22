@@ -1,7 +1,7 @@
-package no.nav.dolly.consumer.generernavn.command;
+package no.nav.dolly.bestilling.personservice.command;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
+import no.nav.dolly.bestilling.personservice.domain.AktoerIdent;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -14,25 +14,28 @@ import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
 
 @AllArgsConstructor
-public class GenererNavnCommand implements Callable<Mono<ResponseEntity<JsonNode>>> {
+public class HentAktoerIdCommand implements Callable<Mono<ResponseEntity<AktoerIdent>>> {
 
-    private static final String FIKTIVE_NAVN_URL = "/api/v1/navn";
+    private static final String AKTOERID_URL = "/api/v1/personer";
 
     private final WebClient webClient;
     private final String token;
-    private final Integer antall;
+    private final String ident;
     private final String callId;
 
     @Override
-    public Mono<ResponseEntity<JsonNode>> call() {
+    public Mono<ResponseEntity<AktoerIdent>> call() {
+
+
         return webClient.get()
-                .uri(uriBuilder -> uriBuilder.path(FIKTIVE_NAVN_URL)
-                        .queryParam("antall", antall)
+                .uri(uriBuilder -> uriBuilder.path(AKTOERID_URL)
+                        .pathSegment("ident", ident)
+                        .pathSegment("aktoerId")
                         .build())
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .header(HEADER_NAV_CALL_ID, callId)
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .retrieve()
-                .toEntity(JsonNode.class);
+                .toEntity(AktoerIdent.class);
     }
 }

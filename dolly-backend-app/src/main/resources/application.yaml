@@ -32,6 +32,11 @@ consumers:
     namespace: dolly
     url: https://generer-navn-service.dev.intern.nav.no
     cluster: dev-gcp
+  testnav-person-service:
+    name: testnav-person-service
+    namespace: dolly
+    url: https://testnav-person-service.dev.intern.nav.no/
+    cluster: dev-gcp
   testnav-pdl-forvalter:
     name: testnav-pdl-forvalter-dev
     namespace: dolly
