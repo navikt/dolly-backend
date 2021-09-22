@@ -1,5 +1,6 @@
 package no.nav.dolly.bestilling.personservice;
 
+import io.swagger.v3.core.util.Json;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.personservice.command.HentAktoerIdCommand;
 import no.nav.dolly.bestilling.personservice.domain.AktoerIdent;
@@ -38,6 +39,8 @@ public class PersonServiceConsumer {
         ResponseEntity<AktoerIdent> response = tokenService.generateToken(serverProperties).flatMap(accessToken ->
                 new HentAktoerIdCommand(webClient, accessToken.getTokenValue(), ident, getNavCallId()).call()
         ).block();
+
+        log.info("Response fra PersonService: {}", Json.pretty(response));
 
         if (isNull(response) || !response.hasBody()) {
             return new AktoerIdent();
