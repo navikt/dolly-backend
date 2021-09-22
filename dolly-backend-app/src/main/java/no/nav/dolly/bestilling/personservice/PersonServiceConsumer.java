@@ -40,11 +40,10 @@ public class PersonServiceConsumer {
                 new HentAktoerIdCommand(webClient, accessToken.getTokenValue(), ident, getNavCallId()).call()
         ).block();
 
-        log.info("Response fra PersonService: {}", Json.pretty(response));
-
         if (isNull(response) || !response.hasBody()) {
             return new AktoerIdent();
         }
+        log.info("Response fra PersonService: {}", Json.pretty(response.getBody()));
         return response.getBody();
     }
 
