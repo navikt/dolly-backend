@@ -1,5 +1,19 @@
 package no.nav.dolly.bestilling.aktoerregister;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import no.nav.dolly.metrics.Timed;
+import no.nav.dolly.properties.ProvidersProps;
+import no.nav.dolly.security.sts.StsOidcService;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.net.URI;
+import java.util.Map;
+import java.util.UUID;
+
 import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
@@ -8,20 +22,8 @@ import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_PERSON_IDENTER;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
-import java.net.URI;
-import java.util.Map;
-import java.util.UUID;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import lombok.RequiredArgsConstructor;
-import no.nav.dolly.metrics.Timed;
-import no.nav.dolly.properties.ProvidersProps;
-import no.nav.dolly.security.sts.StsOidcService;
-
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AktoerregisterConsumer {
 
@@ -36,12 +38,15 @@ public class AktoerregisterConsumer {
     public Map<String, Map> getAktoerId(String ident) {
 
         ResponseEntity<Map> response = restTemplate.exchange(RequestEntity.get(
-                URI.create(providersProps.getAktoerregister().getUrl() + AKTOER_URL))
+                        URI.create(providersProps.getAktoerregister().getUrl() + AKTOER_URL))
                 .header(AUTHORIZATION, stsOidcService.getIdToken(PREPROD_ENV))
                 .header(HEADER_NAV_CALL_ID, getNavCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .header(HEADER_NAV_PERSON_IDENTER, ident)
                 .build(), Map.class);
+        if (response.hasBody()) {
+            log.info("Response fra aktoerreister: {}", response.getBody());
+        }
         return response.hasBody() ? response.getBody() : emptyMap();
     }
 
