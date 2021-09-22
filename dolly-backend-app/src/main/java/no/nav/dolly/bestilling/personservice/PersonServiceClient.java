@@ -33,7 +33,7 @@ public class PersonServiceClient implements ClientRegister {
 
             try {
                 while (count++ < MAX_COUNT &&
-                        isNull(personServiceConsumer.getAktoerId(dollyPerson.getHovedperson()))) {
+                        isNull(personServiceConsumer.getAktoerId(dollyPerson.getHovedperson()).getIdent())) {
                     Thread.sleep(TIMEOUT);
                 }
 

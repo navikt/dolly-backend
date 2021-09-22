@@ -40,7 +40,7 @@ public class PersonServiceConsumer {
         ).block();
 
         if (isNull(response) || !response.hasBody()) {
-            return null;
+            return new AktoerIdent();
         }
 
         return response.getBody();
