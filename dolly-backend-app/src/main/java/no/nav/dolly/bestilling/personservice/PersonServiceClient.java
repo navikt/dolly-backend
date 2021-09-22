@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static java.util.Objects.isNull;
 import static no.nav.dolly.domain.CommonKeysAndUtils.containsSynthEnv;
+import static org.apache.logging.log4j.util.Strings.isBlank;
 
 @Slf4j
 @Service
@@ -33,7 +33,7 @@ public class PersonServiceClient implements ClientRegister {
 
             try {
                 while (count++ < MAX_COUNT &&
-                        isNull(personServiceConsumer.getAktoerId(dollyPerson.getHovedperson()).getIdent())) {
+                        isBlank(personServiceConsumer.getAktoerId(dollyPerson.getHovedperson()).getIdent())) {
                     Thread.sleep(TIMEOUT);
                 }
 
