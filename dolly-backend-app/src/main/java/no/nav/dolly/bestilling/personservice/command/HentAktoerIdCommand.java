@@ -29,7 +29,7 @@ public class HentAktoerIdCommand implements Callable<Mono<ResponseEntity<AktoerI
 
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.path(AKTOERID_URL)
-                        .pathSegment("ident", ident)
+                        .pathSegment(ident)
                         .pathSegment("aktoerId")
                         .build())
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)

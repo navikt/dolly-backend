@@ -45,9 +45,7 @@ public class PersonServiceConsumer {
         if (isNull(response) || !response.hasBody()) {
             return new AktoerIdent();
         }
-
         return response.getBody();
-
     }
 
     private static String getNavCallId() {
