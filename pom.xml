@@ -121,7 +121,7 @@
             <dependency>
                 <groupId>no.nav.testnav.libs</groupId>
                 <artifactId>data-transfer-objects</artifactId>
-                <version>2021.09.21-11.00-f0e6eb9b9ef4</version>
+                <version>2021.09.22-08.24-387e68c824fa</version>
             </dependency>
 
             <dependency>
