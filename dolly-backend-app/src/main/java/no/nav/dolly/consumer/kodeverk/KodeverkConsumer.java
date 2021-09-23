@@ -32,7 +32,7 @@ import static no.nav.dolly.util.CallIdUtil.generateCallId;
 @Slf4j
 public class KodeverkConsumer {
 
-    private static final String KODEVERK_URL_COMPLETE = "/api/v1/kodeverk/{kodeverksnavn}/koder/betydninger?ekskluderUgyldige=true&spraak=nb";
+    private static final String KODEVERK_URL_COMPLETE = "/api/v1/kodeverk/{kodeverksnavn}/koder/betydninger";
 
     private final TokenService tokenService;
     private final WebClient webClient;
@@ -83,6 +83,8 @@ public class KodeverkConsumer {
                     .get()
                     .uri(uriBuilder -> uriBuilder
                             .path(getKodeverksnavnUrl(kodeverk.replace(" ", "%20")))
+                            .queryParam("ekskluderUgyldige", true)
+                            .queryParam("spraak", "nb")
                             .build())
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.getTokenValue())
                     .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
