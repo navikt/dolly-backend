@@ -1,5 +1,6 @@
 package no.nav.dolly.consumer.kodeverk;
 
+import io.swagger.v3.core.util.Json;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.config.credentials.KodeverkProxyProperties;
 import no.nav.dolly.consumer.kodeverk.domain.KodeverkBetydningerResponse;
@@ -72,10 +73,14 @@ public class KodeverkConsumer {
     public Map<String, String> getKodeverkByName(String kodeverk) {
 
         var kodeverkResponse = getKodeverk(kodeverk);
-        return kodeverkResponse.hasBody() ? kodeverkResponse.getBody().getBetydninger().entrySet().stream()
+        if (!kodeverkResponse.hasBody()) {
+            return Collections.emptyMap()
+        }
+
+        log.info("Respons fra kodeverk proxy: {}", Json.pretty(kodeverkResponse.getBody()));
+        return kodeverkResponse.getBody().getBetydninger().entrySet().stream()
                 .filter(entry -> !entry.getValue().isEmpty())
-                .collect(Collectors.toMap(Entry::getKey, KodeverkConsumer::getNorskBokmaal)) :
-                Collections.emptyMap();
+                .collect(Collectors.toMap(Entry::getKey, KodeverkConsumer::getNorskBokmaal));
     }
 
     private ResponseEntity<KodeverkBetydningerResponse> getKodeverk(String kodeverk) {
