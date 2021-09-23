@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Collections;
@@ -42,6 +43,11 @@ public class KodeverkConsumer {
         this.tokenService = tokenService;
         this.serverProperties = serverProperties;
         this.webClient = WebClient.builder()
+                .exchangeStrategies(ExchangeStrategies.builder()
+                        .codecs(configurer -> configurer
+                                .defaultCodecs()
+                                .maxInMemorySize(32 * 1024 * 1024))
+                        .build())
                 .baseUrl(serverProperties.getUrl()).build();
     }
 
