@@ -35,8 +35,13 @@ consumers:
   testnav-person-service:
     name: testnav-person-service
     namespace: dolly
-    url: https://testnav-person-service.dev.intern.nav.no/
+    url: https://testnav-person-service.dev.intern.nav.no
     cluster: dev-gcp
+  testnav-kodeverk-proxy:
+    name: testnav-kodeverk-proxy
+    namespace: dolly
+    url: https://testnav-kodeverk-proxy.dev.intern.nav.no
+    cluster: dev-fss
   testnav-pdl-forvalter:
     name: testnav-pdl-forvalter-dev
     namespace: dolly

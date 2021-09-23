@@ -1,23 +1,27 @@
 package no.nav.dolly.consumer.kodeverk;
 
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import no.nav.dolly.config.credentials.KodeverkProxyProperties;
 import no.nav.dolly.consumer.kodeverk.domain.KodeverkBetydningerResponse;
 import no.nav.dolly.exceptions.DollyFunctionalException;
 import no.nav.dolly.metrics.Timed;
-import no.nav.dolly.properties.ProvidersProps;
+import no.nav.dolly.security.oauth2.config.NaisServerProperties;
+import no.nav.dolly.security.oauth2.domain.AccessToken;
+import no.nav.dolly.security.oauth2.service.TokenService;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.RequestEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
-import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
 import static no.nav.dolly.config.CachingConfig.CACHE_KODEVERK_2;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
@@ -25,13 +29,21 @@ import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
 import static no.nav.dolly.util.CallIdUtil.generateCallId;
 
 @Component
-@RequiredArgsConstructor
+@Slf4j
 public class KodeverkConsumer {
 
     private static final String KODEVERK_URL_COMPLETE = "/api/v1/kodeverk/{kodeverksnavn}/koder/betydninger?ekskluderUgyldige=true&spraak=nb";
 
-    private final RestTemplate restTemplate;
-    private final ProvidersProps providersProps;
+    private final TokenService tokenService;
+    private final WebClient webClient;
+    private final NaisServerProperties serverProperties;
+
+    public KodeverkConsumer(TokenService tokenService, KodeverkProxyProperties serverProperties) {
+        this.tokenService = tokenService;
+        this.serverProperties = serverProperties;
+        this.webClient = WebClient.builder()
+                .baseUrl(serverProperties.getUrl()).build();
+    }
 
     private static String getNorskBokmaal(Entry<String, java.util.List<KodeverkBetydningerResponse.Betydning>> entry) {
 
@@ -42,7 +54,7 @@ public class KodeverkConsumer {
         return KODEVERK_URL_COMPLETE.replace("{kodeverksnavn}", kodeverksnavn);
     }
 
-    @Timed(name = "providers", tags = {"operation", "hentKodeverk"})
+    @Timed(name = "providers", tags = { "operation", "hentKodeverk" })
     public KodeverkBetydningerResponse fetchKodeverkByName(String kodeverk) {
 
         var kodeverkResponse = getKodeverk(kodeverk);
@@ -50,7 +62,7 @@ public class KodeverkConsumer {
     }
 
     @Cacheable(CACHE_KODEVERK_2)
-    @Timed(name = "providers", tags = {"operation", "hentKodeverk"})
+    @Timed(name = "providers", tags = { "operation", "hentKodeverk" })
     public Map<String, String> getKodeverkByName(String kodeverk) {
 
         var kodeverkResponse = getKodeverk(kodeverk);
@@ -63,11 +75,19 @@ public class KodeverkConsumer {
     private ResponseEntity<KodeverkBetydningerResponse> getKodeverk(String kodeverk) {
 
         try {
-            return restTemplate.exchange(RequestEntity.get(
-                    URI.create(providersProps.getKodeverk().getUrl() + getKodeverksnavnUrl(kodeverk.replace(" ", "%20"))))
+            AccessToken token = tokenService.generateToken(serverProperties).block();
+            if (isNull(token)) {
+                throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "Feilet å hente accesstoken");
+            }
+            return webClient
+                    .get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path(getKodeverksnavnUrl(kodeverk.replace(" ", "%20")))
+                            .build())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.getTokenValue())
                     .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                     .header(HEADER_NAV_CALL_ID, generateCallId())
-                    .build(), KodeverkBetydningerResponse.class);
+                    .retrieve().toEntity(KodeverkBetydningerResponse.class).block();
 
         } catch (HttpClientErrorException e) {
             throw new DollyFunctionalException(e.getMessage(), e);
