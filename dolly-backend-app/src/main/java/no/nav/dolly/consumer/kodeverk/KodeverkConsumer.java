@@ -74,7 +74,7 @@ public class KodeverkConsumer {
 
         var kodeverkResponse = getKodeverk(kodeverk);
         if (!kodeverkResponse.hasBody()) {
-            return Collections.emptyMap()
+            return Collections.emptyMap();
         }
 
         log.info("Respons fra kodeverk proxy: {}", Json.pretty(kodeverkResponse.getBody()));
