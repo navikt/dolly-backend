@@ -8,6 +8,19 @@ CLIENT_ID: dummy
 CLIENT_SECRET: dummy
 UDI_CLIENT_ID: dummy
 
+
+consumers:
+  testnav-kodeverk-proxy:
+    name: kodeverk-mock
+    namespace: dolly
+    url: http://localhost:${wiremock.server.port:0}/kodeverk
+    cluster: dev-fss
+  testnav-arena-forvalteren-proxy:
+    name: arena-forvalteren-mock
+    namespace: dolly
+    url: http://localhost:${wiremock.server.port:0}/arenaforvalter
+    cluster: dev-fss
+
 sts:
   token:
     provider:
