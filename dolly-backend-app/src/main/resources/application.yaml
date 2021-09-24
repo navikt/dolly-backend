@@ -40,7 +40,12 @@ consumers:
   testnav-kodeverk-proxy:
     name: testnav-kodeverk-proxy
     namespace: dolly
-    url: https://testnav-kodeverk-proxy.dev.intern.nav.no
+    url: https://testnav-kodeverk-proxy.dev-fss-pub.nais.io
+    cluster: dev-fss
+  testnav-arena-forvalteren-proxy:
+    name: testnav-arena-forvalteren-proxy
+    namespace: dolly
+    url: https://testnav-arena-forvalteren-proxy.dev-fss-pub.nais.io
     cluster: dev-fss
   testnav-pdl-forvalter:
     name: testnav-pdl-forvalter-dev
