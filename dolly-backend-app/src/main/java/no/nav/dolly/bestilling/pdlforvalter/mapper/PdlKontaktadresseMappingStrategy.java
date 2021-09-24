@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static no.nav.dolly.bestilling.pdlforvalter.PdlForvalterClient.PERSON;
 import static no.nav.dolly.bestilling.pdlforvalter.mapper.PdlAdresseMappingStrategy.getDato;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.resultset.tpsf.InnvandretUtvandret.InnUtvandret.UTVANDRET;
@@ -50,7 +51,7 @@ public class PdlKontaktadresseMappingStrategy implements MappingStrategy {
 
     private static void setUtgaatt(PdlKontaktadresse kontaktadresse, MappingContext mappingContext) {
 
-        var innvandretUtvandret = ((Person) mappingContext.getProperty("person")).getInnvandretUtvandret().stream()
+        var innvandretUtvandret = ((Person) mappingContext.getProperty(PERSON)).getInnvandretUtvandret().stream()
                 .findFirst().orElse(new InnvandretUtvandret());
         kontaktadresse.setFolkeregistermetadata(UTVANDRET == innvandretUtvandret.getInnutvandret() && "XUK".equals(innvandretUtvandret.getLandkode()) ?
                 PdlOpplysning.Folkeregistermetadata.builder()

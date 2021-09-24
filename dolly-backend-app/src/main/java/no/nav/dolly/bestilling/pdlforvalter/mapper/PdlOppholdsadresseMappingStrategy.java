@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static no.nav.dolly.bestilling.pdlforvalter.PdlForvalterClient.PERSON;
 import static no.nav.dolly.bestilling.pdlforvalter.domain.PdlOppholdsadresse.UtenlandskAdresse;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.resultset.tpsf.InnvandretUtvandret.InnUtvandret.UTVANDRET;
@@ -30,7 +31,7 @@ public class PdlOppholdsadresseMappingStrategy implements MappingStrategy {
 
     private static void setUtgaatt(PdlOppholdsadresse oppholdsadresse, MappingContext mappingContext) {
 
-        var innvandretUtvandret = ((Person) mappingContext.getProperty("person")).getInnvandretUtvandret().stream()
+        var innvandretUtvandret = ((Person) mappingContext.getProperty(PERSON)).getInnvandretUtvandret().stream()
                 .findFirst().orElse(new InnvandretUtvandret());
         oppholdsadresse.setFolkeregistermetadata(UTVANDRET == innvandretUtvandret.getInnutvandret() && "XUK".equals(innvandretUtvandret.getLandkode()) ?
                 PdlOpplysning.Folkeregistermetadata.builder()

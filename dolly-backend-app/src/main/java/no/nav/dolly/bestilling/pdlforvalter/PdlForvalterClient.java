@@ -63,6 +63,7 @@ public class PdlForvalterClient implements ClientRegister {
     public static final String UTENLANDS_IDENTIFIKASJONSNUMMER = "UtenlandskIdentifikasjonsnummer";
     public static final String FALSK_IDENTITET = "FalskIdentitet";
     public static final String PDL_FORVALTER = "PdlForvalter";
+    public static final String PERSON = "person";
 
     private final PdlForvalterConsumer pdlForvalterConsumer;
     private final DollyPersonCache dollyPersonCache;
@@ -301,7 +302,7 @@ public class PdlForvalterClient implements ClientRegister {
     private void sendOppholdsadresse(Person person) {
 
         var context = new MappingContext.Factory().getContext();
-        context.setProperty("person", person);
+        context.setProperty(PERSON, person);
         mapperFacade.map(person, PdlOppholdsadresseHistorikk.class, context).getPdlAdresser()
                 .forEach(adresse -> pdlForvalterConsumer.postOppholdsadresse(adresse, person.getIdent()));
     }
@@ -309,7 +310,7 @@ public class PdlForvalterClient implements ClientRegister {
     private void sendBostedadresse(Person person) {
 
         var context = new MappingContext.Factory().getContext();
-        context.setProperty("person", person);
+        context.setProperty(PERSON, person);
         mapperFacade.map(person, PdlBostedsadresseHistorikk.class, context).getPdlAdresser()
                 .forEach(adresse -> pdlForvalterConsumer.postBostedadresse(adresse, person.getIdent()));
     }
@@ -323,7 +324,7 @@ public class PdlForvalterClient implements ClientRegister {
     private void sendKontaktadresse(Person person) {
 
         var context = new MappingContext.Factory().getContext();
-        context.setProperty("person", person);
+        context.setProperty(PERSON, person);
         mapperFacade.map(person, PdlKontaktadresseHistorikk.class, context).getPdlAdresser()
                 .forEach(adresse -> pdlForvalterConsumer.postKontaktadresse(adresse, person.getIdent()));
     }

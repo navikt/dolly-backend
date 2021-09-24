@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static no.nav.dolly.bestilling.pdlforvalter.PdlForvalterClient.PERSON;
 import static no.nav.dolly.bestilling.pdlforvalter.mapper.PdlAdresseMappingStrategy.getCoadresse;
 import static no.nav.dolly.bestilling.pdlforvalter.mapper.PdlAdresseMappingStrategy.getDato;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
@@ -42,7 +43,7 @@ public class PdlBostedsadresseMappingStrategy implements MappingStrategy {
         bostedadresse.setAngittFlyttedato(getDato(adresse.getFlyttedato()));
         bostedadresse.setCoAdressenavn(getCoadresse(adresse));
         bostedadresse.setAdresseIdentifikatorFraMatrikkelen(adresse.getMatrikkelId());
-        var innvandretUtvandret = ((Person)mappingContext.getProperty("person")).getInnvandretUtvandret();
+        var innvandretUtvandret = ((Person)mappingContext.getProperty(PERSON)).getInnvandretUtvandret();
         bostedadresse.setFolkeregistermetadata(UTVANDRET == innvandretUtvandret.stream().findFirst().orElse(new InnvandretUtvandret()).getInnutvandret() ?
                 PdlOpplysning.Folkeregistermetadata.builder()
                 .gjeldende(false)
