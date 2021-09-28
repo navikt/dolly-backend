@@ -46,31 +46,37 @@ consumers:
   testnav-dokarkiv-proxy:
     name: testnav-dokarkiv-proxy
     namespace: dolly
-    url: https://testnav-dokarkiv-proxy.dev-fss-pub.nais.io
+    #url: https://testnav-dokarkiv-proxy.dev-fss-pub.nais.io TODO: Bytte til denne når backend er i GCP
+    url: https://testnav-dokarkiv-proxy.dev.intern.nav.no
     cluster: dev-fss
   testnav-brregstub-proxy:
     name: testnav-brregstub-proxy
     namespace: dolly
-    url: https://testnav-brregstub-proxy.dev-fss-pub.nais.io
+    #url: https://testnav-brregstub-proxy.dev-fss-pub.nais.io TODO: Bytte til denne når backend er i GCP
+    url: https://testnav-brregstub-proxy.dev.intern.nav.no
     cluster: dev-fss
   testnav-krrstub-proxy:
     name: testnav-krrstub-proxy
     namespace: dolly
-    url: https://testnav-krrstub-proxy.dev-fss-pub.nais.io
+    #url: https://testnav-krrstub-proxy.dev-fss-pub.nais.io TODO: Bytte til denne når backend er i GCP
+    url: https://testnav-krrstub-proxy.dev.intern.nav.no
     cluster: dev-fss
   testnav-inntektstub-proxy:
     name: testnav-inntektstub-proxy
     namespace: dolly
-    url: https://testnav-inntektstub-proxy.dev-fss-pub.nais.io
+    #url: https://testnav-inntektstub-proxy.dev-fss-pub.nais.io TODO: Bytte til denne når backend er i GCP
+    url: https://testnav-inntektstub-proxy.dev.intern.nav.no
     cluster: dev-fss
   testnav-inst-proxy:
     name: testnav-testnorge-inst-proxy
     namespace: dolly
-    url: https://testnav-testnorge-inst-proxy.dev-fss-pub.nais.io
+    #url: https://testnav-testnorge-inst-proxy.dev-fss-pub.nais.io TODO: Bytte til denne når backend er i GCP
+    url: https://testnav-testnorge-inst-proxy.dev.intern.nav.no
     cluster: dev-fss
   testnav-arena-forvalteren-proxy:
     name: testnav-arena-forvalteren-proxy
     namespace: dolly
+    #url: https://testnav-arena-forvalteren-proxy.dev-fss-pub.nais.io TODO Bytte til denne når backend er i GCP
     url: https://testnav-arena-forvalteren-proxy.dev-fss-pub.nais.io
     cluster: dev-fss
   testnav-pdl-forvalter:
