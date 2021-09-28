@@ -1,12 +1,12 @@
 package no.nav.dolly.bestilling.arenaforvalter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.tomakehurst.wiremock.client.WireMock;
 import no.nav.dolly.config.credentials.ArenaforvalterProxyProperties;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaArbeidssokerBruker;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyBruker;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeBrukere;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeBrukereResponse;
+import no.nav.dolly.errorhandling.ErrorStatusDecoder;
 import no.nav.dolly.security.oauth2.domain.AccessToken;
 import no.nav.dolly.security.oauth2.service.TokenService;
 import org.junit.Before;
@@ -47,13 +47,15 @@ public class ArenaForvalterConsumerTest {
     @MockBean
     private TokenService tokenService;
 
+    @MockBean
+    private ErrorStatusDecoder errorStatusDecoder;
+
     @Autowired
     private ArenaForvalterConsumer arenaForvalterConsumer;
 
     @Before
     public void setup() {
 
-        WireMock.reset();
         when(tokenService.generateToken(ArgumentMatchers.any(ArenaforvalterProxyProperties.class))).thenReturn(Mono.just(new AccessToken("token")));
     }
 
