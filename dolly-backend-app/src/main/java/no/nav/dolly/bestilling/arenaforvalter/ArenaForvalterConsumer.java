@@ -50,7 +50,7 @@ public class ArenaForvalterConsumer {
     }
 
     @Timed(name = "providers", tags = { "operation", "arena_getIdent" })
-    public ResponseEntity getIdent(String ident) {
+    public ResponseEntity<ArenaArbeidssokerBruker> getIdent(String ident) {
 
         log.info("Henter bruker på ident: {} fra arena-forvalteren", ident);
         ResponseEntity<ArenaArbeidssokerBruker> response = webClient.get().uri(
@@ -60,7 +60,7 @@ public class ArenaForvalterConsumer {
                                 .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
                 .retrieve().toEntity(ArenaArbeidssokerBruker.class).block();
 
         if (nonNull(response) && response.hasBody()) {
@@ -70,7 +70,7 @@ public class ArenaForvalterConsumer {
     }
 
     @Timed(name = "providers", tags = { "operation", "arena_deleteIdent" })
-    public ResponseEntity deleteIdent(String ident, String environment) {
+    public ResponseEntity<JsonNode> deleteIdent(String ident, String environment) {
 
         return webClient.delete().uri(
                         uriBuilder -> uriBuilder
@@ -80,7 +80,7 @@ public class ArenaForvalterConsumer {
                                 .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
                 .retrieve()
                 .toEntity(JsonNode.class)
                 .block();
@@ -95,7 +95,7 @@ public class ArenaForvalterConsumer {
                                 .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
                 .bodyValue(arenaNyeBrukere)
                 .retrieve()
                 .toEntity(ArenaNyeBrukereResponse.class)
@@ -111,7 +111,7 @@ public class ArenaForvalterConsumer {
                                 .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
                 .bodyValue(arenaDagpenger)
                 .retrieve()
                 .toEntity(ArenaNyeDagpengerResponse.class)
@@ -127,7 +127,7 @@ public class ArenaForvalterConsumer {
                                 .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<String>>() {
                 })
