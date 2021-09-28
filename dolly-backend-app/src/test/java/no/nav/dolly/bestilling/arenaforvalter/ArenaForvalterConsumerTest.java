@@ -41,7 +41,7 @@ import static wiremock.org.hamcrest.MatcherAssert.assertThat;
 @AutoConfigureWireMock(port = 0)
 public class ArenaForvalterConsumerTest {
 
-    private static final String IDENT = "12423353";
+    private static final String IDENT = "12345678901";
     private static final String ENV = "u2";
 
     @MockBean
