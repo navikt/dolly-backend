@@ -40,7 +40,8 @@ consumers:
   testnav-kodeverk-proxy:
     name: testnav-kodeverk-proxy
     namespace: dolly
-    url: https://testnav-kodeverk-proxy.dev-fss-pub.nais.io
+    #url: https://testnav-kodeverk-proxy.dev-fss-pub.nais.io TODO: Bytte til denne når backend er i GCP
+    url: https://testnav-kodeverk-proxy.dev.intern.nav.no
     cluster: dev-fss
   testnav-dokarkiv-proxy:
     name: testnav-dokarkiv-proxy
