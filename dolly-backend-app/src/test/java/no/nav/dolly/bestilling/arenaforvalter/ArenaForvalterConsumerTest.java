@@ -42,7 +42,7 @@ import static wiremock.org.hamcrest.MatcherAssert.assertThat;
 public class ArenaForvalterConsumerTest {
 
     private static final String IDENT = "12345678901";
-    private static final String ENV = "u2";
+    private static final String ENV = "q2";
 
     @MockBean
     private TokenService tokenService;
