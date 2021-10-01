@@ -43,7 +43,7 @@ public class BrregstubConsumer {
             return
                     webClient.get().uri(uriBuilder -> uriBuilder.path(ROLLEOVERSIKT_URL).build())
                             .header(HEADER_NAV_PERSON_IDENT, ident)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+                            .header(HttpHeaders.AUTHORIZATION, getAccessToken())
                             .retrieve().toEntity(RolleoversiktTo.class)
                             .block()
                             .getBody();
@@ -87,8 +87,8 @@ public class BrregstubConsumer {
     private String getAccessToken() {
         AccessToken token = tokenService.generateToken(serverProperties).block();
         if (isNull(token)) {
-            throw new AccessControlException("Klarte ikke å generere AccessToken for brregstub-proxy");
+            throw new AccessControlException("Klarte ikke å generere AccessToken for dokarkiv-proxy");
         }
-        return token.getTokenValue();
+        return "Bearer " + token.getTokenValue();
     }
 }

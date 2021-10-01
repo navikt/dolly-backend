@@ -45,7 +45,7 @@ public class InntektstubConsumer {
                         .path(INNTEKTER_URL)
                         .queryParam(NORSKE_IDENTER_QUERY, ident)
                         .build())
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
                 .retrieve().toEntityList(Inntektsinformasjon.class)
                 .block();
     }
@@ -58,7 +58,7 @@ public class InntektstubConsumer {
                         .path(DELETE_INNTEKTER_URL)
                         .queryParam(NORSKE_IDENTER_QUERY, ident)
                         .pathSegment(ident).build())
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
                 .retrieve().toEntity(Inntektsinformasjon.class)
                 .block();
     }
@@ -71,7 +71,7 @@ public class InntektstubConsumer {
                         .uri(uriBuilder -> uriBuilder
                                 .path(INNTEKTER_URL)
                                 .build())
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+                        .header(HttpHeaders.AUTHORIZATION, getAccessToken())
                         .bodyValue(inntektsinformasjon)
                         .retrieve().toEntityList(Inntektsinformasjon.class)
                         .block();
@@ -84,7 +84,7 @@ public class InntektstubConsumer {
                 .uri(uriBuilder -> uriBuilder
                         .path(VALIDER_INNTEKTER_URL)
                         .build())
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
                 .bodyValue(validerInntekt)
                 .retrieve().toEntity(Object.class)
                 .block();
@@ -95,6 +95,6 @@ public class InntektstubConsumer {
         if (isNull(token)) {
             throw new AccessControlException("Klarte ikke å generere AccessToken for dokarkiv-proxy");
         }
-        return token.getTokenValue();
+        return "Bearer " + token.getTokenValue();
     }
 }

@@ -47,7 +47,7 @@ public class DokarkivConsumer {
 
         return webClient.post()
                 .uri(builder -> builder.path("/api/{miljo}/v1/journalpost").build(environment))
-                .header(AUTHORIZATION, "Bearer " + getAccessToken())
+                .header(AUTHORIZATION, getAccessToken())
                 .header(HEADER_NAV_CALL_ID, callId)
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .bodyValue(dokarkivRequest)
@@ -76,6 +76,6 @@ public class DokarkivConsumer {
         if (isNull(token)) {
             throw new AccessControlException("Klarte ikke å generere AccessToken for dokarkiv-proxy");
         }
-        return token.getTokenValue();
+        return "Bearer " + token.getTokenValue();
     }
 }

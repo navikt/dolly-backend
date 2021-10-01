@@ -65,7 +65,7 @@ public class InstdataConsumer {
                                     .build())
                             .header(HEADER_NAV_CALL_ID, getNavCallId())
                             .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+                            .header(HttpHeaders.AUTHORIZATION, getAccessToken())
                             .retrieve().toEntityList(String.class)
                             .block().getBody();
 
@@ -86,7 +86,7 @@ public class InstdataConsumer {
                                 .build())
                         .header(HEADER_NAV_CALL_ID, getNavCallId())
                         .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+                        .header(HttpHeaders.AUTHORIZATION, getAccessToken())
                         .retrieve().toEntityList(Instdata.class)
                         .block();
     }
@@ -104,7 +104,7 @@ public class InstdataConsumer {
                                     .build())
                             .header(HEADER_NAV_CALL_ID, getNavCallId())
                             .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+                            .header(HttpHeaders.AUTHORIZATION, getAccessToken())
                             .retrieve().toEntityList(InstdataResponse.class)
                             .block();
 
@@ -142,6 +142,6 @@ public class InstdataConsumer {
         if (isNull(token)) {
             throw new AccessControlException("Klarte ikke å generere AccessToken for dokarkiv-proxy");
         }
-        return token.getTokenValue();
+        return "Bearer " + token.getTokenValue();
     }
 }

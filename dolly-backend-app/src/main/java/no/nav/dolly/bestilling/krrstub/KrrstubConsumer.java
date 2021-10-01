@@ -53,7 +53,7 @@ public class KrrstubConsumer {
                 .header(HEADER_NAV_CALL_ID, getNavCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .header(HEADER_NAV_PERSON_IDENT, ident)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
                 .retrieve().toEntityList(DigitalKontaktdata.class)
                 .block();
     }
@@ -68,7 +68,7 @@ public class KrrstubConsumer {
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HEADER_NAV_CALL_ID, getNavCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
                 .bodyValue(digitalKontaktdata)
                 .retrieve().toEntity(Object.class)
                 .block();
@@ -84,7 +84,7 @@ public class KrrstubConsumer {
                         .build())
                 .header(HEADER_NAV_CALL_ID, getNavCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
                 .retrieve().toEntity(Object.class)
                 .block();
     }
@@ -98,7 +98,6 @@ public class KrrstubConsumer {
         if (isNull(token)) {
             throw new AccessControlException("Klarte ikke å generere AccessToken for dokarkiv-proxy");
         }
-        return token.getTokenValue();
+        return "Bearer " + token.getTokenValue();
     }
-
 }

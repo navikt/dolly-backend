@@ -60,7 +60,7 @@ public class ArenaForvalterConsumer {
                                 .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
                 .retrieve().toEntity(ArenaArbeidssokerBruker.class).block();
 
         if (nonNull(response) && response.hasBody()) {
@@ -80,7 +80,7 @@ public class ArenaForvalterConsumer {
                                 .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
                 .retrieve()
                 .toEntity(JsonNode.class)
                 .block();
@@ -95,7 +95,7 @@ public class ArenaForvalterConsumer {
                                 .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
                 .bodyValue(arenaNyeBrukere)
                 .retrieve()
                 .toEntity(ArenaNyeBrukereResponse.class)
@@ -111,7 +111,7 @@ public class ArenaForvalterConsumer {
                                 .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
                 .bodyValue(arenaDagpenger)
                 .retrieve()
                 .toEntity(ArenaNyeDagpengerResponse.class)
@@ -127,7 +127,7 @@ public class ArenaForvalterConsumer {
                                 .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<String>>() {
                 })
@@ -137,8 +137,8 @@ public class ArenaForvalterConsumer {
     private String getAccessToken() {
         AccessToken token = tokenService.generateToken(serverProperties).block();
         if (isNull(token)) {
-            throw new AccessControlException("Klarte ikke å generere AccessToken for arena-forvalter-proxy");
+            throw new AccessControlException("Klarte ikke å generere AccessToken for dokarkiv-proxy");
         }
-        return token.getTokenValue();
+        return "Bearer " + token.getTokenValue();
     }
 }

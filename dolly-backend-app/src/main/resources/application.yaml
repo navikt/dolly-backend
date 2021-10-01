@@ -77,7 +77,13 @@ consumers:
     name: testnav-arena-forvalteren-proxy
     namespace: dolly
     #url: https://testnav-arena-forvalteren-proxy.dev-fss-pub.nais.io TODO Bytte til denne når backend er i GCP
-    url: https://testnav-arena-forvalteren-proxy.dev-fss-pub.nais.io
+    url: https://testnav-arena-forvalteren-proxy.dev.intern.nav.no
+    cluster: dev-fss
+  testnav-pdl-proxy:
+    name: testnav-pdl-proxy
+    namespace: dolly
+    #url: https://testnav-pdl-proxy.dev-fss-pub.nais.io TODO Bytte til denne når backend er i GCP
+    url: https://testnav-pdl-proxy.dev.intern.nav.no
     cluster: dev-fss
   testnav-pdl-forvalter:
     name: testnav-pdl-forvalter-dev
