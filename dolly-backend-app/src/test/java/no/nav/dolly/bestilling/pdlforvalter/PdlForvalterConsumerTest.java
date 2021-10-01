@@ -3,22 +3,25 @@ package no.nav.dolly.bestilling.pdlforvalter;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlKontaktinformasjonForDoedsbo;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlNavn;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlOpprettPerson;
+import no.nav.dolly.config.credentials.PdlProxyProperties;
 import no.nav.dolly.domain.resultset.pdlforvalter.falskidentitet.PdlFalskIdentitet;
 import no.nav.dolly.domain.resultset.pdlforvalter.utenlandsid.PdlUtenlandskIdentifikasjonsnummer;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
-import no.nav.dolly.properties.ProvidersProps;
-import no.nav.dolly.security.sts.StsOidcService;
+import no.nav.dolly.security.oauth2.domain.AccessToken;
+import no.nav.dolly.security.oauth2.service.TokenService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.web.client.RestTemplate;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,22 +37,15 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
-@RestClientTest(PdlForvalterConsumer.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestPropertySource(locations = "classpath:application-test.yaml")
+@AutoConfigureWireMock(port = 0)
 public class PdlForvalterConsumerTest {
 
     private static final String IDENT = "11111111111";
-    private static final String PDL_URL = "http://pdl.nav.no";
-
-    private MockRestServiceServer server;
-
-    @Autowired
-    private RestTemplate restTemplate;
 
     @MockBean
-    private ProvidersProps providersProps;
-
-    @MockBean
-    private StsOidcService stsOidcService;
+    private TokenService tokenService;
 
     @MockBean
     private ErrorStatusDecoder errorStatusDecoder;
@@ -60,9 +56,7 @@ public class PdlForvalterConsumerTest {
     @Before
     public void setup() {
 
-        when(providersProps.getPdlForvalter()).thenReturn(ProvidersProps.PdlForvalter.builder().url(PDL_URL).build());
-
-        server = MockRestServiceServer.createServer(restTemplate);
+        when(tokenService.generateToken(ArgumentMatchers.any(PdlProxyProperties.class))).thenReturn(Mono.just(new AccessToken("token")));
     }
 
     @Test
@@ -75,7 +69,7 @@ public class PdlForvalterConsumerTest {
 
         pdlForvalterConsumer.postKontaktinformasjonForDoedsbo(PdlKontaktinformasjonForDoedsbo.builder().build(), IDENT);
 
-        verify(providersProps).getPdlForvalter();
+        verify(tokenService).generateToken(ArgumentMatchers.any(PdlProxyProperties.class));
         verify(stsOidcService).getIdToken(anyString());
     }
 
