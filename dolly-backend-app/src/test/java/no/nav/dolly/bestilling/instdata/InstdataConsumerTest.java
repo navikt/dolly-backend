@@ -29,6 +29,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static wiremock.org.hamcrest.MatcherAssert.assertThat;
@@ -75,7 +76,7 @@ public class InstdataConsumerTest {
 
         stubPostInstData();
 
-        ResponseEntity<List<InstdataResponse>> response = instdataConsumer.postInstdata(List.of(Instdata.builder().build()), ENVIRONMENT);
+        ResponseEntity<List<InstdataResponse>> response = instdataConsumer.postInstdata(singletonList(Instdata.builder().build()), ENVIRONMENT);
 
         assertThat("Response should be 200 successful", response.getStatusCode().is2xxSuccessful());
     }

@@ -31,8 +31,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class InstdataConsumer {
 
     private static final String INSTDATA_URL = "/api/v1/ident";
-    private static final String DELETE_FMT_BLD = INSTDATA_URL + "/batch";
-    private static final String POST_FMT_BLD = INSTDATA_URL + "/batch";
+    private static final String DELETE_POST_FMT_BLD = INSTDATA_URL + "/batch";
     private static final String INSTMILJO_URL = "/api/v1/miljoer";
 
     private static final String INST_IDENTER_QUERY = "identer";
@@ -98,7 +97,7 @@ public class InstdataConsumer {
             ResponseEntity<List<InstdataResponse>> response =
                     webClient.delete()
                             .uri(uriBuilder -> uriBuilder
-                                    .path(DELETE_FMT_BLD)
+                                    .path(DELETE_POST_FMT_BLD)
                                     .queryParam(INST_IDENTER_QUERY, ident)
                                     .queryParam(INST_MILJOE_QUERY, environment)
                                     .build())
@@ -125,7 +124,7 @@ public class InstdataConsumer {
 
         return webClient.post()
                 .uri(uriBuilder -> uriBuilder
-                        .path(POST_FMT_BLD)
+                        .path(DELETE_POST_FMT_BLD)
                         .queryParam(INST_MILJOE_QUERY, environment)
                         .build())
                 .bodyValue(instdata)
