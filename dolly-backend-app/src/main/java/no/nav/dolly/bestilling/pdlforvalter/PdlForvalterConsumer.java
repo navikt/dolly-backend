@@ -79,7 +79,6 @@ public class PdlForvalterConsumer {
 
     private static final String PDL_BESTILLING_SLETTING_URL = "/api/v1/personident";
     private static final String PDL_FORVALTER_URL = "/pdl-testdata";
-    private static final String PREPROD_ENV = "q";
 
     private static final String SEND_ERROR = "Feilet å sende %s: %s";
 
