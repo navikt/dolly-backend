@@ -1,6 +1,7 @@
 package no.nav.dolly.bestilling.pdlforvalter;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlKontaktinformasjonForDoedsbo;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlNavn;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlOpprettPerson;
@@ -58,6 +59,8 @@ public class PdlForvalterConsumerTest {
 
     @Before
     public void setup() {
+
+        WireMock.reset();
 
         when(tokenService.generateToken(ArgumentMatchers.any(PdlProxyProperties.class))).thenReturn(Mono.just(new AccessToken("token")));
     }

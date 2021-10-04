@@ -6,11 +6,14 @@ import no.nav.dolly.domain.resultset.RsOrganisasjonBestilling.SyntetiskOrganisas
 import no.nav.dolly.mapper.utils.MapperTestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@RunWith(MockitoJUnitRunner.class)
 class OrganisasjonerMappingStrategyTest {
 
     private MapperFacade mapperFacade;
