@@ -1,6 +1,5 @@
 package no.nav.dolly.bestilling.krrstub;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
 import no.nav.dolly.config.credentials.KrrstubProxyProperties;
 import no.nav.dolly.domain.resultset.krrstub.DigitalKontaktdata;
 import no.nav.dolly.security.oauth2.domain.AccessToken;
@@ -51,8 +50,6 @@ public class KrrstubConsumerTest {
 
     @Before
     public void setup() {
-
-        WireMock.reset();
 
         when(tokenService.generateToken(ArgumentMatchers.any(KrrstubProxyProperties.class))).thenReturn(Mono.just(new AccessToken("token")));
     }

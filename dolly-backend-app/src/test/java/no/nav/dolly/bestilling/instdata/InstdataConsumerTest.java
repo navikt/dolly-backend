@@ -1,6 +1,5 @@
 package no.nav.dolly.bestilling.instdata;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
 import no.nav.dolly.bestilling.instdata.domain.InstdataResponse;
 import no.nav.dolly.config.credentials.InstProxyProperties;
 import no.nav.dolly.domain.resultset.inst.Instdata;
@@ -55,8 +54,6 @@ public class InstdataConsumerTest {
 
     @Before
     public void setup() {
-
-        WireMock.reset();
 
         when(tokenService.generateToken(ArgumentMatchers.any(InstProxyProperties.class))).thenReturn(Mono.just(new AccessToken("token")));
     }
