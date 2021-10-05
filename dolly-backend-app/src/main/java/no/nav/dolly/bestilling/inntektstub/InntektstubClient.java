@@ -1,5 +1,6 @@
 package no.nav.dolly.bestilling.inntektstub;
 
+import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
@@ -75,6 +76,7 @@ public class InntektstubClient implements ClientRegister {
 
     private void opprettInntekter(List<Inntektsinformasjon> inntektsinformasjon, BestillingProgress progress) {
 
+        log.info("Sender inntektsinformasjon til inntektStub: {}", Json.pretty(inntektsinformasjon));
         try {
             ResponseEntity<Inntektsinformasjon[]> response = inntektstubConsumer.postInntekter(inntektsinformasjon);
 
