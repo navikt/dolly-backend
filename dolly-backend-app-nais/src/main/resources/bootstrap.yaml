@@ -25,4 +25,4 @@ spring:
         role: ${postgresql.database.name}-admin
       kv:
         backend: kv/preprod/fss
-        application-name: dolly-backend-dev
+        application-name: dolly-backend-dev/dolly
