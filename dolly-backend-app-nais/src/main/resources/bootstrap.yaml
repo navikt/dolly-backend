@@ -26,3 +26,4 @@ spring:
       kv:
         backend: kv/preprod/fss
         application-name: dolly-backend-dev/dolly
+        default-context: dolly-backend-dev/dolly
