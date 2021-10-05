@@ -13,9 +13,11 @@ https://dolly-backend.nais.preprod.local/swagger-ui.html
 
 ## Kjør lokalt
 
+https://dolly-backend.dev.intern.nav.no/swagger-ui.html
 **NB: `naisdevice` må kjøre**
 
 Legg inn dette i **din** maven settings.xml fil:
+
 ```
 <settings>
     <profiles>
