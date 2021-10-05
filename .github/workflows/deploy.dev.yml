@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - master
-      - feature/pdl-testdata_breaking_changes
       - feature/rapporteringsdato-inntekt
+      - feature/pdl-testdata_breaking_changes
 
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/dolly-backend:${{ github.sha }}

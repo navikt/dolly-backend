@@ -9,7 +9,7 @@
 ## Avhenighetsanalyse
 
 **Kan kun brukes fra utviklerimage**
-https://dolly-backend.nais.preprod.local/swagger-ui.html
+https://dolly-backend.dev.adeo.no/swagger-ui.html
 
 ## Kjør lokalt
 
