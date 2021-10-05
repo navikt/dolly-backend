@@ -43,6 +43,9 @@ sts:
       preprod: dummy
 
 spring:
+  cloud:
+    vault:
+      token: test
   datasource:
     url: jdbc:h2:mem:dollyDB
     username: sa

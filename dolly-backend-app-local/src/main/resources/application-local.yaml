@@ -1,4 +1,3 @@
-
 consumers:
   testnav-pdl-forvalter:
     url: https://testnav-pdl-forvalter-dev.dev.intern.nav.no
