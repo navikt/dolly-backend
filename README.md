@@ -13,7 +13,7 @@ https://dolly-backend.nais.preprod.local/swagger-ui.html
 
 ## Kjør lokalt
 
-**NB: `navtunnel` må kjøre**
+**NB: `naisdevice` må kjøre**
 
 Legg inn dette i **din** maven settings.xml fil:
 ```
