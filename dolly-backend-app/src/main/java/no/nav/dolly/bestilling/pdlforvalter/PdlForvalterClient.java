@@ -8,6 +8,7 @@ import no.nav.dolly.bestilling.ClientRegister;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlAdressebeskyttelse;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlBostedsadresseHistorikk;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlDeltBosted.PdlDelteBosteder;
+import no.nav.dolly.bestilling.pdlforvalter.domain.PdlDoedfoedtBarn;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlDoedsfall;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlFoedsel;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlFolkeregisterpersonstatus;
@@ -29,6 +30,7 @@ import no.nav.dolly.bestilling.pdlforvalter.domain.PdlVergemaalHistorikk;
 import no.nav.dolly.bestilling.pdlforvalter.domain.Pdldata;
 import no.nav.dolly.bestilling.pdlforvalter.domain.SivilstandWrapper;
 import no.nav.dolly.domain.jpa.BestillingProgress;
+import no.nav.dolly.domain.resultset.IdentType;
 import no.nav.dolly.domain.resultset.RsDollyUtvidetBestilling;
 import no.nav.dolly.domain.resultset.pdlforvalter.PdlOpplysning.Master;
 import no.nav.dolly.domain.resultset.pdlforvalter.utenlandsid.PdlUtenlandskIdentifikasjonsnummer;
@@ -39,6 +41,7 @@ import no.nav.dolly.domain.resultset.tpsf.adresse.IdentHistorikk;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
 import no.nav.dolly.exceptions.DollyFunctionalException;
 import no.nav.dolly.service.DollyPersonCache;
+import no.nav.dolly.util.IdentTypeUtil;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -125,10 +128,10 @@ public class PdlForvalterClient implements ClientRegister {
         }
     }
 
-   @Override
-   public boolean isTestnorgeRelevant() {
+    @Override
+    public boolean isTestnorgeRelevant() {
         return false;
-   }
+    }
 
     private void hentPersondetaljer(DollyPerson dollyPerson) {
 
@@ -148,7 +151,7 @@ public class PdlForvalterClient implements ClientRegister {
             dollyPerson.getPersondetaljer().stream()
                     .filter(person -> dollyPerson.getIdenthistorikk().stream().anyMatch(historisk -> historisk.equals(person.getIdent())))
                     .forEach(person ->
-                        sendArtifacter(bestilling, dollyPerson, person));
+                            sendArtifacter(bestilling, dollyPerson, person));
             // Send øvrige personer
             dollyPerson.getPersondetaljer().stream()
                     .filter(person -> dollyPerson.getIdenthistorikk().stream().noneMatch(historisk -> historisk.equals(person.getIdent())))
@@ -174,27 +177,31 @@ public class PdlForvalterClient implements ClientRegister {
     }
 
     private void sendArtifacter(RsDollyUtvidetBestilling bestilling, DollyPerson dollyPerson, Person person) {
-        sendOpprettPerson(person, dollyPerson);
-        sendFoedselsmelding(person);
-        sendNavn(person);
-        sendKjoenn(person);
-        sendAdressebeskyttelse(person);
-        sendOppholdsadresse(person);
-        sendKontaktadresse(person);
-        sendBostedadresse(person);
-        sendDeltBosted(person);
-        sendInnflytting(person);
-        sendUtflytting(person);
-        sendFolkeregisterpersonstatus(person);
-        sendStatsborgerskap(person);
-        sendFamilierelasjoner(person);
-        sendForeldreansvar(person);
-        sendSivilstand(person);
-        sendTelefonnummer(person);
-        sendDoedsfall(person);
-        sendOpphold(bestilling, person);
-        sendVergemaal(person);
-        sendFullmakt(person);
+
+        if (IdentType.FDAT != IdentTypeUtil.getIdentType(person.getIdent())) {
+            sendOpprettPerson(person, dollyPerson);
+            sendFoedselsmelding(person);
+            sendNavn(person);
+            sendKjoenn(person);
+            sendAdressebeskyttelse(person);
+            sendOppholdsadresse(person);
+            sendKontaktadresse(person);
+            sendBostedadresse(person);
+            sendDeltBosted(person);
+            sendInnflytting(person);
+            sendUtflytting(person);
+            sendFolkeregisterpersonstatus(person);
+            sendStatsborgerskap(person);
+            sendForeldreBarnRelasjon(person);
+            sendForeldreansvar(person);
+            sendSivilstand(person);
+            sendTelefonnummer(person);
+            sendDoedsfall(person);
+            sendOpphold(bestilling, person);
+            sendVergemaal(person);
+            sendFullmakt(person);
+            sendDoedfoedtBarn(person);
+        }
     }
 
     private void sendOpphold(RsDollyUtvidetBestilling bestilling, Person person) {
@@ -233,14 +240,11 @@ public class PdlForvalterClient implements ClientRegister {
         }
     }
 
-    private void sendFamilierelasjoner(Person person) {
+    private void sendForeldreBarnRelasjon(Person person) {
 
-        person.getRelasjoner().forEach(relasjon -> {
-            if (!relasjon.isPartner() && nonNull(relasjon.getPersonRelasjonTil())) {
-                pdlForvalterConsumer.postFamilierelasjon(mapperFacade.map(relasjon, PdlForelderBarnRelasjon.class),
-                        person.getIdent());
-            }
-        });
+        mapperFacade.mapAsList(person.getRelasjoner(), PdlForelderBarnRelasjon.class).stream()
+                .filter(relasjon -> nonNull(relasjon.getMinRolleForPerson()))
+                .forEach(relasjon -> pdlForvalterConsumer.postForeldreBarnRelasjon(relasjon, person.getIdent()));
     }
 
     private void sendForeldreansvar(Person person) {
@@ -357,6 +361,13 @@ public class PdlForvalterClient implements ClientRegister {
 
         mapperFacade.map(person, PdlFullmaktHistorikk.class).getFullmakter()
                 .forEach(fullmakt -> pdlForvalterConsumer.postFullmakt(fullmakt, person.getIdent()));
+    }
+
+    private void sendDoedfoedtBarn(Person person) {
+
+        mapperFacade.mapAsList(person.getRelasjoner(), PdlDoedfoedtBarn.class).stream()
+                .filter(hendelse -> nonNull(hendelse.getDato()))
+                .forEach(hendelse -> pdlForvalterConsumer.postDoedfoedtBarn(hendelse, person.getIdent()));
     }
 
     private void sendUtenlandsid(Pdldata pdldata, String ident, StringBuilder status) {
