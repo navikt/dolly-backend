@@ -13,7 +13,7 @@ public class SigrunStubResponseHandler {
 
     public String extractResponse(ResponseEntity<SigrunResponse> response) {
 
-        if (isNull(response) || isNull(response.getBody())) {
+        if (isNull(response) || !response.hasBody()) {
             return "FEIL";
         }
 
