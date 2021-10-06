@@ -13,7 +13,7 @@ public class SigrunStubResponseHandler {
 
     public String extractResponse(ResponseEntity<SigrunResponse> response) {
 
-        return nonNull(response) && response.getBody().getOpprettelseTilbakemeldingsListe().stream()
+        return nonNull(response.getBody()) && response.getBody().getOpprettelseTilbakemeldingsListe().stream()
                 .noneMatch(element -> 200 != element.getStatus()) ? "OK" :
                 "FEIL " +
                 response.getBody().getOpprettelseTilbakemeldingsListe().stream()

@@ -5,7 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.Objects.isNull;
 
 @Data
 @Builder
@@ -14,6 +17,14 @@ import java.util.List;
 public class SigrunResponse {
 
     private List<ResponseElement> opprettelseTilbakemeldingsListe;
+
+    public List<ResponseElement> getOpprettelseTilbakemeldingsListe() {
+
+        if (isNull(opprettelseTilbakemeldingsListe)) {
+            opprettelseTilbakemeldingsListe = new ArrayList<>();
+        }
+        return opprettelseTilbakemeldingsListe;
+    }
 
     @Data
     @Builder
