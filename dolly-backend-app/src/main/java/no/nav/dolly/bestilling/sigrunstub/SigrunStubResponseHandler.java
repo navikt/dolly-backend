@@ -4,6 +4,8 @@ import no.nav.dolly.bestilling.sigrunstub.dto.SigrunResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.stream.Collectors;
+
 import static java.util.Objects.nonNull;
 
 @Component
@@ -13,9 +15,10 @@ public class SigrunStubResponseHandler {
 
         return nonNull(response) && response.getBody().getOpprettelseTilbakemeldingsListe().stream()
                 .noneMatch(element -> 200 != element.getStatus()) ? "OK" :
+                "FEIL " +
                 response.getBody().getOpprettelseTilbakemeldingsListe().stream()
                         .filter(element -> 200 != element.getStatus())
-                        .map(element -> "FEIL: " + element.getMessage())
-                        .findFirst().get();
+                        .map(SigrunResponse.ResponseElement::getMessage)
+                        .collect(Collectors.joining(", "));
     }
 }
