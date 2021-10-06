@@ -8,8 +8,13 @@
 
 ## Avhenighetsanalyse
 
-**Kan kun brukes fra utviklerimage**
-https://dolly-backend.dev.adeo.no/swagger-ui.html
+## Utenfor utviklerimage
+
+https://dolly.ekstern.dev.nav.no/swagger-ui.html
+
+## Fra utviklerimage
+
+https://dolly-backend.dev.intern.nav.no/swagger-ui.html
 
 ## Kjør lokalt
 
