@@ -14,7 +14,7 @@ https://dolly-backend.dev.adeo.no/swagger-ui.html
 ## Kjør lokalt
 
 https://dolly-backend.dev.intern.nav.no/swagger-ui.html
-**NB: `naisdevice` må kjøre og være grønn**
+**NB: `naisdevice` må kjøre og være grønn.**
 
 Legg inn dette i **din** maven settings.xml fil:
 
