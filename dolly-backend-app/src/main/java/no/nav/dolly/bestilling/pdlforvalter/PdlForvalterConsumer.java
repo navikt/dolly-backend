@@ -348,7 +348,7 @@ public class PdlForvalterConsumer {
     private String getAccessToken() {
         AccessToken token = tokenService.generateToken(serverProperties).block();
         if (isNull(token)) {
-            throw new AccessControlException("Klarte ikke å generere AccessToken for dokarkiv-proxy");
+            throw new AccessControlException("Klarte ikke å generere AccessToken for pdlForvalter-proxy");
         }
         return "Bearer " + token.getTokenValue();
     }

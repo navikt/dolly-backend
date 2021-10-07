@@ -79,6 +79,12 @@ consumers:
     #url: https://testnav-testnorge-inst-proxy.dev-fss-pub.nais.io TODO: Bytte til denne når backend er i GCP
     url: https://testnav-testnorge-inst-proxy.dev.intern.nav.no
     cluster: dev-fss
+  testnav-skjermingsregister-proxy:
+    name: testnav-skjermingsregister-proxy
+    namespace: dolly
+    #url: https://testnav-skjermingsregister-proxy.dev-fss-pub.nais.io TODO: Bytte til denne når backend er i GCP
+    url: https://testnav-skjermingsregister-proxy.dev.intern.nav.no
+    cluster: dev-fss
   testnav-arena-forvalteren-proxy:
     name: testnav-arena-forvalteren-proxy
     namespace: dolly
@@ -90,6 +96,18 @@ consumers:
     namespace: dolly
     #url: https://testnav-pdl-proxy.dev-fss-pub.nais.io TODO Bytte til denne når backend er i GCP
     url: https://testnav-pdl-proxy.dev.intern.nav.no
+    cluster: dev-fss
+  testnav-sigrunstub-proxy:
+    name: testnav-sigrunstub-proxy
+    namespace: dolly
+    #url: https://testnav-sigrunstub-proxy.dev-fss-pub.nais.io TODO Bytte til denne når backend er i GCP
+    url: https://testnav-sigrunstub-proxy.dev.intern.nav.no
+    cluster: dev-fss
+  testnav-pensjon-testdata-facade-proxy:
+    name: testnav-pensjon-testdata-facade-proxy
+    namespace: dolly
+    #url: https://testnav-pensjon-testdata-facade-proxy.dev-fss-pub.nais.io TODO Bytte til denne når backend er i GCP
+    url: https://testnav-pensjon-testdata-facade-proxy.dev.intern.nav.no
     cluster: dev-fss
   testnav-pdl-forvalter:
     name: testnav-pdl-forvalter-dev

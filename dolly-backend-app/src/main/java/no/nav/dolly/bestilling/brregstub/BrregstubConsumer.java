@@ -38,7 +38,6 @@ public class BrregstubConsumer {
 
     public RolleoversiktTo getRolleoversikt(String ident) {
 
-
         try {
             return
                     webClient.get().uri(uriBuilder -> uriBuilder.path(ROLLEOVERSIKT_URL).build())
@@ -85,9 +84,10 @@ public class BrregstubConsumer {
     }
 
     private String getAccessToken() {
+
         AccessToken token = tokenService.generateToken(serverProperties).block();
         if (isNull(token)) {
-            throw new AccessControlException("Klarte ikke å generere AccessToken for dokarkiv-proxy");
+            throw new AccessControlException("Klarte ikke å generere AccessToken for brregstub-proxy");
         }
         return "Bearer " + token.getTokenValue();
     }

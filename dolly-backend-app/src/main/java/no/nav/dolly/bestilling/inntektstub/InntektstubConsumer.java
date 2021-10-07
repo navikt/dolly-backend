@@ -93,7 +93,7 @@ public class InntektstubConsumer {
     private String getAccessToken() {
         AccessToken token = tokenService.generateToken(serverProperties).block();
         if (isNull(token)) {
-            throw new AccessControlException("Klarte ikke å generere AccessToken for dokarkiv-proxy");
+            throw new AccessControlException("Klarte ikke å generere AccessToken for inntektstub-proxy");
         }
         return "Bearer " + token.getTokenValue();
     }
