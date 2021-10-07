@@ -1,7 +1,6 @@
 package no.nav.dolly.bestilling.arenaforvalter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.tomakehurst.wiremock.client.WireMock;
 import no.nav.dolly.config.credentials.ArenaforvalterProxyProperties;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaArbeidssokerBruker;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyBruker;
@@ -56,8 +55,6 @@ public class ArenaForvalterConsumerTest {
 
     @Before
     public void setup() {
-
-        WireMock.reset();
 
         when(tokenService.generateToken(ArgumentMatchers.any(ArenaforvalterProxyProperties.class))).thenReturn(Mono.just(new AccessToken("token")));
     }

@@ -180,7 +180,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postDoedfoedtBarn(PdlDoedfoedtBarn doedfoedtBarn, String ident) {
 
         return postRequest(
-                providersProps.getPdlForvalter().getUrl() + PDL_BESTILLING_DOEDFOEDTBARN_URL,
+                serverProperties.getUrl() + PDL_BESTILLING_DOEDFOEDTBARN_URL,
                 doedfoedtBarn, ident, "dødfødtBarn");
     }
 
