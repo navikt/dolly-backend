@@ -130,6 +130,12 @@ consumers:
     cluster: dev-gcp
     namespace: dolly
     threads: 5
+  tps-forvalteren-proxy:
+    url: https://tps-forvalteren-proxy.dev.intern.nav.no
+    #url: https://tps-forvalteren-facade-proxy.dev-fss-pub.nais.io TODO Bytte til denne når backend er i GCP
+    name: tps-forvalteren-proxy
+    cluster: dev-fss
+    namespace: dolly
 
 #### APP DB ####
 ? app.datasource.onsHosts

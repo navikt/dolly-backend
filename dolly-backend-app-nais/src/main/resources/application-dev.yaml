@@ -19,3 +19,8 @@ consumers:
     namespace: dolly
     url: https://testnav-pdl-forvalter-dev.dev.intern.nav.no
     cluster: dev-gcp
+  tps-forvalteren-proxy:
+    url: https://tps-forvalteren-dev-proxy.dev.intern.nav.no
+    name: tps-forvalteren-dev-proxy
+    cluster: dev-fss
+    namespace: dolly

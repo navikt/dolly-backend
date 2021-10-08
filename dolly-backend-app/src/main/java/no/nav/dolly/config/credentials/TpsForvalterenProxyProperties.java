@@ -5,6 +5,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "consumers.testnav-skjermingsregister-proxy")
-public class SkjermingsregisterProxyProperties extends NaisServerProperties {
+@ConfigurationProperties(prefix = "consumers.tps-forvalteren-proxy")
+public class TpsForvalterenProxyProperties extends NaisServerProperties {
 }
