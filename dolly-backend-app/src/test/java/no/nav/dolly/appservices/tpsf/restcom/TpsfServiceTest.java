@@ -46,7 +46,6 @@ import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-//@Ignore
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -154,7 +153,7 @@ public class TpsfServiceTest {
                 ));
     }
 
-    private void stubPostTpsfDataThrowExpection() throws JsonProcessingException {
+    private void stubPostTpsfDataThrowExpection() {
 
         stubFor(post(urlPathMatching("(.*)/tpsf/api/v1/dolly/testdata/personer"))
                 .willReturn(serverError()
