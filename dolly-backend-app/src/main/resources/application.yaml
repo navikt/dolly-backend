@@ -82,8 +82,8 @@ consumers:
   testnav-udistub:
     name: udi-stub
     namespace: dolly
-    #url: https://testnav-udistub-proxy.dev-fss-pub.nais.io TODO: Bytte til denne når backend er i GCP
-    url: https://testnav-udistub-proxy.dev.intern.nav.no/udistub
+    url: https://testnav-udistub-proxy.dev-fss-pub.nais.io
+    #    url: https://testnav-udistub-proxy.dev.intern.nav.no/udistub
     cluster: dev-fss
   testnav-skjermingsregister-proxy:
     name: testnav-skjermingsregister-proxy
@@ -100,8 +100,8 @@ consumers:
   testnav-pdl-proxy:
     name: testnav-pdl-proxy
     namespace: dolly
-    #url: https://testnav-pdl-proxy.dev-fss-pub.nais.io TODO Bytte til denne når backend er i GCP
-    url: https://testnav-pdl-proxy.dev.intern.nav.no
+    url: https://testnav-pdl-proxy.dev-fss-pub.nais.io
+    #    url: https://testnav-pdl-proxy.dev.intern.nav.no
     cluster: dev-fss
   testnav-sigrunstub-proxy:
     name: testnav-sigrunstub-proxy
