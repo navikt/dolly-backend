@@ -79,10 +79,10 @@ consumers:
     #url: https://testnav-testnorge-inst-proxy.dev-fss-pub.nais.io TODO: Bytte til denne når backend er i GCP
     url: https://testnav-testnorge-inst-proxy.dev.intern.nav.no
     cluster: dev-fss
-  testnav-udistub:
-    name: udi-stub
+  testnav-udistub-proxy:
+    name: testnav-udistub-proxy
     namespace: dolly
-    url: https://testnav-udistub-proxy.dev-fss-pub.nais.io
+    url: https://testnav-udistub-proxy.dev-fss-pub.nais.io/udistub
     #    url: https://testnav-udistub-proxy.dev.intern.nav.no/udistub
     cluster: dev-fss
   testnav-skjermingsregister-proxy:

@@ -6,6 +6,6 @@ import org.springframework.context.annotation.Configuration;
 
 
 @Configuration
-@ConfigurationProperties(prefix = "consumers.testnav-udistub")
+@ConfigurationProperties(prefix = "consumers.testnav-udistub-proxy")
 public class UdistubServerProperties extends NaisServerProperties {
 }
