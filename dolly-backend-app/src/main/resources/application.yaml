@@ -130,6 +130,11 @@ consumers:
     name: testnav-amelding-service
     cluster: dev-gcp
     namespace: dolly
+  testnav-sykemelding-api-proxy:
+    url: https://testnav-sykemelding-api-proxy.dev.intern.nav.no
+    name: testnav-sykemelding-api-proxy
+    cluster: dev-fss
+    namespace: dolly
   testnav-organisasjon-service:
     url: https://testnav-organisasjon-service.dev.intern.nav.no
     name: testnav-organisasjon-service
