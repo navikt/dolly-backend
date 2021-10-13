@@ -115,7 +115,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postOpprettPerson(PdlOpprettPerson opprettPerson, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_OPPRETT_PERSON +
+                PDL_BESTILLING_OPPRETT_PERSON +
                         (opprettPerson.getHistoriskeIdenter().isEmpty() ? "" :
                                 PDL_IDENTHISTORIKK_PARAMS + String.join(PDL_IDENTHISTORIKK_PARAMS_2, opprettPerson.getHistoriskeIdenter())),
                 opprettPerson, ident, "opprett person");
@@ -125,7 +125,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postNavn(PdlNavn pdlNavn, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_NAVN_URL,
+                PDL_BESTILLING_NAVN_URL,
                 pdlNavn, ident, "navn");
     }
 
@@ -133,7 +133,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postKjoenn(PdlKjoenn pdlKjoenn, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_KJOENN_URL,
+                PDL_BESTILLING_KJOENN_URL,
                 pdlKjoenn, ident, "kjønn");
     }
 
@@ -141,7 +141,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postKontaktinformasjonForDoedsbo(PdlKontaktinformasjonForDoedsbo kontaktinformasjonForDoedsbo, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILL_KONTAKTINFORMASJON_FOR_DODESDBO_URL,
+                PDL_BESTILL_KONTAKTINFORMASJON_FOR_DODESDBO_URL,
                 kontaktinformasjonForDoedsbo, ident);
     }
 
@@ -149,7 +149,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postUtenlandskIdentifikasjonsnummer(PdlUtenlandskIdentifikasjonsnummer utenlandskIdentifikasjonsnummer, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_UTENLANDS_IDENTIFIKASJON_NUMMER_URL,
+                PDL_BESTILLING_UTENLANDS_IDENTIFIKASJON_NUMMER_URL,
                 utenlandskIdentifikasjonsnummer, ident);
     }
 
@@ -157,14 +157,14 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postFalskIdentitet(PdlFalskIdentitet falskIdentitet, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_FALSK_IDENTITET_URL, falskIdentitet, ident);
+                PDL_BESTILLING_FALSK_IDENTITET_URL, falskIdentitet, ident);
     }
 
     @Timed(name = "providers", tags = { "operation", "pdl_statsborgerskap" })
     public ResponseEntity<JsonNode> postStatsborgerskap(PdlStatsborgerskap pdlStatsborgerskap, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_STATSBORGERSKAP_URL,
+                PDL_BESTILLING_STATSBORGERSKAP_URL,
                 pdlStatsborgerskap, ident, "statsborgerskap");
     }
 
@@ -172,7 +172,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postDoedsfall(PdlDoedsfall pdlDoedsfall, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_DOEDSFALL_URL,
+                PDL_BESTILLING_DOEDSFALL_URL,
                 pdlDoedsfall, ident, "dødsmelding");
     }
 
@@ -180,7 +180,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postDoedfoedtBarn(PdlDoedfoedtBarn doedfoedtBarn, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_DOEDFOEDTBARN_URL,
+                PDL_BESTILLING_DOEDFOEDTBARN_URL,
                 doedfoedtBarn, ident, "dødfødtBarn");
     }
 
@@ -188,7 +188,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postFoedsel(PdlFoedsel pdlFoedsel, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_FOEDSEL_URL,
+                PDL_BESTILLING_FOEDSEL_URL,
                 pdlFoedsel, ident, "fødselsmelding");
     }
 
@@ -196,7 +196,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postAdressebeskyttelse(PdlAdressebeskyttelse pdlAdressebeskyttelse, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_ADRESSEBESKYTTELSE_URL,
+                PDL_BESTILLING_ADRESSEBESKYTTELSE_URL,
                 pdlAdressebeskyttelse, ident, "adressebeskyttelse");
     }
 
@@ -204,7 +204,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postForeldreBarnRelasjon(PdlForelderBarnRelasjon familierelasjonn, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_FORELDER_BARN_RELASJON,
+                PDL_BESTILLING_FORELDER_BARN_RELASJON,
                 familierelasjonn, ident, "familierelasjon");
     }
 
@@ -212,7 +212,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postTelefonnummer(PdlTelefonnummer.Entry telefonnummer, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_TELEFONUMMER_URL,
+                PDL_BESTILLING_TELEFONUMMER_URL,
                 telefonnummer, ident, "telefonnummer");
     }
 
@@ -220,7 +220,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postSivilstand(PdlSivilstand sivilstand, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_SIVILSTAND_URL,
+                PDL_BESTILLING_SIVILSTAND_URL,
                 sivilstand, ident, "sivilstand");
     }
 
@@ -228,7 +228,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postOppholdsadresse(PdlOppholdsadresse oppholdsadresse, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_OPPHOLDSADRESSE_URL,
+                PDL_BESTILLING_OPPHOLDSADRESSE_URL,
                 oppholdsadresse, ident, "oppholdsadresse");
     }
 
@@ -236,7 +236,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postKontaktadresse(PdlKontaktadresse kontaktadresse, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_KONTAKTADRESSE_URL,
+                PDL_BESTILLING_KONTAKTADRESSE_URL,
                 kontaktadresse, ident, "kontaktadresse");
     }
 
@@ -244,7 +244,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postBostedadresse(PdlBostedadresse bostedadresse, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_BOSTEDADRESSE_URL,
+                PDL_BESTILLING_BOSTEDADRESSE_URL,
                 bostedadresse, ident, "bostedadresse");
     }
 
@@ -252,7 +252,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postDeltBosted(PdlDeltBosted deltBosted, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_DELTBOSTED_URL,
+                PDL_BESTILLING_DELTBOSTED_URL,
                 deltBosted, ident, "deltBosted");
     }
 
@@ -260,7 +260,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postFolkeregisterpersonstatus(PdlFolkeregisterpersonstatus folkeregisterpersonstatus, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_FOLKEREGISTERPERSONSTATUS_URL,
+                PDL_BESTILLING_FOLKEREGISTERPERSONSTATUS_URL,
                 folkeregisterpersonstatus, ident, "folkeregisterpersonstatus");
     }
 
@@ -268,7 +268,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postForeldreansvar(PdlForeldreansvar foreldreansvar, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_FORELDREANSVAR_URL,
+                PDL_BESTILLING_FORELDREANSVAR_URL,
                 foreldreansvar, ident, "foreldreansvar");
     }
 
@@ -276,7 +276,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postInnflytting(PdlInnflytting innflytting, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_INNFLYTTING_URL,
+                PDL_BESTILLING_INNFLYTTING_URL,
                 innflytting, ident, "innflytting");
     }
 
@@ -284,7 +284,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postUtflytting(PdlUtflytting utflytting, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_UTFLYTTING_URL,
+                PDL_BESTILLING_UTFLYTTING_URL,
                 utflytting, ident, "utflytting");
     }
 
@@ -292,7 +292,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postOpphold(PdlOpphold opphold, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_OPPHOLD_URL,
+                PDL_BESTILLING_OPPHOLD_URL,
                 opphold, ident, "opphold");
     }
 
@@ -300,7 +300,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postVergemaal(PdlVergemaal vergemaal, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_VERGEMAAL_URL,
+                PDL_BESTILLING_VERGEMAAL_URL,
                 vergemaal, ident, "vergemaal");
     }
 
@@ -308,7 +308,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> postFullmakt(PdlFullmakt fullmakt, String ident) {
 
         return postRequest(
-                serverProperties.getUrl() + PDL_BESTILLING_FULLMAKT_URL,
+                PDL_BESTILLING_FULLMAKT_URL,
                 fullmakt, ident, "fullmakt");
     }
 
@@ -317,7 +317,7 @@ public class PdlForvalterConsumer {
         try {
             return
                     webClient.post()
-                            .uri(url)
+                            .uri(uriBuilder -> uriBuilder.path(url).build())
                             .contentType(APPLICATION_JSON)
                             .header(AUTHORIZATION, getAccessToken())
                             .header(HEADER_NAV_PERSON_IDENT, ident)
@@ -336,7 +336,7 @@ public class PdlForvalterConsumer {
 
         return
                 webClient.post()
-                        .uri(url)
+                        .uri(uriBuilder -> uriBuilder.path(url).build())
                         .contentType(APPLICATION_JSON)
                         .header(AUTHORIZATION, getAccessToken())
                         .header(HEADER_NAV_PERSON_IDENT, ident)
