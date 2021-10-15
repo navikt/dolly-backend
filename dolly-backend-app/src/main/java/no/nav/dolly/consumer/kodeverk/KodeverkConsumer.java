@@ -1,7 +1,5 @@
 package no.nav.dolly.consumer.kodeverk;
 
-import io.swagger.v3.core.util.Json;
-import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.config.credentials.KodeverkProxyProperties;
 import no.nav.dolly.consumer.kodeverk.domain.KodeverkBetydningerResponse;
 import no.nav.dolly.exceptions.DollyFunctionalException;
@@ -31,7 +29,6 @@ import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
 import static no.nav.dolly.util.CallIdUtil.generateCallId;
 
 @Component
-@Slf4j
 public class KodeverkConsumer {
 
     private static final String KODEVERK_URL_COMPLETE = "/api/v1/kodeverk/{kodeverksnavn}/koder/betydninger";
@@ -77,7 +74,6 @@ public class KodeverkConsumer {
             return Collections.emptyMap();
         }
 
-        log.info("Respons fra kodeverk proxy: {}", Json.pretty(kodeverkResponse.getBody()));
         return kodeverkResponse.getBody().getBetydninger().entrySet().stream()
                 .filter(entry -> !entry.getValue().isEmpty())
                 .collect(Collectors.toMap(Entry::getKey, KodeverkConsumer::getNorskBokmaal));

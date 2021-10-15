@@ -1,49 +1,80 @@
 package no.nav.dolly.consumer.fastedatasett;
 
-import static java.lang.String.*;
-
-import java.net.URI;
-import org.springframework.http.RequestEntity;
+import com.fasterxml.jackson.databind.JsonNode;
+import no.nav.dolly.config.credentials.StatiskDataForvalterProxyProperties;
+import no.nav.dolly.metrics.Timed;
+import no.nav.dolly.security.oauth2.config.NaisServerProperties;
+import no.nav.dolly.security.oauth2.domain.AccessToken;
+import no.nav.dolly.security.oauth2.service.TokenService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.web.reactive.function.client.WebClient;
 
-import lombok.RequiredArgsConstructor;
-import no.nav.dolly.metrics.Timed;
-import no.nav.dolly.properties.ProvidersProps;
+import java.security.AccessControlException;
+
+import static java.util.Objects.isNull;
 
 @Component
-@RequiredArgsConstructor
 public class FasteDatasettConsumer {
 
     private static final String REQUEST_URL = "/api/v1/faste-data";
-    private static final String GRUPPE_REQUEST_URL = REQUEST_URL+"/tps?gruppe=";
+    private static final String GRUPPE_REQUEST_URL = REQUEST_URL + "/tps";
+    private static final String EREG_REQUEST_URL = REQUEST_URL + "/ereg";
+    private static final String GRUPPE_QUERY = "gruppe";
 
-    private final ProvidersProps providersProps;
-    private final RestTemplate restTemplate;
+    private final TokenService tokenService;
+    private final WebClient webClient;
+    private final NaisServerProperties serverProperties;
 
-    @Timed(name = "providers", tags = {"operation", "hentFasteDatasett"})
-    public ResponseEntity hentDatasett(DatasettType datasettType) {
-
-        return restTemplate.exchange(RequestEntity.get(
-                URI.create(format("%s%s%s", providersProps.getFasteDatasett().getUrl(), REQUEST_URL, datasettType.getUrl())))
-                .build(), JsonNode.class);
+    public FasteDatasettConsumer(TokenService tokenService, StatiskDataForvalterProxyProperties serverProperties) {
+        this.tokenService = tokenService;
+        this.serverProperties = serverProperties;
+        this.webClient = WebClient.builder()
+                .baseUrl(serverProperties.getUrl()).build();
     }
 
-    @Timed(name = "providers", tags = {"operation", "hentOrgnummer"})
-    public ResponseEntity hentOrgnummer() {
+    @Timed(name = "providers", tags = { "operation", "hentFasteDatasett" })
+    public ResponseEntity<JsonNode> hentDatasett(DatasettType datasettType) {
 
-        return restTemplate.exchange(RequestEntity.get(
-                URI.create(format("%s%s/ereg?gruppe=DOLLY", providersProps.getFasteDatasett().getUrl(), REQUEST_URL)))
-                .build(), JsonNode.class);
+        return webClient.get().uri(uriBuilder -> uriBuilder
+                        .path(REQUEST_URL)
+                        .pathSegment(datasettType.getUrl())
+                        .build())
+                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .retrieve().toEntity(JsonNode.class)
+                .block();
     }
 
-    @Timed(name = "providers", tags = {"operation", "hentFasteDatasettGruppe"})
-    public ResponseEntity hentDatasettGruppe(String gruppe) {
+    @Timed(name = "providers", tags = { "operation", "hentOrgnummer" })
+    public ResponseEntity<JsonNode> hentOrgnummer() {
 
-        return restTemplate.exchange(RequestEntity.get(
-                URI.create(format(providersProps.getFasteDatasett().getUrl()+ GRUPPE_REQUEST_URL+gruppe)))
-                .build(), JsonNode.class);
+        return webClient.get().uri(uriBuilder -> uriBuilder
+                        .path(EREG_REQUEST_URL)
+                        .queryParam(GRUPPE_QUERY, "DOLLY")
+                        .build())
+                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .retrieve().toEntity(JsonNode.class)
+                .block();
+    }
+
+    @Timed(name = "providers", tags = { "operation", "hentFasteDatasettGruppe" })
+    public ResponseEntity<JsonNode> hentDatasettGruppe(String gruppe) {
+
+        return webClient.get().uri(uriBuilder -> uriBuilder
+                        .path(GRUPPE_REQUEST_URL)
+                        .queryParam(GRUPPE_QUERY, gruppe)
+                        .build())
+                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .retrieve().toEntity(JsonNode.class)
+                .block();
+    }
+
+    private String getAccessToken() {
+        AccessToken token = tokenService.generateToken(serverProperties).block();
+        if (isNull(token)) {
+            throw new AccessControlException("Klarte ikke å generere AccessToken for FasteDataSett-Proxy");
+        }
+        return "Bearer " + token.getTokenValue();
     }
 }

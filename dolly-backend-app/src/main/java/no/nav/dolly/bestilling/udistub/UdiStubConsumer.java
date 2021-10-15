@@ -55,7 +55,8 @@ public class UdiStubConsumer {
         try {
             return webClient
                     .get()
-                    .uri(uriBuilder -> uriBuilder.path(UDISTUB_PERSON + "/" + ident).build())
+                    .uri(uriBuilder -> uriBuilder.path(UDISTUB_PERSON)
+                            .pathSegment(ident).build())
                     .header(HEADER_NAV_CALL_ID, getNavCallId())
                     .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                     .header(HttpHeaders.AUTHORIZATION, getAccessToken())
@@ -122,7 +123,7 @@ public class UdiStubConsumer {
     private String getAccessToken() {
         AccessToken token = tokenService.generateToken(serverProperties).block();
         if (isNull(token)) {
-            throw new AccessControlException("Klarte ikke å generere AccessToken for udistub");
+            throw new AccessControlException("Klarte ikke å generere AccessToken for udistub-proxy");
         }
         return "Bearer " + token.getTokenValue();
     }
