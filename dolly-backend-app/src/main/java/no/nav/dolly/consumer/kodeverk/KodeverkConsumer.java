@@ -31,7 +31,9 @@ import static no.nav.dolly.util.CallIdUtil.generateCallId;
 @Component
 public class KodeverkConsumer {
 
-    private static final String KODEVERK_URL_COMPLETE = "/api/v1/kodeverk/{kodeverksnavn}/koder/betydninger";
+    private static final String KODEVERK_URL_BEGINNING = "/api/v1/kodeverk";
+    private static final String KODEVERK_URL_KODER = "koder";
+    private static final String KODEVERK_URL_BETYDNINGER = "betydninger";
 
     private final TokenService tokenService;
     private final WebClient webClient;
@@ -52,10 +54,6 @@ public class KodeverkConsumer {
     private static String getNorskBokmaal(Entry<String, java.util.List<KodeverkBetydningerResponse.Betydning>> entry) {
 
         return entry.getValue().get(0).getBeskrivelser().get("nb").getTekst();
-    }
-
-    private static String getKodeverksnavnUrl(String kodeverksnavn) {
-        return KODEVERK_URL_COMPLETE.replace("{kodeverksnavn}", kodeverksnavn);
     }
 
     @Timed(name = "providers", tags = { "operation", "hentKodeverk" })
@@ -85,7 +83,10 @@ public class KodeverkConsumer {
             return webClient
                     .get()
                     .uri(uriBuilder -> uriBuilder
-                            .path(getKodeverksnavnUrl(kodeverk.replace(" ", "%20")))
+                            .path(KODEVERK_URL_BEGINNING)
+                            .pathSegment(kodeverk)
+                            .pathSegment(KODEVERK_URL_KODER)
+                            .pathSegment(KODEVERK_URL_BETYDNINGER)
                             .queryParam("ekskluderUgyldige", true)
                             .queryParam("spraak", "nb")
                             .build())
