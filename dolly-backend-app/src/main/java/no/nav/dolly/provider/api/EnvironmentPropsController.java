@@ -17,6 +17,7 @@ import no.nav.dolly.bestilling.organisasjonforvalter.OrganisasjonConsumer;
 import no.nav.dolly.bestilling.pdldata.PdlDataConsumer;
 import no.nav.dolly.bestilling.pdlforvalter.PdlForvalterConsumer;
 import no.nav.dolly.bestilling.pensjonforvalter.PensjonforvalterConsumer;
+import no.nav.dolly.bestilling.personservice.PersonServiceConsumer;
 import no.nav.dolly.bestilling.sigrunstub.SigrunStubConsumer;
 import no.nav.dolly.bestilling.skjermingsregister.SkjermingsRegisterConsumer;
 import no.nav.dolly.bestilling.sykemelding.HelsepersonellConsumer;
@@ -63,6 +64,7 @@ public class EnvironmentPropsController {
     private final OrganisasjonServiceConsumer organisasjonServiceConsumer;
     private final OrganisasjonConsumer organisasjonConsumer;
     private final PensjonforvalterConsumer pensjonforvalterConsumer;
+    private final PersonServiceConsumer personServiceConsumer;
     private final PdlPersonConsumer pdlPersonConsumer;
     private final PdlDataConsumer pdlDataConsumer;
     private final PdlForvalterConsumer pdlForvalterConsumer;
@@ -111,6 +113,7 @@ public class EnvironmentPropsController {
                         organisasjonConsumer.checkAlive().entrySet(),
                         organisasjonServiceConsumer.checkAlive().entrySet(),
                         pdlDataConsumer.checkAlive().entrySet(),
+                        personServiceConsumer.checkAlive().entrySet(),
                         pdlForvalterConsumer.checkAlive().entrySet(),
                         pdlPersonConsumer.checkAlive().entrySet(),
                         pensjonforvalterConsumer.checkAlive().entrySet(),

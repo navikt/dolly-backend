@@ -26,7 +26,7 @@ public class PdlDataOppdateringCommand implements Callable<Mono<String>> {
         return webClient
                 .put()
                 .uri(PDL_FORVALTER_URL, ident)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .header(HttpHeaders.AUTHORIZATION, token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(body))
                 .retrieve()

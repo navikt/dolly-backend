@@ -31,7 +31,7 @@ public class PdlDataOrdreCommand implements Callable<Flux<String>> {
                         .pathSegment(identer.getIdenter().get(0))
                         .pathSegment("ordre")
                         .build())
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .header(HttpHeaders.AUTHORIZATION, token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(identer)
                 .retrieve()

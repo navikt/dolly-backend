@@ -1,6 +1,8 @@
 package no.nav.dolly.bestilling.inntektsmelding.command;
 
 import lombok.AllArgsConstructor;
+import no.nav.dolly.bestilling.inntektsmelding.domain.InntektsmeldingRequest;
+import no.nav.dolly.bestilling.inntektsmelding.domain.InntektsmeldingResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -8,9 +10,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.concurrent.Callable;
-
-import no.nav.dolly.bestilling.inntektsmelding.domain.InntektsmeldingRequest;
-import no.nav.dolly.bestilling.inntektsmelding.domain.InntektsmeldingResponse;
 
 @AllArgsConstructor
 public class OpprettInntektsmeldingCommand implements Callable<Mono<ResponseEntity<InntektsmeldingResponse>>> {
@@ -23,7 +22,7 @@ public class OpprettInntektsmeldingCommand implements Callable<Mono<ResponseEnti
     public Mono<ResponseEntity<InntektsmeldingResponse>> call() {
         return webClient.post()
                 .uri("/api/v1/inntektsmelding")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .header(HttpHeaders.AUTHORIZATION, token)
                 .header("Nav-Call-Id", callId)
                 .body(BodyInserters.fromPublisher(Mono.just(request), InntektsmeldingRequest.class))
                 .retrieve()

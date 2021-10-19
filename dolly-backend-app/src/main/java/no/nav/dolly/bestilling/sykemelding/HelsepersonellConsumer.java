@@ -54,7 +54,6 @@ public class HelsepersonellConsumer {
     }
 
     private String getAccessToken() {
-
         AccessToken token = accessTokenService.generateToken(serviceProperties).block();
         if (isNull(token)) {
             throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s", serviceProperties.getName()));

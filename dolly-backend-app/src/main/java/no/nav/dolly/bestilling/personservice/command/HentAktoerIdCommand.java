@@ -32,7 +32,7 @@ public class HentAktoerIdCommand implements Callable<Mono<ResponseEntity<AktoerI
                         .pathSegment(ident)
                         .pathSegment("aktoerId")
                         .build())
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .header(HttpHeaders.AUTHORIZATION, token)
                 .header(HEADER_NAV_CALL_ID, callId)
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .retrieve()

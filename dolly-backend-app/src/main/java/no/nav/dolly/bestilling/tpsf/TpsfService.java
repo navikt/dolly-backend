@@ -230,7 +230,6 @@ public class TpsfService {
     }
 
     private String getAccessToken() {
-
         AccessToken token = tokenService.generateToken(serviceProperties).block();
         if (isNull(token)) {
             throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s", serviceProperties.getName()));

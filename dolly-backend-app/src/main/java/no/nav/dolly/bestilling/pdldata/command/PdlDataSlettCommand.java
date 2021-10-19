@@ -24,7 +24,7 @@ public class PdlDataSlettCommand implements Callable<Mono<Void>> {
         return webClient
                 .delete()
                 .uri(PDL_FORVALTER_URL, ident)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .header(HttpHeaders.AUTHORIZATION, token)
                 .retrieve()
                 .bodyToMono(Void.class)
                 .onErrorResume(throwable -> throwable instanceof WebClientResponseException.NotFound,
