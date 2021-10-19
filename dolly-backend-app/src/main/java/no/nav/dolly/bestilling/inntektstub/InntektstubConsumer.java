@@ -14,6 +14,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.security.AccessControlException;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Objects.isNull;
 
@@ -96,5 +97,9 @@ public class InntektstubConsumer {
             throw new AccessControlException("Klarte ikke å generere AccessToken for inntektstub-proxy");
         }
         return "Bearer " + token.getTokenValue();
+    }
+
+    public Map<String, String> checkAlive() {
+        return Map.of(serverProperties.getName(), serverProperties.checkIsAlive(webClient, getAccessToken()));
     }
 }

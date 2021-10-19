@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Map;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -45,5 +46,9 @@ public class InntektsmeldingConsumer {
 
     private static String getNavCallId() {
         return format("%s %s", CONSUMER, UUID.randomUUID());
+    }
+
+    public Map<String, String> checkAlive() {
+        return Map.of(serverProperties.getName(), serverProperties.checkIsAlive(webClient, null));
     }
 }
