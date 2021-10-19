@@ -29,7 +29,7 @@ public class GetOrganisasjonCommand implements Callable<OrganisasjonDTO> {
                             .path("/api/v1/organisasjoner/{orgnummer}")
                             .build(orgnummer)
                     )
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .header(HttpHeaders.AUTHORIZATION, token)
                     .header("miljo", this.miljo)
                     .retrieve()
                     .bodyToMono(OrganisasjonDTO.class)

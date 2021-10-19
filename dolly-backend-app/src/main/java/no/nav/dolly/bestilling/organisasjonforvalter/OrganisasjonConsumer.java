@@ -14,11 +14,14 @@ import no.nav.dolly.security.oauth2.service.TokenService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static java.lang.String.format;
+import static java.util.Objects.isNull;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
@@ -31,7 +34,6 @@ public class OrganisasjonConsumer {
     private static final String ORGANISASJON_FORVALTER_URL = "/api/v2/organisasjoner";
     private static final String ORGANISASJON_DEPLOYMENT_URL = ORGANISASJON_FORVALTER_URL + "/ordre";
     private static final String ORGANISASJON_STATUS_URL = ORGANISASJON_FORVALTER_URL + "/ordrestatus";
-    private static final String BEARER = "Bearer ";
 
     private final TokenService tokenService;
     private final WebClient webClient;
@@ -56,7 +58,7 @@ public class OrganisasjonConsumer {
                         uriBuilder.path(ORGANISASJON_FORVALTER_URL)
                                 .queryParam("orgnumre", orgnumre)
                                 .build())
-                .header(AUTHORIZATION, BEARER + accessToken.getTokenValue())
+                .header(AUTHORIZATION, getAccessToken())
                 .header(HEADER_NAV_CALL_ID, navCallId)
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .retrieve()
@@ -75,7 +77,7 @@ public class OrganisasjonConsumer {
                         uriBuilder.path(ORGANISASJON_STATUS_URL)
                                 .queryParam("orgnumre", orgnumre)
                                 .build())
-                .header(AUTHORIZATION, BEARER + accessToken.getTokenValue())
+                .header(AUTHORIZATION, getAccessToken())
                 .header(HEADER_NAV_CALL_ID, navCallId)
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .retrieve()
@@ -91,7 +93,7 @@ public class OrganisasjonConsumer {
         return tokenService.generateToken(serviceProperties).flatMap(accessToken -> webClient
                 .post()
                 .uri(uriBuilder -> uriBuilder.path(ORGANISASJON_FORVALTER_URL).build())
-                .header(AUTHORIZATION, BEARER + accessToken.getTokenValue())
+                .header(AUTHORIZATION, getAccessToken())
                 .header(HEADER_NAV_CALL_ID, navCallId)
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .bodyValue(bestillingRequest)
@@ -105,16 +107,15 @@ public class OrganisasjonConsumer {
         var navCallId = getNavCallId();
         log.info("Organisasjon deploy sendt, callId: {}, consumerId: {}", navCallId, CONSUMER);
 
-        AccessToken accessToken = tokenService.generateToken(serviceProperties).block();
-        return sendDeployOrganisasjonRequest(request, navCallId, accessToken);
+        return sendDeployOrganisasjonRequest(request, navCallId);
     }
 
 
-    private ResponseEntity<DeployResponse> sendDeployOrganisasjonRequest(DeployRequest deployRequest, String callId, AccessToken accessToken) {
+    private ResponseEntity<DeployResponse> sendDeployOrganisasjonRequest(DeployRequest deployRequest, String callId) {
         return webClient
                 .post()
                 .uri(uriBuilder -> uriBuilder.path(ORGANISASJON_DEPLOYMENT_URL).build())
-                .header(AUTHORIZATION, BEARER + accessToken.getTokenValue())
+                .header(AUTHORIZATION, getAccessToken())
                 .header(HEADER_NAV_CALL_ID, callId)
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .bodyValue(deployRequest)
@@ -125,6 +126,22 @@ public class OrganisasjonConsumer {
 
     private static String getNavCallId() {
         return format("%s %s", CONSUMER, UUID.randomUUID());
+    }
+
+    private String getAccessToken() {
+        AccessToken token = tokenService.generateToken(serviceProperties).block();
+        if (isNull(token)) {
+            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s", serviceProperties.getName()));
+        }
+        return "Bearer " + token.getTokenValue();
+    }
+
+    public Map<String, String> checkAlive() {
+        try {
+            return Map.of(serviceProperties.getName(), serviceProperties.checkIsAlive(webClient, getAccessToken()));
+        } catch (SecurityException | WebClientResponseException ex) {
+            return Map.of(serviceProperties.getName(), String.format("%s, URL: %s", ex.getMessage(), serviceProperties.getUrl()));
+        }
     }
 
 }

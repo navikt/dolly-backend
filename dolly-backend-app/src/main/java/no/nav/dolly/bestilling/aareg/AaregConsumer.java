@@ -17,8 +17,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import java.security.AccessControlException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -38,11 +38,11 @@ public class AaregConsumer {
     private static final String MILJOE_QUERY = "miljoe";
 
     private final WebClient webClient;
-    private final NaisServerProperties serverProperties;
+    private final NaisServerProperties serviceProperties;
     private final TokenService tokenService;
 
     public AaregConsumer(TestnorgeAaregProxyProperties serverProperties, TokenService tokenService) {
-        this.serverProperties = serverProperties;
+        this.serviceProperties = serverProperties;
         this.tokenService = tokenService;
         this.webClient = WebClient.builder()
                 .baseUrl(serverProperties.getUrl())
@@ -122,10 +122,18 @@ public class AaregConsumer {
     }
 
     private String getAccessToken() {
-        AccessToken token = tokenService.generateToken(serverProperties).block();
+        AccessToken token = tokenService.generateToken(serviceProperties).block();
         if (isNull(token)) {
-            throw new AccessControlException("Klarte ikke å generere AccessToken for testnorge-aareg-proxy");
+            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s", serviceProperties.getName()));
         }
         return "Bearer " + token.getTokenValue();
+    }
+
+    public Map<String, String> checkAlive() {
+        try {
+            return Map.of(serviceProperties.getName(), serviceProperties.checkIsAlive(webClient, getAccessToken()));
+        } catch (SecurityException | WebClientResponseException ex) {
+            return Map.of(serviceProperties.getName(), String.format("%s, URL: %s", ex.getMessage(), serviceProperties.getUrl()));
+        }
     }
 }

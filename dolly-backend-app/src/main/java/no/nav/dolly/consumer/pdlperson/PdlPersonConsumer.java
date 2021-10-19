@@ -13,11 +13,11 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.security.AccessControlException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -41,15 +41,15 @@ public class PdlPersonConsumer {
     private static final String MULTI_PERSON_QUERY = "pdlperson/pdlbolkquery.graphql";
 
     private final TokenService tokenService;
-    private final NaisServerProperties serverProperties;
+    private final NaisServerProperties serviceProperties;
     private final WebClient webClient;
 
     public PdlPersonConsumer(TokenService tokenService, PdlProxyProperties serverProperties) {
 
-        this.serverProperties = serverProperties;
+        this.serviceProperties = serverProperties;
         this.tokenService = tokenService;
         webClient = WebClient.builder()
-                .baseUrl(serverProperties.getUrl() + PDL_API_URL)
+                .baseUrl(serverProperties.getUrl())
                 .build();
     }
 
@@ -70,7 +70,10 @@ public class PdlPersonConsumer {
 
         return webClient
                 .post()
-                .uri(uriBuilder -> uriBuilder.path(GRAPHQL_URL).build())
+                .uri(uriBuilder -> uriBuilder
+                        .path(PDL_API_URL)
+                        .path(GRAPHQL_URL)
+                        .build())
                 .header(AUTHORIZATION, getAccessToken())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .header(HEADER_NAV_CALL_ID, "Dolly: " + UUID.randomUUID())
@@ -89,7 +92,10 @@ public class PdlPersonConsumer {
 
         return webClient
                 .post()
-                .uri(uriBuilder -> uriBuilder.path(GRAPHQL_URL).build())
+                .uri(uriBuilder -> uriBuilder
+                        .path(PDL_API_URL)
+                        .path(GRAPHQL_URL)
+                        .build())
                 .header(AUTHORIZATION, getAccessToken())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .header(HEADER_NAV_CALL_ID, "Dolly: " + UUID.randomUUID())
@@ -104,10 +110,18 @@ public class PdlPersonConsumer {
     }
 
     private String getAccessToken() {
-        AccessToken token = tokenService.generateToken(serverProperties).block();
+        AccessToken token = tokenService.generateToken(serviceProperties).block();
         if (isNull(token)) {
-            throw new AccessControlException("Klarte ikke å generere AccessToken for pdlperson-proxy");
+            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s%s", serviceProperties.getName(), PDL_API_URL));
         }
         return "Bearer " + token.getTokenValue();
+    }
+
+    public Map<String, String> checkAlive() {
+        try {
+            return Map.of(serviceProperties.getName() + PDL_API_URL, serviceProperties.checkIsAlive(webClient, getAccessToken()));
+        } catch (SecurityException | WebClientResponseException ex) {
+            return Map.of(serviceProperties.getName(), String.format("%s, URL: %s", ex.getMessage(), serviceProperties.getUrl()));
+        }
     }
 }

@@ -14,11 +14,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.nav.dolly.util.CallIdUtil.generateCallId;
 
@@ -28,11 +30,11 @@ public class AmeldingConsumer {
 
     private final TokenService tokenService;
     private final WebClient webClient;
-    private final NaisServerProperties serverProperties;
+    private final NaisServerProperties serviceProperties;
 
     public AmeldingConsumer(TokenService tokenService, AmeldingServiceProperties serviceProperties) {
         this.tokenService = tokenService;
-        this.serverProperties = serviceProperties;
+        this.serviceProperties = serviceProperties;
         this.webClient = WebClient.builder()
                 .baseUrl(serviceProperties.getUrl())
                 .build();
@@ -40,7 +42,7 @@ public class AmeldingConsumer {
 
     public Map<String, ResponseEntity<Void>> putAmeldingList(Map<String, AMeldingDTO> ameldingList, String miljoe) {
 
-        AccessToken accessToken = tokenService.generateToken(serverProperties).block();
+        AccessToken accessToken = tokenService.generateToken(serviceProperties).block();
         Map<String, ResponseEntity<Void>> ameldingMap = new HashMap<>();
 
         log.info("Sender liste med Ameldinger: " + Json.pretty(ameldingList));
@@ -53,7 +55,7 @@ public class AmeldingConsumer {
             });
             return ameldingMap;
         } else
-            throw new DollyFunctionalException(String.format("Klarte ikke å hente accessToken for %s", serverProperties.getName()));
+            throw new DollyFunctionalException(String.format("Klarte ikke å hente accessToken for %s", serviceProperties.getName()));
     }
 
     @Timed(name = "providers", tags = { "operation", "amelding_put" })
@@ -62,7 +64,7 @@ public class AmeldingConsumer {
         log.info("Sender enkel Amelding: " + Json.pretty(amelding));
         ResponseEntity<Void> response = webClient.put()
                 .uri(uriBuilder -> uriBuilder.path("/api/v1/amelding").build())
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessTokenValue)
+                .header(HttpHeaders.AUTHORIZATION, accessTokenValue)
                 .header("Nav-Call-Id", generateCallId())
                 .header("miljo", miljoe)
                 .body(BodyInserters.fromPublisher(Mono.just(amelding), AMeldingDTO.class))
@@ -73,5 +75,21 @@ public class AmeldingConsumer {
             return response;
         } else
             throw new DollyFunctionalException("Feil under innsending til Amelding-service");
+    }
+
+    private String getAccessToken() {
+        AccessToken token = tokenService.generateToken(serviceProperties).block();
+        if (isNull(token)) {
+            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s", serviceProperties.getName()));
+        }
+        return "Bearer " + token.getTokenValue();
+    }
+
+    public Map<String, String> checkAlive() {
+        try {
+            return Map.of(serviceProperties.getName(), serviceProperties.checkIsAlive(webClient, getAccessToken()));
+        } catch (SecurityException | WebClientResponseException ex) {
+            return Map.of(serviceProperties.getName(), String.format("%s, URL: %s", ex.getMessage(), serviceProperties.getUrl()));
+        }
     }
 }

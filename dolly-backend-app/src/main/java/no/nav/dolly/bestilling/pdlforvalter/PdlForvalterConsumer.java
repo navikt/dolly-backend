@@ -37,8 +37,9 @@ import no.nav.dolly.security.oauth2.service.TokenService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import java.security.AccessControlException;
+import java.util.Map;
 
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
@@ -85,17 +86,17 @@ public class PdlForvalterConsumer {
     private static final String SEND_ERROR = "Feilet å sende %s: %s";
 
     private final TokenService tokenService;
-    private final NaisServerProperties serverProperties;
+    private final NaisServerProperties serviceProperties;
     private final WebClient webClient;
     private final ErrorStatusDecoder errorStatusDecoder;
 
     public PdlForvalterConsumer(TokenService tokenService, PdlProxyProperties serverProperties, ErrorStatusDecoder errorStatusDecoder) {
 
-        this.serverProperties = serverProperties;
+        this.serviceProperties = serverProperties;
         this.tokenService = tokenService;
         this.errorStatusDecoder = errorStatusDecoder;
         webClient = WebClient.builder()
-                .baseUrl(serverProperties.getUrl() + PDL_FORVALTER_URL)
+                .baseUrl(serverProperties.getUrl())
                 .build();
     }
 
@@ -103,6 +104,7 @@ public class PdlForvalterConsumer {
     public ResponseEntity<JsonNode> deleteIdent(String ident) {
         return webClient.delete()
                 .uri(uriBuilder -> uriBuilder
+                        .path(PDL_FORVALTER_URL)
                         .path(PDL_BESTILLING_SLETTING_URL)
                         .build())
                 .header(AUTHORIZATION, getAccessToken())
@@ -317,7 +319,10 @@ public class PdlForvalterConsumer {
         try {
             return
                     webClient.post()
-                            .uri(uriBuilder -> uriBuilder.path(url).build())
+                            .uri(uriBuilder -> uriBuilder
+                                    .path(PDL_FORVALTER_URL)
+                                    .path(url)
+                                    .build())
                             .contentType(APPLICATION_JSON)
                             .header(AUTHORIZATION, getAccessToken())
                             .header(HEADER_NAV_PERSON_IDENT, ident)
@@ -336,7 +341,10 @@ public class PdlForvalterConsumer {
 
         return
                 webClient.post()
-                        .uri(uriBuilder -> uriBuilder.path(url).build())
+                        .uri(uriBuilder -> uriBuilder
+                                .path(PDL_FORVALTER_URL)
+                                .path(url)
+                                .build())
                         .contentType(APPLICATION_JSON)
                         .header(AUTHORIZATION, getAccessToken())
                         .header(HEADER_NAV_PERSON_IDENT, ident)
@@ -346,10 +354,18 @@ public class PdlForvalterConsumer {
     }
 
     private String getAccessToken() {
-        AccessToken token = tokenService.generateToken(serverProperties).block();
+        AccessToken token = tokenService.generateToken(serviceProperties).block();
         if (isNull(token)) {
-            throw new AccessControlException("Klarte ikke å generere AccessToken for pdlForvalter-proxy");
+            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s%s", serviceProperties.getName(), PDL_FORVALTER_URL));
         }
         return "Bearer " + token.getTokenValue();
+    }
+
+    public Map<String, String> checkAlive() {
+        try {
+            return Map.of(serviceProperties.getName() + PDL_FORVALTER_URL, serviceProperties.checkIsAlive(webClient, getAccessToken()));
+        } catch (SecurityException | WebClientResponseException ex) {
+            return Map.of(serviceProperties.getName(), String.format("%s, URL: %s", ex.getMessage(), serviceProperties.getUrl()));
+        }
     }
 }

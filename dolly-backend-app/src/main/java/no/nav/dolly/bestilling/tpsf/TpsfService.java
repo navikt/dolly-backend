@@ -27,9 +27,9 @@ import org.springframework.web.reactive.function.client.WebClientException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.io.IOException;
-import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -61,12 +61,12 @@ public class TpsfService {
     private final TokenService tokenService;
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
-    private final NaisServerProperties serverProperties;
+    private final NaisServerProperties serviceProperties;
 
     public TpsfService(TokenService tokenService, TpsForvalterenProxyProperties serverProperties, ObjectMapper objectMapper) {
         this.tokenService = tokenService;
         this.objectMapper = objectMapper;
-        this.serverProperties = serverProperties;
+        this.serviceProperties = serverProperties;
         this.webClient = WebClient.builder()
                 .baseUrl(serverProperties.getUrl())
                 .build();
@@ -231,10 +231,18 @@ public class TpsfService {
 
     private String getAccessToken() {
 
-        AccessToken token = tokenService.generateToken(serverProperties).block();
+        AccessToken token = tokenService.generateToken(serviceProperties).block();
         if (isNull(token)) {
-            throw new AccessControlException("Klarte ikke å generere AccessToken for tps-forvalteren-proxy");
+            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s", serviceProperties.getName()));
         }
         return "Bearer " + token.getTokenValue();
+    }
+
+    public Map<String, String> checkAlive() {
+        try {
+            return Map.of(serviceProperties.getName(), serviceProperties.checkIsAlive(webClient, getAccessToken()));
+        } catch (SecurityException | WebClientResponseException ex) {
+            return Map.of(serviceProperties.getName(), String.format("%s, URL: %s", ex.getMessage(), serviceProperties.getUrl()));
+        }
     }
 }

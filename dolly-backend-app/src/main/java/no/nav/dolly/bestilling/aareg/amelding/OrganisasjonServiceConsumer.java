@@ -8,14 +8,18 @@ import no.nav.dolly.security.oauth2.service.TokenService;
 import no.nav.testnav.libs.dto.organisasjon.v1.OrganisasjonDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
+
+import static java.util.Objects.isNull;
 
 @Slf4j
 @Service
@@ -35,15 +39,15 @@ public class OrganisasjonServiceConsumer {
                 .build();
     }
 
-    private CompletableFuture<OrganisasjonDTO> getFutureOrganisasjon(String orgnummer, AccessToken accessToken, String miljo) {
+    private CompletableFuture<OrganisasjonDTO> getFutureOrganisasjon(String orgnummer, String accessToken, String miljo) {
         return CompletableFuture.supplyAsync(
-                () -> new GetOrganisasjonCommand(webClient, accessToken.getTokenValue(), orgnummer, miljo).call(),
+                () -> new GetOrganisasjonCommand(webClient, accessToken, orgnummer, miljo).call(),
                 executorService
         );
     }
 
     public List<OrganisasjonDTO> getOrganisasjoner(Set<String> orgnummerListe, String miljo) {
-        AccessToken accessToken = tokenService.generateToken(serviceProperties).flux().blockFirst();
+        String accessToken = getAccessToken();
         var futures = orgnummerListe.stream().map(value -> getFutureOrganisasjon(value, accessToken, miljo)).collect(Collectors.toList());
         List<OrganisasjonDTO> list = new ArrayList<>();
 
@@ -55,5 +59,21 @@ public class OrganisasjonServiceConsumer {
             }
         }
         return list;
+    }
+
+    private String getAccessToken() {
+        AccessToken token = tokenService.generateToken(serviceProperties).block();
+        if (isNull(token)) {
+            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s", serviceProperties.getName()));
+        }
+        return "Bearer " + token.getTokenValue();
+    }
+
+    public Map<String, String> checkAlive() {
+        try {
+            return Map.of(serviceProperties.getName(), serviceProperties.checkIsAlive(webClient, getAccessToken()));
+        } catch (SecurityException | WebClientResponseException ex) {
+            return Map.of(serviceProperties.getName(), String.format("%s, URL: %s", ex.getMessage(), serviceProperties.getUrl()));
+        }
     }
 }

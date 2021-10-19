@@ -12,9 +12,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import java.security.AccessControlException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -33,11 +34,11 @@ public class KrrstubConsumer {
 
     private final WebClient webClient;
     private final TokenService tokenService;
-    private final NaisServerProperties serverProperties;
+    private final NaisServerProperties serviceProperties;
 
     public KrrstubConsumer(TokenService tokenService, KrrstubProxyProperties serverProperties) {
         this.tokenService = tokenService;
-        this.serverProperties = serverProperties;
+        this.serviceProperties = serverProperties;
         this.webClient = WebClient.builder()
                 .baseUrl(serverProperties.getUrl())
                 .build();
@@ -94,10 +95,18 @@ public class KrrstubConsumer {
     }
 
     private String getAccessToken() {
-        AccessToken token = tokenService.generateToken(serverProperties).block();
+        AccessToken token = tokenService.generateToken(serviceProperties).block();
         if (isNull(token)) {
-            throw new AccessControlException("Klarte ikke å generere AccessToken for krrstub-proxy");
+            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s", serviceProperties.getName()));
         }
         return "Bearer " + token.getTokenValue();
+    }
+
+    public Map<String, String> checkAlive() {
+        try {
+            return Map.of(serviceProperties.getName(), serviceProperties.checkIsAlive(webClient, getAccessToken()));
+        } catch (SecurityException | WebClientResponseException ex) {
+            return Map.of(serviceProperties.getName(), String.format("%s, URL: %s", ex.getMessage(), serviceProperties.getUrl()));
+        }
     }
 }
