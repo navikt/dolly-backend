@@ -33,7 +33,7 @@ public class NaisServerProperties implements Scopeable {
                     .retrieve().toBodilessEntity()
                     .block();
             if (nonNull(response) && response.getStatusCode().is2xxSuccessful()) {
-                return String.valueOf(response.getStatusCodeValue());
+                return response.getStatusCode().name();
             }
         } catch (WebClientResponseException ex) {
             String feilmelding = String.format("%s, URL: %s", ex.getStatusCode(), url);
