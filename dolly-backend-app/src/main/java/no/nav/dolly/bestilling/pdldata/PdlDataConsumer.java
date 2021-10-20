@@ -10,7 +10,6 @@ import no.nav.dolly.config.credentials.PdlDataForvalterProperties;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.security.oauth2.service.TokenService;
 import no.nav.dolly.util.CheckAliveUtil;
-import no.nav.testnav.libs.dto.pdlforvalter.v1.OrdreRequestDTO;
 import no.nav.testnav.libs.dto.pdlforvalter.v1.PersonUpdateRequestDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -40,7 +39,8 @@ public class PdlDataConsumer {
     @Timed(name = "providers", tags = { "operation", "pdl_sendOrdre" })
     public String sendOrdre(String ident) {
 
-        return new PdlDataOrdreCommand(webClient, identer, serviceProperties.getAccessToken(tokenService)).call();
+        return new PdlDataOrdreCommand(webClient, ident, serviceProperties.getAccessToken(tokenService)).call()
+                .block();
     }
 
     @Timed(name = "providers", tags = { "operation", "pdl_delete" })
@@ -54,14 +54,13 @@ public class PdlDataConsumer {
                 .block();
     }
 
-    public String oppdaterPdl(String ident, PersonUpdateRequestDTO request) throws JsonProcessingException {
+    public void oppdaterPdl(String ident, PersonUpdateRequestDTO request) throws JsonProcessingException {
 
         var body = objectMapper.writeValueAsString(request);
-        return new PdlDataOppdateringCommand(webClient, ident, body, serviceProperties.getAccessToken(tokenService)).call();
+        new PdlDataOppdateringCommand(webClient, ident, body, serviceProperties.getAccessToken(tokenService)).call();
     }
 
     public Map<String, String> checkAlive() {
-        return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService)
-                .block();
+        return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
     }
 }
