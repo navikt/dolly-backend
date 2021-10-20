@@ -12,9 +12,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.Collections;
 import java.util.Map;
@@ -94,7 +94,7 @@ public class KodeverkConsumer {
                     .header(HEADER_NAV_CALL_ID, generateCallId())
                     .retrieve().toEntity(KodeverkBetydningerResponse.class).block();
 
-        } catch (HttpClientErrorException e) {
+        } catch (WebClientResponseException e) {
             throw new DollyFunctionalException(e.getMessage(), e);
         }
     }

@@ -14,8 +14,7 @@ import no.nav.dolly.errorhandling.ErrorStatusDecoder;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.List;
 
@@ -106,7 +105,7 @@ public class InntektstubClient implements ClientRegister {
             ResponseEntity<Inntektsinformasjon> response = inntektstubConsumer.deleteInntekter(hovedperson);
             log.info("Slettet inntektsinformasjon om ident {} i Inntektstub: {}", hovedperson, nonNull(response) ? response.getBody() : null);
 
-        } catch (HttpClientErrorException | HttpServerErrorException e) {
+        } catch (WebClientResponseException e) {
 
             log.error("Feilet å slette informasjon om ident {} i Inntektstub. Feilmelding: {}", hovedperson, e.getResponseBodyAsString());
 

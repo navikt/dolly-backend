@@ -11,7 +11,7 @@ import no.nav.dolly.domain.resultset.tpsf.DollyPerson;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.List;
 
@@ -59,7 +59,7 @@ public class SigrunStubClient implements ClientRegister {
             // Alle skattegrunnlag har samme ident
             sigrunStubConsumer.deleteSkattegrunnlag(ident);
 
-        } catch (HttpClientErrorException error) {
+        } catch (WebClientResponseException error) {
             if (!HttpStatus.NOT_FOUND.equals(error.getStatusCode())) {
 
                 log.error("Feilet å slette ident {} fra Sigrunstub", ident, error);

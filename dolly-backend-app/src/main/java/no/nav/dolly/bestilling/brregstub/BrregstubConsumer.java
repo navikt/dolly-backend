@@ -10,8 +10,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.Map;
 
@@ -46,7 +46,7 @@ public class BrregstubConsumer {
                             .block()
                             .getBody();
 
-        } catch (HttpClientErrorException e) {
+        } catch (WebClientResponseException e) {
             if (HttpStatus.NOT_FOUND != e.getStatusCode()) {
                 log.error("Feilet å lese fra BRREGSTUB", e);
             }
