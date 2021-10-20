@@ -101,6 +101,12 @@
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-vault-config-databases</artifactId>
+            <version>${spring-cloud.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-contract-wiremock</artifactId>
             <version>${spring-cloud.version}</version>
         </dependency>
@@ -127,7 +133,7 @@
             <dependency>
                 <groupId>no.nav.testnav.libs</groupId>
                 <artifactId>data-transfer-objects</artifactId>
-                <version>2021.10.19-10.20-459fd5f0b00d</version>
+                <version>2021.10.20-08.13-42b4dddd7e7c</version>
             </dependency>
 
             <dependency>
