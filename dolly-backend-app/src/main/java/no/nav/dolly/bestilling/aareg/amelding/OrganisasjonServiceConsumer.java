@@ -36,13 +36,6 @@ public class OrganisasjonServiceConsumer {
                 .build();
     }
 
-    private CompletableFuture<OrganisasjonDTO> getFutureOrganisasjon(String orgnummer, String accessToken, String miljo) {
-        return CompletableFuture.supplyAsync(
-                () -> new GetOrganisasjonCommand(webClient, accessToken, orgnummer, miljo).call(),
-                executorService
-        );
-    }
-
     public List<OrganisasjonDTO> getOrganisasjoner(Set<String> orgnummerListe, String miljo) {
         String accessToken = serviceProperties.getAccessToken(tokenService);
         var futures = orgnummerListe.stream().map(value -> getFutureOrganisasjon(value, accessToken, miljo)).collect(Collectors.toList());
@@ -60,5 +53,12 @@ public class OrganisasjonServiceConsumer {
 
     public Map<String, String> checkAlive() {
         return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
+    }
+
+    private CompletableFuture<OrganisasjonDTO> getFutureOrganisasjon(String orgnummer, String accessToken, String miljo) {
+        return CompletableFuture.supplyAsync(
+                () -> new GetOrganisasjonCommand(webClient, accessToken, orgnummer, miljo).call(),
+                executorService
+        );
     }
 }

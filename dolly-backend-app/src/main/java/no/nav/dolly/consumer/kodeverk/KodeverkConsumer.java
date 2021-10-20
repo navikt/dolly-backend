@@ -51,11 +51,6 @@ public class KodeverkConsumer {
                 .baseUrl(serverProperties.getUrl()).build();
     }
 
-    private static String getNorskBokmaal(Entry<String, java.util.List<KodeverkBetydningerResponse.Betydning>> entry) {
-
-        return entry.getValue().get(0).getBeskrivelser().get("nb").getTekst();
-    }
-
     @Timed(name = "providers", tags = { "operation", "hentKodeverk" })
     public KodeverkBetydningerResponse fetchKodeverkByName(String kodeverk) {
 
@@ -75,6 +70,10 @@ public class KodeverkConsumer {
         return kodeverkResponse.getBody().getBetydninger().entrySet().stream()
                 .filter(entry -> !entry.getValue().isEmpty())
                 .collect(Collectors.toMap(Entry::getKey, KodeverkConsumer::getNorskBokmaal));
+    }
+
+    public Map<String, String> checkAlive() {
+        return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
     }
 
     private ResponseEntity<KodeverkBetydningerResponse> getKodeverk(String kodeverk) {
@@ -100,7 +99,8 @@ public class KodeverkConsumer {
         }
     }
 
-    public Map<String, String> checkAlive() {
-        return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
+    private static String getNorskBokmaal(Entry<String, java.util.List<KodeverkBetydningerResponse.Betydning>> entry) {
+
+        return entry.getValue().get(0).getBeskrivelser().get("nb").getTekst();
     }
 }

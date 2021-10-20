@@ -60,6 +60,7 @@ public class PdlDataConsumer {
         new PdlDataOppdateringCommand(webClient, ident, body, serviceProperties.getAccessToken(tokenService)).call();
     }
 
+    @Timed(name = "providers", tags = { "operation", "pdl_alive" })
     public Map<String, String> checkAlive() {
         return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
     }

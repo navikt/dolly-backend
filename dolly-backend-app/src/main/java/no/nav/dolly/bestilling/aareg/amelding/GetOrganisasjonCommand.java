@@ -13,12 +13,9 @@ import java.util.concurrent.Callable;
 
 @Slf4j
 @RequiredArgsConstructor
-public class GetOrganisasjonCommand implements Callable<OrganisasjonDTO> {
-    private final WebClient webClient;
-    private final String token;
-    private final String orgnummer;
-    private final String miljo;
-
+public record GetOrganisasjonCommand(WebClient webClient,
+                                     String token, String orgnummer,
+                                     String miljo) implements Callable<OrganisasjonDTO> {
     @Override
     public OrganisasjonDTO call() {
         log.info("Henter organisasjon med orgnummer {} fra {}...", orgnummer, miljo);

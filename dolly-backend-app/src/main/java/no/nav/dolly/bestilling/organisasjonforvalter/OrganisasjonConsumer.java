@@ -83,7 +83,6 @@ public class OrganisasjonConsumer {
         ).block();
     }
 
-
     @Timed(name = "providers", tags = { "operation", "organisasjon-opprett" })
     public ResponseEntity<BestillingResponse> postOrganisasjon(BestillingRequest bestillingRequest) {
         var navCallId = getNavCallId();
@@ -108,6 +107,10 @@ public class OrganisasjonConsumer {
         return sendDeployOrganisasjonRequest(request, navCallId);
     }
 
+    @Timed(name = "providers", tags = { "operation", "organisasjon-alive" })
+    public Map<String, String> checkAlive() {
+        return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
+    }
 
     private ResponseEntity<DeployResponse> sendDeployOrganisasjonRequest(DeployRequest deployRequest, String callId) {
         return webClient
@@ -125,9 +128,4 @@ public class OrganisasjonConsumer {
     private static String getNavCallId() {
         return format("%s %s", CONSUMER, UUID.randomUUID());
     }
-
-    public Map<String, String> checkAlive() {
-        return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
-    }
-
 }

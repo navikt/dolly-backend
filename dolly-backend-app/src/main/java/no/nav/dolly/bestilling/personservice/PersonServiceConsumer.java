@@ -49,11 +49,11 @@ public class PersonServiceConsumer {
         return response.getBody();
     }
 
-    private static String getNavCallId() {
-        return format("%s %s", CONSUMER, UUID.randomUUID());
-    }
-
     public Map<String, String> checkAlive() {
         return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
+    }
+
+    private static String getNavCallId() {
+        return format("%s %s", CONSUMER, UUID.randomUUID());
     }
 }

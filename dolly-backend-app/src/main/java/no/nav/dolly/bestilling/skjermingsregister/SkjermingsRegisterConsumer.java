@@ -110,8 +110,8 @@ public class SkjermingsRegisterConsumer {
                 .block();
     }
 
-    private static String getNavCallId() {
-        return format("%s %s", CONSUMER, UUID.randomUUID());
+    public Map<String, String> checkAlive() {
+        return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
     }
 
     private void logInfoSkjermingsMelding(String callId) {
@@ -119,7 +119,7 @@ public class SkjermingsRegisterConsumer {
         log.info("Skjermingsmelding sendt, callid: {}, consumerId: {}", callId, CONSUMER);
     }
 
-    public Map<String, String> checkAlive() {
-        return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
+    private static String getNavCallId() {
+        return format("%s %s", CONSUMER, UUID.randomUUID());
     }
 }
