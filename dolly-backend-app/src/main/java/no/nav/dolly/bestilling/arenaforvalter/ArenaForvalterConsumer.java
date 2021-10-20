@@ -11,19 +11,17 @@ import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeBrukereResponse;
 import no.nav.dolly.domain.resultset.arenaforvalter.ArenaNyeDagpengerResponse;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.security.oauth2.config.NaisServerProperties;
-import no.nav.dolly.security.oauth2.domain.AccessToken;
 import no.nav.dolly.security.oauth2.service.TokenService;
+import no.nav.dolly.util.CheckAliveUtil;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
@@ -61,7 +59,7 @@ public class ArenaForvalterConsumer {
                                 .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .retrieve().toEntity(ArenaArbeidssokerBruker.class).block();
 
         if (nonNull(response) && response.hasBody()) {
@@ -81,7 +79,7 @@ public class ArenaForvalterConsumer {
                                 .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .retrieve()
                 .toEntity(JsonNode.class)
                 .block();
@@ -96,7 +94,7 @@ public class ArenaForvalterConsumer {
                                 .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .bodyValue(arenaNyeBrukere)
                 .retrieve()
                 .toEntity(ArenaNyeBrukereResponse.class)
@@ -112,7 +110,7 @@ public class ArenaForvalterConsumer {
                                 .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .bodyValue(arenaDagpenger)
                 .retrieve()
                 .toEntity(ArenaNyeDagpengerResponse.class)
@@ -128,26 +126,14 @@ public class ArenaForvalterConsumer {
                                 .build())
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<String>>() {
                 })
                 .block();
     }
 
-    private String getAccessToken() {
-        AccessToken token = tokenService.generateToken(serviceProperties).block();
-        if (isNull(token)) {
-            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s", serviceProperties.getName()));
-        }
-        return "Bearer " + token.getTokenValue();
-    }
-
     public Map<String, String> checkAlive() {
-        try {
-            return Map.of(serviceProperties.getName(), serviceProperties.checkIsAlive(webClient, getAccessToken()));
-        } catch (SecurityException | WebClientResponseException ex) {
-            return Map.of(serviceProperties.getName(), String.format("%s, URL: %s", ex.getMessage(), serviceProperties.getUrl()));
-        }
+        return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
     }
 }

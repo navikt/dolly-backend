@@ -6,8 +6,8 @@ import no.nav.dolly.bestilling.dokarkiv.domain.DokarkivResponse;
 import no.nav.dolly.config.credentials.DokarkivProxyServiceProperties;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.security.oauth2.config.NaisServerProperties;
-import no.nav.dolly.security.oauth2.domain.AccessToken;
 import no.nav.dolly.security.oauth2.service.TokenService;
+import no.nav.dolly.util.CheckAliveUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import static java.lang.String.format;
-import static java.util.Objects.isNull;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
@@ -47,7 +46,7 @@ public class DokarkivConsumer {
 
         return webClient.post()
                 .uri(builder -> builder.path("/api/{miljo}/v1/journalpost").build(environment))
-                .header(AUTHORIZATION, getAccessToken())
+                .header(AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .header(HEADER_NAV_CALL_ID, callId)
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .bodyValue(dokarkivRequest)
@@ -71,19 +70,7 @@ public class DokarkivConsumer {
         return format("%s %s", CONSUMER, UUID.randomUUID());
     }
 
-    private String getAccessToken() {
-        AccessToken token = tokenService.generateToken(serviceProperties).block();
-        if (isNull(token)) {
-            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s", serviceProperties.getName()));
-        }
-        return "Bearer " + token.getTokenValue();
-    }
-
     public Map<String, String> checkAlive() {
-        try {
-            return Map.of(serviceProperties.getName(), serviceProperties.checkIsAlive(webClient, getAccessToken()));
-        } catch (SecurityException | WebClientResponseException ex) {
-            return Map.of(serviceProperties.getName(), String.format("%s, URL: %s", ex.getMessage(), serviceProperties.getUrl()));
-        }
+        return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
     }
 }

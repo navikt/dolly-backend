@@ -32,7 +32,6 @@ import no.nav.dolly.errorhandling.ErrorStatusDecoder;
 import no.nav.dolly.exceptions.DollyFunctionalException;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.security.oauth2.config.NaisServerProperties;
-import no.nav.dolly.security.oauth2.domain.AccessToken;
 import no.nav.dolly.security.oauth2.service.TokenService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -42,7 +41,6 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import java.util.Map;
 
 import static java.lang.String.format;
-import static java.util.Objects.isNull;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_PERSON_IDENT;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -107,7 +105,7 @@ public class PdlForvalterConsumer {
                         .path(PDL_FORVALTER_URL)
                         .path(PDL_BESTILLING_SLETTING_URL)
                         .build())
-                .header(AUTHORIZATION, getAccessToken())
+                .header(AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .header(HEADER_NAV_PERSON_IDENT, ident)
                 .retrieve().toEntity(JsonNode.class)
                 .block();
@@ -324,7 +322,7 @@ public class PdlForvalterConsumer {
                                     .path(url)
                                     .build())
                             .contentType(APPLICATION_JSON)
-                            .header(AUTHORIZATION, getAccessToken())
+                            .header(AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                             .header(HEADER_NAV_PERSON_IDENT, ident)
                             .bodyValue(body)
                             .retrieve().toEntity(JsonNode.class)
@@ -346,25 +344,18 @@ public class PdlForvalterConsumer {
                                 .path(url)
                                 .build())
                         .contentType(APPLICATION_JSON)
-                        .header(AUTHORIZATION, getAccessToken())
+                        .header(AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                         .header(HEADER_NAV_PERSON_IDENT, ident)
                         .bodyValue(body)
                         .retrieve().toEntity(JsonNode.class)
                         .block();
     }
 
-    private String getAccessToken() {
-        AccessToken token = tokenService.generateToken(serviceProperties).block();
-        if (isNull(token)) {
-            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s%s", serviceProperties.getName(), PDL_FORVALTER_URL));
-        }
-        return "Bearer " + token.getTokenValue();
-    }
-
     public Map<String, String> checkAlive() {
         try {
-            return Map.of(serviceProperties.getName() + PDL_FORVALTER_URL, serviceProperties.checkIsAlive(webClient, getAccessToken()));
+            return Map.of(serviceProperties.getName() + PDL_FORVALTER_URL, serviceProperties.checkIsAlive(webClient, serviceProperties.getAccessToken(tokenService)));
         } catch (SecurityException | WebClientResponseException ex) {
+            log.error("{} feilet mot URL: {}", serviceProperties.getName(), serviceProperties.getUrl(), ex);
             return Map.of(serviceProperties.getName(), String.format("%s, URL: %s", ex.getMessage(), serviceProperties.getUrl()));
         }
     }

@@ -3,11 +3,14 @@ package no.nav.dolly.security.oauth2.config;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.dolly.security.oauth2.domain.AccessToken;
+import no.nav.dolly.security.oauth2.service.TokenService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @Getter
@@ -22,6 +25,14 @@ public class NaisServerProperties implements Scopeable {
     @Override
     public String toScope() {
         return "api://" + cluster + "." + namespace + "." + name + "/.default";
+    }
+
+    public String getAccessToken(TokenService tokenService) {
+        AccessToken token = tokenService.generateToken(this).block();
+        if (isNull(token)) {
+            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s", this.getName()));
+        }
+        return "Bearer " + token.getTokenValue();
     }
 
     public String checkIsAlive(WebClient webClient, String accessToken) {

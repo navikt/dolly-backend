@@ -17,8 +17,8 @@ import no.nav.dolly.exceptions.DollyFunctionalException;
 import no.nav.dolly.exceptions.TpsfException;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.security.oauth2.config.NaisServerProperties;
-import no.nav.dolly.security.oauth2.domain.AccessToken;
 import no.nav.dolly.security.oauth2.service.TokenService;
+import no.nav.dolly.util.CheckAliveUtil;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -77,7 +77,7 @@ public class TpsfService {
 
         return webClient.get().uri(uriBuilder -> uriBuilder
                         .path(TPSF_GET_ENVIRONMENTS).build())
-                .header(AUTHORIZATION, getAccessToken())
+                .header(AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .retrieve().toEntity(EnvironmentsResponse.class)
                 .block();
     }
@@ -88,7 +88,7 @@ public class TpsfService {
         return webClient.delete().uri(uriBuilder -> uriBuilder
                         .path(TPSF_DELETE_PERSON_URL)
                         .queryParam(TPSF_IDENT_QUERY, ident).build())
-                .header(AUTHORIZATION, getAccessToken())
+                .header(AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .retrieve().toEntity(Object.class)
                 .block();
     }
@@ -98,7 +98,7 @@ public class TpsfService {
 
         return webClient.post().uri(uriBuilder -> uriBuilder
                         .path(TPSF_CREATE_ALIASES).build())
-                .header(AUTHORIZATION, getAccessToken())
+                .header(AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .bodyValue(request)
                 .retrieve().toEntity(RsAliasResponse.class)
                 .block();
@@ -142,7 +142,7 @@ public class TpsfService {
                         .path(TPSF_UPDATE_PERSON_URL)
                         .queryParam(TPSF_IDENT_QUERY, ident).build())
                 .contentType(MediaType.APPLICATION_JSON)
-                .header(AUTHORIZATION, getAccessToken())
+                .header(AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .bodyValue(tpsfBestilling)
                 .retrieve().toEntity(RsOppdaterPersonResponse.class)
                 .block();
@@ -160,7 +160,7 @@ public class TpsfService {
                         .path(TPSF_PERSON_RELASJON)
                         .queryParam(TPSF_IDENT_QUERY, ident).build())
                 .contentType(MediaType.APPLICATION_JSON)
-                .header(AUTHORIZATION, getAccessToken())
+                .header(AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .bodyValue(tpsfBestilling)
                 .retrieve().toEntityList(String.class)
                 .block();
@@ -177,7 +177,7 @@ public class TpsfService {
         ResponseEntity<Person> response = webClient.post().uri(uriBuilder -> uriBuilder
                         .path(TPSF_IMPORTER_PERSON).build())
                 .contentType(MediaType.APPLICATION_JSON)
-                .header(AUTHORIZATION, getAccessToken())
+                .header(AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .bodyValue(tpsfImportPersonRequest)
                 .retrieve().toEntity(Person.class)
                 .block();
@@ -195,7 +195,7 @@ public class TpsfService {
                             .path(TPSF_BASE_URL)
                             .pathSegment(addtionalUrl).build())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .header(AUTHORIZATION, getAccessToken())
+                    .header(AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                     .bodyValue(request)
                     .retrieve().toEntity(Object.class)
                     .block();
@@ -229,19 +229,7 @@ public class TpsfService {
         }
     }
 
-    private String getAccessToken() {
-        AccessToken token = tokenService.generateToken(serviceProperties).block();
-        if (isNull(token)) {
-            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s", serviceProperties.getName()));
-        }
-        return "Bearer " + token.getTokenValue();
-    }
-
     public Map<String, String> checkAlive() {
-        try {
-            return Map.of(serviceProperties.getName(), serviceProperties.checkIsAlive(webClient, getAccessToken()));
-        } catch (SecurityException | WebClientResponseException ex) {
-            return Map.of(serviceProperties.getName(), String.format("%s, URL: %s", ex.getMessage(), serviceProperties.getUrl()));
-        }
+        return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
     }
 }

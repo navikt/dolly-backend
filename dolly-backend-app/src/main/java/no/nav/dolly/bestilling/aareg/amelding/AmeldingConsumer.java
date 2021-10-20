@@ -20,7 +20,6 @@ import reactor.core.publisher.Mono;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.nav.dolly.util.CallIdUtil.generateCallId;
 
@@ -77,18 +76,11 @@ public class AmeldingConsumer {
             throw new DollyFunctionalException("Feil under innsending til Amelding-service");
     }
 
-    private String getAccessToken() {
-        AccessToken token = tokenService.generateToken(serviceProperties).block();
-        if (isNull(token)) {
-            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s", serviceProperties.getName()));
-        }
-        return "Bearer " + token.getTokenValue();
-    }
-
     public Map<String, String> checkAlive() {
         try {
-            return Map.of(serviceProperties.getName(), serviceProperties.checkIsAlive(webClient, getAccessToken()));
+            return Map.of(serviceProperties.getName(), serviceProperties.checkIsAlive(webClient, serviceProperties.getAccessToken(tokenService)));
         } catch (SecurityException | WebClientResponseException ex) {
+            log.error("{} feilet mot URL: {}", serviceProperties.getName(), serviceProperties.getUrl(), ex);
             return Map.of(serviceProperties.getName(), String.format("%s, URL: %s", ex.getMessage(), serviceProperties.getUrl()));
         }
     }

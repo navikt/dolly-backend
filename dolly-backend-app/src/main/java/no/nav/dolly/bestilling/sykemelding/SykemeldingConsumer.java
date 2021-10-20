@@ -6,19 +6,17 @@ import no.nav.dolly.bestilling.sykemelding.domain.SyntSykemeldingRequest;
 import no.nav.dolly.config.credentials.SykemeldingApiProxyProperties;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.security.oauth2.config.NaisServerProperties;
-import no.nav.dolly.security.oauth2.domain.AccessToken;
 import no.nav.dolly.security.oauth2.service.TokenService;
+import no.nav.dolly.util.CheckAliveUtil;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.Map;
 import java.util.UUID;
 
 import static java.lang.String.format;
-import static java.util.Objects.isNull;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 
 @Slf4j
@@ -51,7 +49,7 @@ public class SykemeldingConsumer {
         return webClient.post().uri(uriBuilder -> uriBuilder
                         .path(SYNT_SYKEMELDING_URL)
                         .build())
-                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .bodyValue(sykemeldingRequest)
                 .retrieve().toEntity(String.class)
                 .block();
@@ -66,26 +64,14 @@ public class SykemeldingConsumer {
         return webClient.post().uri(uriBuilder -> uriBuilder
                         .path(DETALJERT_SYKEMELDING_URL)
                         .build())
-                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .bodyValue(detaljertSykemeldingRequest)
                 .retrieve().toEntity(String.class)
                 .block();
     }
 
-    private String getAccessToken() {
-        AccessToken token = tokenService.generateToken(serviceProperties).block();
-        if (isNull(token)) {
-            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s", serviceProperties.getName()));
-        }
-        return "Bearer " + token.getTokenValue();
-    }
-
     public Map<String, String> checkAlive() {
-        try {
-            return Map.of(serviceProperties.getName(), serviceProperties.checkIsAlive(webClient, getAccessToken()));
-        } catch (SecurityException | WebClientResponseException ex) {
-            return Map.of(serviceProperties.getName(), String.format("%s, URL: %s", ex.getMessage(), serviceProperties.getUrl()));
-        }
+        return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
     }
 
     private static String getNavCallId() {

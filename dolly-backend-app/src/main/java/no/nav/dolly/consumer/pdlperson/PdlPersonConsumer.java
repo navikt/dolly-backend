@@ -6,7 +6,6 @@ import lombok.val;
 import no.nav.dolly.config.credentials.PdlProxyProperties;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.security.oauth2.config.NaisServerProperties;
-import no.nav.dolly.security.oauth2.domain.AccessToken;
 import no.nav.dolly.security.oauth2.service.TokenService;
 import org.apache.http.Consts;
 import org.springframework.core.io.ClassPathResource;
@@ -23,7 +22,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static java.util.Objects.isNull;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
@@ -74,7 +72,7 @@ public class PdlPersonConsumer {
                         .path(PDL_API_URL)
                         .path(GRAPHQL_URL)
                         .build())
-                .header(AUTHORIZATION, getAccessToken())
+                .header(AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .header(HEADER_NAV_CALL_ID, "Dolly: " + UUID.randomUUID())
                 .header(TEMA, GEN.name())
@@ -96,7 +94,7 @@ public class PdlPersonConsumer {
                         .path(PDL_API_URL)
                         .path(GRAPHQL_URL)
                         .build())
-                .header(AUTHORIZATION, getAccessToken())
+                .header(AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .header(HEADER_NAV_CALL_ID, "Dolly: " + UUID.randomUUID())
                 .header(TEMA, GEN.name())
@@ -109,18 +107,11 @@ public class PdlPersonConsumer {
                 .block();
     }
 
-    private String getAccessToken() {
-        AccessToken token = tokenService.generateToken(serviceProperties).block();
-        if (isNull(token)) {
-            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s%s", serviceProperties.getName(), PDL_API_URL));
-        }
-        return "Bearer " + token.getTokenValue();
-    }
-
     public Map<String, String> checkAlive() {
         try {
-            return Map.of(serviceProperties.getName() + PDL_API_URL, serviceProperties.checkIsAlive(webClient, getAccessToken()));
+            return Map.of(serviceProperties.getName() + PDL_API_URL, serviceProperties.checkIsAlive(webClient, serviceProperties.getAccessToken(tokenService)));
         } catch (SecurityException | WebClientResponseException ex) {
+            log.error("{} feilet mot URL: {}", serviceProperties.getName(), serviceProperties.getUrl(), ex);
             return Map.of(serviceProperties.getName(), String.format("%s, URL: %s", ex.getMessage(), serviceProperties.getUrl()));
         }
     }

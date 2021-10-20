@@ -7,21 +7,19 @@ import no.nav.dolly.config.credentials.UdistubServerProperties;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.security.oauth2.config.NaisServerProperties;
-import no.nav.dolly.security.oauth2.domain.AccessToken;
 import no.nav.dolly.security.oauth2.service.TokenService;
+import no.nav.dolly.util.CheckAliveUtil;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
 import java.util.UUID;
 
 import static java.lang.String.format;
-import static java.util.Objects.isNull;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
 
@@ -60,7 +58,7 @@ public class UdiStubConsumer {
                             .pathSegment(ident).build())
                     .header(HEADER_NAV_CALL_ID, getNavCallId())
                     .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                    .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                    .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                     .retrieve()
                     .bodyToMono(UdiPersonResponse.class)
                     .block();
@@ -79,7 +77,7 @@ public class UdiStubConsumer {
                 .accept(MediaType.APPLICATION_JSON)
                 .header(HEADER_NAV_CALL_ID, getNavCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .body(BodyInserters.fromPublisher(Mono.just(udiPerson), UdiPerson.class))
                 .retrieve()
                 .bodyToMono(UdiPersonResponse.class)
@@ -95,7 +93,7 @@ public class UdiStubConsumer {
                 .uri(uriBuilder -> uriBuilder.path(UDISTUB_PERSON).build())
                 .header(HEADER_NAV_CALL_ID, getNavCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .body(BodyInserters.fromPublisher(Mono.just(udiPerson), UdiPerson.class))
                 .retrieve()
                 .bodyToMono(UdiPersonResponse.class)
@@ -112,7 +110,7 @@ public class UdiStubConsumer {
                     .header(HEADER_NAV_CALL_ID, getNavCallId())
                     .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                     .header(NAV_PERSON_IDENT, ident)
-                    .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                    .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                     .retrieve().toBodilessEntity()
                     .block();
 
@@ -125,19 +123,7 @@ public class UdiStubConsumer {
         return format("%s %s", CONSUMER, UUID.randomUUID());
     }
 
-    private String getAccessToken() {
-        AccessToken token = tokenService.generateToken(serviceProperties).block();
-        if (isNull(token)) {
-            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s", serviceProperties.getName()));
-        }
-        return "Bearer " + token.getTokenValue();
-    }
-
     public Map<String, String> checkAlive() {
-        try {
-            return Map.of(serviceProperties.getName(), serviceProperties.checkIsAlive(webClient, getAccessToken()));
-        } catch (SecurityException | WebClientResponseException ex) {
-            return Map.of(serviceProperties.getName(), String.format("%s, URL: %s", ex.getMessage(), serviceProperties.getUrl()));
-        }
+        return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
     }
 }

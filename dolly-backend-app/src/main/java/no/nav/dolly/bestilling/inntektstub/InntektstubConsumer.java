@@ -1,24 +1,23 @@
 package no.nav.dolly.bestilling.inntektstub;
 
+import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.inntektstub.domain.Inntektsinformasjon;
 import no.nav.dolly.bestilling.inntektstub.domain.ValiderInntekt;
 import no.nav.dolly.config.credentials.InntektstubProxyProperties;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.security.oauth2.config.NaisServerProperties;
-import no.nav.dolly.security.oauth2.domain.AccessToken;
 import no.nav.dolly.security.oauth2.service.TokenService;
+import no.nav.dolly.util.CheckAliveUtil;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Objects.isNull;
-
 @Service
+@Slf4j
 public class InntektstubConsumer {
 
     private static final String INNTEKTER_URL = "/api/v2/inntektsinformasjon";
@@ -46,7 +45,7 @@ public class InntektstubConsumer {
                         .path(INNTEKTER_URL)
                         .queryParam(NORSKE_IDENTER_QUERY, ident)
                         .build())
-                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .retrieve().toEntityList(Inntektsinformasjon.class)
                 .block();
     }
@@ -59,7 +58,7 @@ public class InntektstubConsumer {
                         .path(DELETE_INNTEKTER_URL)
                         .queryParam(NORSKE_IDENTER_QUERY, ident)
                         .pathSegment(ident).build())
-                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .retrieve().toEntity(Inntektsinformasjon.class)
                 .block();
     }
@@ -72,7 +71,7 @@ public class InntektstubConsumer {
                         .uri(uriBuilder -> uriBuilder
                                 .path(INNTEKTER_URL)
                                 .build())
-                        .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                        .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                         .bodyValue(inntektsinformasjon)
                         .retrieve().toEntityList(Inntektsinformasjon.class)
                         .block();
@@ -85,25 +84,13 @@ public class InntektstubConsumer {
                 .uri(uriBuilder -> uriBuilder
                         .path(VALIDER_INNTEKTER_URL)
                         .build())
-                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .bodyValue(validerInntekt)
                 .retrieve().toEntity(Object.class)
                 .block();
     }
 
-    private String getAccessToken() {
-        AccessToken token = tokenService.generateToken(serviceProperties).block();
-        if (isNull(token)) {
-            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s", serviceProperties.getName()));
-        }
-        return "Bearer " + token.getTokenValue();
-    }
-
     public Map<String, String> checkAlive() {
-        try {
-            return Map.of(serviceProperties.getName(), serviceProperties.checkIsAlive(webClient, getAccessToken()));
-        } catch (SecurityException | WebClientResponseException ex) {
-            return Map.of(serviceProperties.getName(), String.format("%s, URL: %s", ex.getMessage(), serviceProperties.getUrl()));
-        }
+        return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
     }
 }

@@ -8,8 +8,8 @@ import no.nav.dolly.config.credentials.TestnorgeAaregProxyProperties;
 import no.nav.dolly.exceptions.DollyFunctionalException;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.security.oauth2.config.NaisServerProperties;
-import no.nav.dolly.security.oauth2.domain.AccessToken;
 import no.nav.dolly.security.oauth2.service.TokenService;
+import no.nav.dolly.util.CheckAliveUtil;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,6 @@ import java.util.UUID;
 
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
@@ -58,7 +57,7 @@ public class AaregConsumer {
                         .build())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .header(HEADER_NAV_CALL_ID, getNavCallId())
-                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .bodyValue(request)
                 .retrieve().toEntity(AaregResponse.class)
                 .block();
@@ -80,7 +79,7 @@ public class AaregConsumer {
                             .build())
                     .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                     .header(HEADER_NAV_CALL_ID, getNavCallId())
-                    .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                    .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                     .retrieve().toEntityList(ArbeidsforholdResponse.class)
                     .block();
 
@@ -106,7 +105,7 @@ public class AaregConsumer {
                         .build())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .header(HEADER_NAV_CALL_ID, getNavCallId())
-                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .retrieve().toEntity(AaregResponse.class)
                 .block();
 
@@ -121,19 +120,7 @@ public class AaregConsumer {
         return format("%s %s", CONSUMER, UUID.randomUUID());
     }
 
-    private String getAccessToken() {
-        AccessToken token = tokenService.generateToken(serviceProperties).block();
-        if (isNull(token)) {
-            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s", serviceProperties.getName()));
-        }
-        return "Bearer " + token.getTokenValue();
-    }
-
     public Map<String, String> checkAlive() {
-        try {
-            return Map.of(serviceProperties.getName(), serviceProperties.checkIsAlive(webClient, getAccessToken()));
-        } catch (SecurityException | WebClientResponseException ex) {
-            return Map.of(serviceProperties.getName(), String.format("%s, URL: %s", ex.getMessage(), serviceProperties.getUrl()));
-        }
+        return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
     }
 }

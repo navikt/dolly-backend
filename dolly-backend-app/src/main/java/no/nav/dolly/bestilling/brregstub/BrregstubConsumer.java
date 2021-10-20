@@ -4,19 +4,17 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.brregstub.domain.RolleoversiktTo;
 import no.nav.dolly.config.credentials.BrregstubProxyProperties;
 import no.nav.dolly.security.oauth2.config.NaisServerProperties;
-import no.nav.dolly.security.oauth2.domain.AccessToken;
 import no.nav.dolly.security.oauth2.service.TokenService;
+import no.nav.dolly.util.CheckAliveUtil;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.Map;
 
-import static java.util.Objects.isNull;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_PERSON_IDENT;
 
 @Slf4j
@@ -43,7 +41,7 @@ public class BrregstubConsumer {
             return
                     webClient.get().uri(uriBuilder -> uriBuilder.path(ROLLEOVERSIKT_URL).build())
                             .header(HEADER_NAV_PERSON_IDENT, ident)
-                            .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                            .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                             .retrieve().toEntity(RolleoversiktTo.class)
                             .block()
                             .getBody();
@@ -63,7 +61,7 @@ public class BrregstubConsumer {
 
         return
                 webClient.post().uri(uriBuilder -> uriBuilder.path(ROLLEOVERSIKT_URL).build())
-                        .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                        .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                         .bodyValue(rolleoversiktTo)
                         .retrieve().toEntity(RolleoversiktTo.class)
                         .block();
@@ -74,7 +72,7 @@ public class BrregstubConsumer {
         try {
             webClient.delete().uri(uriBuilder -> uriBuilder.path(ROLLEOVERSIKT_URL).build())
                     .header(HEADER_NAV_PERSON_IDENT, ident)
-                    .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                    .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                     .retrieve().toEntity(String.class)
                     .block();
 
@@ -84,19 +82,7 @@ public class BrregstubConsumer {
         }
     }
 
-    private String getAccessToken() {
-        AccessToken token = tokenService.generateToken(serviceProperties).block();
-        if (isNull(token)) {
-            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s", serviceProperties.getName()));
-        }
-        return "Bearer " + token.getTokenValue();
-    }
-
     public Map<String, String> checkAlive() {
-        try {
-            return Map.of(serviceProperties.getName(), serviceProperties.checkIsAlive(webClient, getAccessToken()));
-        } catch (SecurityException | WebClientResponseException ex) {
-            return Map.of(serviceProperties.getName(), String.format("%s, URL: %s", ex.getMessage(), serviceProperties.getUrl()));
-        }
+        return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
     }
 }

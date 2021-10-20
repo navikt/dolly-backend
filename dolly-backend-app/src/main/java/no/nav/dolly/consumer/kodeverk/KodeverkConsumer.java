@@ -1,12 +1,13 @@
 package no.nav.dolly.consumer.kodeverk;
 
+import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.config.credentials.KodeverkProxyProperties;
 import no.nav.dolly.consumer.kodeverk.domain.KodeverkBetydningerResponse;
 import no.nav.dolly.exceptions.DollyFunctionalException;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.security.oauth2.config.NaisServerProperties;
-import no.nav.dolly.security.oauth2.domain.AccessToken;
 import no.nav.dolly.security.oauth2.service.TokenService;
+import no.nav.dolly.util.CheckAliveUtil;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -14,14 +15,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import static java.util.Objects.isNull;
 import static no.nav.dolly.config.CachingConfig.CACHE_KODEVERK_2;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
@@ -29,6 +28,7 @@ import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
 import static no.nav.dolly.util.CallIdUtil.generateCallId;
 
 @Component
+@Slf4j
 public class KodeverkConsumer {
 
     private static final String KODEVERK_URL_BEGINNING = "/api/v1/kodeverk";
@@ -90,7 +90,7 @@ public class KodeverkConsumer {
                             .queryParam("ekskluderUgyldige", true)
                             .queryParam("spraak", "nb")
                             .build())
-                    .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                    .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                     .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                     .header(HEADER_NAV_CALL_ID, generateCallId())
                     .retrieve().toEntity(KodeverkBetydningerResponse.class).block();
@@ -100,19 +100,7 @@ public class KodeverkConsumer {
         }
     }
 
-    private String getAccessToken() {
-        AccessToken token = tokenService.generateToken(serviceProperties).block();
-        if (isNull(token)) {
-            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s", serviceProperties.getName()));
-        }
-        return "Bearer " + token.getTokenValue();
-    }
-
     public Map<String, String> checkAlive() {
-        try {
-            return Map.of(serviceProperties.getName(), serviceProperties.checkIsAlive(webClient, getAccessToken()));
-        } catch (SecurityException | WebClientResponseException ex) {
-            return Map.of(serviceProperties.getName(), String.format("%s, URL: %s", ex.getMessage(), serviceProperties.getUrl()));
-        }
+        return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
     }
 }

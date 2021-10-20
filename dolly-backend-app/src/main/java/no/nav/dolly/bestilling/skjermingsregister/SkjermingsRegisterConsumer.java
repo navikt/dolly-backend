@@ -6,19 +6,17 @@ import no.nav.dolly.bestilling.skjermingsregister.domain.SkjermingsDataResponse;
 import no.nav.dolly.config.credentials.SkjermingsregisterProxyProperties;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.security.oauth2.config.NaisServerProperties;
-import no.nav.dolly.security.oauth2.domain.AccessToken;
 import no.nav.dolly.security.oauth2.service.TokenService;
+import no.nav.dolly.util.CheckAliveUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static java.lang.String.format;
-import static java.util.Objects.isNull;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
@@ -52,7 +50,7 @@ public class SkjermingsRegisterConsumer {
         return webClient.post().uri(uriBuilder -> uriBuilder
                         .path(SKJERMINGSREGISTER_URL)
                         .build())
-                .header(AUTHORIZATION, getAccessToken())
+                .header(AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .header(HEADER_NAV_CALL_ID, callid)
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .bodyValue(skjermingsDataRequest)
@@ -71,7 +69,7 @@ public class SkjermingsRegisterConsumer {
                         .path(SKJERMINGSREGISTER_URL)
                         .pathSegment(ident)
                         .build())
-                .header(AUTHORIZATION, getAccessToken())
+                .header(AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .header(HEADER_NAV_CALL_ID, callid)
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .retrieve().toEntity(SkjermingsDataResponse.class)
@@ -88,7 +86,7 @@ public class SkjermingsRegisterConsumer {
                         .path(SKJERMINGOPPHOER_URL)
                         .pathSegment(ident)
                         .build())
-                .header(AUTHORIZATION, getAccessToken())
+                .header(AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .header(HEADER_NAV_CALL_ID, callid)
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .retrieve().toEntity(String.class)
@@ -105,7 +103,7 @@ public class SkjermingsRegisterConsumer {
                         .path(SKJERMINGSREGISTER_URL)
                         .pathSegment(fnr)
                         .build())
-                .header(AUTHORIZATION, getAccessToken())
+                .header(AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .header(HEADER_NAV_CALL_ID, callid)
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .retrieve().toEntity(String.class)
@@ -121,19 +119,7 @@ public class SkjermingsRegisterConsumer {
         log.info("Skjermingsmelding sendt, callid: {}, consumerId: {}", callId, CONSUMER);
     }
 
-    private String getAccessToken() {
-        AccessToken token = tokenService.generateToken(serviceProperties).block();
-        if (isNull(token)) {
-            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s", serviceProperties.getName()));
-        }
-        return "Bearer " + token.getTokenValue();
-    }
-
     public Map<String, String> checkAlive() {
-        try {
-            return Map.of(serviceProperties.getName(), serviceProperties.checkIsAlive(webClient, getAccessToken()));
-        } catch (SecurityException | WebClientResponseException ex) {
-            return Map.of(serviceProperties.getName(), String.format("%s, URL: %s", ex.getMessage(), serviceProperties.getUrl()));
-        }
+        return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
     }
 }

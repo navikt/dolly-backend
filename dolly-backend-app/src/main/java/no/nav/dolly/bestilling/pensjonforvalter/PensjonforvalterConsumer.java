@@ -9,19 +9,17 @@ import no.nav.dolly.config.credentials.PensjonforvalterProxyProperties;
 import no.nav.dolly.exceptions.DollyFunctionalException;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.security.oauth2.config.NaisServerProperties;
-import no.nav.dolly.security.oauth2.domain.AccessToken;
 import no.nav.dolly.security.oauth2.service.TokenService;
+import no.nav.dolly.util.CheckAliveUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import static java.util.Collections.emptySet;
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
@@ -61,7 +59,7 @@ public class PensjonforvalterConsumer {
                     .uri(uriBuilder -> uriBuilder
                             .path(MILJOER_HENT_TILGJENGELIGE_URL)
                             .build())
-                    .header(AUTHORIZATION, getAccessToken())
+                    .header(AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                     .header(HEADER_NAV_CALL_ID, generateCallId())
                     .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                     .retrieve().toEntity(String[].class)
@@ -84,7 +82,7 @@ public class PensjonforvalterConsumer {
                 .uri(uriBuilder -> uriBuilder
                         .path(PENSJON_OPPRETT_PERSON_URL)
                         .build())
-                .header(AUTHORIZATION, getAccessToken())
+                .header(AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .bodyValue(opprettPersonRequest)
@@ -107,7 +105,7 @@ public class PensjonforvalterConsumer {
                 .uri(uriBuilder -> uriBuilder
                         .path(PENSJON_INNTEKT_URL)
                         .build())
-                .header(AUTHORIZATION, getAccessToken())
+                .header(AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .bodyValue(lagreInntektRequest)
@@ -132,7 +130,7 @@ public class PensjonforvalterConsumer {
                         .queryParam(FNR_QUERY, ident)
                         .queryParam(MILJO_QUERY, miljoe)
                         .build())
-                .header(AUTHORIZATION, getAccessToken())
+                .header(AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .header(HEADER_NAV_CALL_ID, generateCallId())
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .retrieve().toEntity(JsonNode.class)
@@ -145,19 +143,8 @@ public class PensjonforvalterConsumer {
         return response.getBody();
     }
 
-    private String getAccessToken() {
-        AccessToken token = tokenService.generateToken(serviceProperties).block();
-        if (isNull(token)) {
-            throw new SecurityException(String.format("Klarte ikke å generere AccessToken for %s", serviceProperties.getName()));
-        }
-        return "Bearer " + token.getTokenValue();
+    public Map<String, String> checkAlive() {
+        return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
     }
 
-    public Map<String, String> checkAlive() {
-        try {
-            return Map.of(serviceProperties.getName(), serviceProperties.checkIsAlive(webClient, getAccessToken()));
-        } catch (SecurityException | WebClientResponseException ex) {
-            return Map.of(serviceProperties.getName(), String.format("%s, URL: %s", ex.getMessage(), serviceProperties.getUrl()));
-        }
-    }
 }
