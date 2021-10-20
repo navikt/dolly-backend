@@ -16,7 +16,7 @@ import org.springframework.vault.config.AbstractVaultConfiguration;
 @VaultPropertySource(value = "serviceuser/dev/srvfregdolly", propertyNamePrefix = "jira.", ignoreSecretNotFound = false)
 @VaultPropertySource(value = "serviceuser/test/srvdolly-backend", propertyNamePrefix = "credentials.test.", ignoreSecretNotFound = false)
 @VaultPropertySource(value = "serviceuser/dev/srvdolly-preprod-env", propertyNamePrefix = "credentials.preprod.", ignoreSecretNotFound = false)
-class LocalVaultConfig extends AbstractVaultConfiguration {
+public class LocalVaultConfig extends AbstractVaultConfiguration {
     @Override
     public VaultEndpoint vaultEndpoint() {
         return VaultEndpoint.create("vault.adeo.no", 443);

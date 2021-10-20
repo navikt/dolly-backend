@@ -8,7 +8,6 @@ import no.nav.dolly.domain.jpa.BestillingProgress;
 import no.nav.dolly.domain.resultset.RsDollyUtvidetBestilling;
 import no.nav.dolly.domain.resultset.tpsf.DollyPerson;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
-import no.nav.testnav.libs.dto.pdlforvalter.v1.OrdreRequestDTO;
 import no.nav.testnav.libs.dto.pdlforvalter.v1.PersonUpdateRequestDTO;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
@@ -16,6 +15,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import java.util.List;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @Slf4j
@@ -31,22 +31,14 @@ public class PdlDataClient implements ClientRegister {
     public void gjenopprett(RsDollyUtvidetBestilling bestilling, DollyPerson dollyPerson, BestillingProgress progress, boolean isOpprettEndre) {
 
         try {
-            if (nonNull(bestilling.getPdldata())) {
+            if (nonNull(bestilling.getPdldata()) && isNull(bestilling.getPdldata().getOpprettNyPerson())) {
                 pdlDataConsumer.oppdaterPdl(dollyPerson.getHovedperson(),
-                                PersonUpdateRequestDTO.builder()
-                                        .person(bestilling.getPdldata())
-                                        .build())
-                        .block();
+                        PersonUpdateRequestDTO.builder()
+                                .person(bestilling.getPdldata().getPerson())
+                                .build());
             }
 
-            var ordreResultat = pdlDataConsumer.sendOrdre(
-                            OrdreRequestDTO.builder()
-                                    .identer(List.of(dollyPerson.getHovedperson()))
-                                    .build())
-                    .collectList()
-                    .block();
-
-            progress.setPdlDataStatus(ordreResultat.stream().findFirst().orElse(null));
+            progress.setPdlDataStatus(pdlDataConsumer.sendOrdre(dollyPerson.getHovedperson()));
 
         } catch (JsonProcessingException e) {
 

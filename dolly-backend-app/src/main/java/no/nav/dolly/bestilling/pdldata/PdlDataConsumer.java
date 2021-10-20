@@ -15,7 +15,6 @@ import no.nav.testnav.libs.dto.pdlforvalter.v1.PersonUpdateRequestDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
@@ -39,7 +38,7 @@ public class PdlDataConsumer {
     }
 
     @Timed(name = "providers", tags = { "operation", "pdl_sendOrdre" })
-    public Flux<String> sendOrdre(OrdreRequestDTO identer) {
+    public String sendOrdre(String ident) {
 
         return new PdlDataOrdreCommand(webClient, identer, serviceProperties.getAccessToken(tokenService)).call();
     }
@@ -55,13 +54,14 @@ public class PdlDataConsumer {
                 .block();
     }
 
-    public Mono<String> oppdaterPdl(String ident, PersonUpdateRequestDTO request) throws JsonProcessingException {
+    public String oppdaterPdl(String ident, PersonUpdateRequestDTO request) throws JsonProcessingException {
 
         var body = objectMapper.writeValueAsString(request);
         return new PdlDataOppdateringCommand(webClient, ident, body, serviceProperties.getAccessToken(tokenService)).call();
     }
 
     public Map<String, String> checkAlive() {
-        return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
+        return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService)
+                .block();
     }
 }
