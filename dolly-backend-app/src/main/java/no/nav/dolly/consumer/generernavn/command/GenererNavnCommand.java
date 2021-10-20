@@ -1,7 +1,6 @@
 package no.nav.dolly.consumer.generernavn.command;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -13,15 +12,11 @@ import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
 
-@AllArgsConstructor
-public class GenererNavnCommand implements Callable<Mono<ResponseEntity<JsonNode>>> {
+public record GenererNavnCommand(WebClient webClient,
+                                 String token, Integer antall,
+                                 String callId) implements Callable<Mono<ResponseEntity<JsonNode>>> {
 
     private static final String FIKTIVE_NAVN_URL = "/api/v1/navn";
-
-    private final WebClient webClient;
-    private final String token;
-    private final Integer antall;
-    private final String callId;
 
     @Override
     public Mono<ResponseEntity<JsonNode>> call() {

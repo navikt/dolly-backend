@@ -2,6 +2,7 @@ package no.nav.dolly.bestilling.krrstub;
 
 import no.nav.dolly.config.credentials.KrrstubProxyProperties;
 import no.nav.dolly.domain.resultset.krrstub.DigitalKontaktdata;
+import no.nav.dolly.exceptions.DollyFunctionalException;
 import no.nav.dolly.security.oauth2.domain.AccessToken;
 import no.nav.dolly.security.oauth2.service.TokenService;
 import org.junit.Before;
@@ -17,8 +18,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import reactor.core.publisher.Mono;
-
-import java.security.AccessControlException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
@@ -78,8 +77,8 @@ public class KrrstubConsumerTest {
         assertThat("Response should be 200 successful", response.getStatusCode().is2xxSuccessful());
     }
 
-    @Test(expected = AccessControlException.class)
-    public void createDigitalKontaktdata_GenerateTokenFailed_ThrowsAccessControlException() {
+    @Test(expected = DollyFunctionalException.class)
+    public void createDigitalKontaktdata_GenerateTokenFailed_ThrowsDollyFunctionalException() {
 
         when(tokenService.generateToken(any(KrrstubProxyProperties.class))).thenReturn(Mono.empty());
 

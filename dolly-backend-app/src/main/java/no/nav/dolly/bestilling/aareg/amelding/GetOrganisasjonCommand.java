@@ -1,6 +1,5 @@
 package no.nav.dolly.bestilling.aareg.amelding;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.testnav.libs.dto.organisasjon.v1.OrganisasjonDTO;
 import org.springframework.http.HttpHeaders;
@@ -12,7 +11,6 @@ import java.time.Duration;
 import java.util.concurrent.Callable;
 
 @Slf4j
-@RequiredArgsConstructor
 public record GetOrganisasjonCommand(WebClient webClient,
                                      String token, String orgnummer,
                                      String miljo) implements Callable<OrganisasjonDTO> {

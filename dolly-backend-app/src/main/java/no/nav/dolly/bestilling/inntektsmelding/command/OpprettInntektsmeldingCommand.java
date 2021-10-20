@@ -1,6 +1,5 @@
 package no.nav.dolly.bestilling.inntektsmelding.command;
 
-import lombok.AllArgsConstructor;
 import no.nav.dolly.bestilling.inntektsmelding.domain.InntektsmeldingRequest;
 import no.nav.dolly.bestilling.inntektsmelding.domain.InntektsmeldingResponse;
 import org.springframework.http.HttpHeaders;
@@ -11,13 +10,10 @@ import reactor.core.publisher.Mono;
 
 import java.util.concurrent.Callable;
 
-@AllArgsConstructor
-public class OpprettInntektsmeldingCommand implements Callable<Mono<ResponseEntity<InntektsmeldingResponse>>> {
-    private final WebClient webClient;
-    private final String token;
-    private final InntektsmeldingRequest request;
-    private final String callId;
-
+public record OpprettInntektsmeldingCommand(WebClient webClient,
+                                            String token,
+                                            InntektsmeldingRequest request,
+                                            String callId) implements Callable<Mono<ResponseEntity<InntektsmeldingResponse>>> {
     @Override
     public Mono<ResponseEntity<InntektsmeldingResponse>> call() {
         return webClient.post()
