@@ -25,7 +25,8 @@ public class AktoerregisterClient implements ClientRegister {
 
     private final AktoerregisterConsumer aktoerregisterConsumer;
 
-    @Override public void gjenopprett(RsDollyUtvidetBestilling bestilling, DollyPerson dollyPerson, BestillingProgress progress, boolean isOpprettEndre) {
+    @Override
+    public void gjenopprett(RsDollyUtvidetBestilling bestilling, DollyPerson dollyPerson, BestillingProgress progress, boolean isOpprettEndre) {
 
         if (containsSynthEnv(bestilling.getEnvironments())) {
             int count = 0;
@@ -53,12 +54,8 @@ public class AktoerregisterClient implements ClientRegister {
         }
     }
 
-    @Override public void release(List<String> identer) {
-
-    }
-
     @Override
-    public boolean isTestnorgeRelevant() {
-        return false;
+    public void release(List<String> identer) {
+
     }
 }

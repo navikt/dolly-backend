@@ -19,6 +19,7 @@ public class PdlDataOrdreCommand implements Callable<Mono<String>> {
 
     private final WebClient webClient;
     private final String ident;
+    private final boolean isTpsfMaster;
     private final String token;
 
     public Mono<String> call() {
@@ -26,7 +27,7 @@ public class PdlDataOrdreCommand implements Callable<Mono<String>> {
         return webClient
                 .post()
                 .uri(uriBuilder -> uriBuilder.path(PDL_FORVALTER_ORDRE_URL)
-                        .queryParam(IS_TPS_MASTER, true)
+                        .queryParam(IS_TPS_MASTER, isTpsfMaster)
                         .build(ident))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)

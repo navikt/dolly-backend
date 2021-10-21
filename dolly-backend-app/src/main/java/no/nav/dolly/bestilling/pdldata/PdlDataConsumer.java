@@ -1,14 +1,14 @@
 package no.nav.dolly.bestilling.pdldata;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.pdldata.command.PdlDataOppdateringCommand;
+import no.nav.dolly.bestilling.pdldata.command.PdlDataOpprettingCommand;
 import no.nav.dolly.bestilling.pdldata.command.PdlDataOrdreCommand;
 import no.nav.dolly.bestilling.pdldata.command.PdlDataSlettCommand;
 import no.nav.dolly.config.credentials.PdlDataForvalterProperties;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.security.oauth2.service.TokenService;
+import no.nav.testnav.libs.dto.pdlforvalter.v1.BestillingRequestDTO;
 import no.nav.testnav.libs.dto.pdlforvalter.v1.PersonUpdateRequestDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -23,22 +23,20 @@ public class PdlDataConsumer {
     private final TokenService tokenService;
     private final WebClient webClient;
     private final PdlDataForvalterProperties properties;
-    private final ObjectMapper objectMapper;
 
-    public PdlDataConsumer(TokenService tokenService, PdlDataForvalterProperties serviceProperties, ObjectMapper objectMapper) {
+    public PdlDataConsumer(TokenService tokenService, PdlDataForvalterProperties serviceProperties) {
         this.tokenService = tokenService;
         this.properties = serviceProperties;
         this.webClient = WebClient.builder()
                 .baseUrl(serviceProperties.getUrl())
                 .build();
-        this.objectMapper = objectMapper;
     }
 
     @Timed(name = "providers", tags = {"operation", "pdl_sendOrdre"})
-    public String sendOrdre(String ident) {
+    public String sendOrdre(String ident, boolean isTpsfMaster) {
 
         return tokenService.generateToken(properties)
-                .flatMap(token -> new PdlDataOrdreCommand(webClient, ident, token.getTokenValue()).call())
+                .flatMap(token -> new PdlDataOrdreCommand(webClient, ident, isTpsfMaster, token.getTokenValue()).call())
                 .block();
     }
 
@@ -53,12 +51,19 @@ public class PdlDataConsumer {
                 .block();
     }
 
-    public String oppdaterPdl(String ident, PersonUpdateRequestDTO request) throws JsonProcessingException {
+    public String opprettPdl(BestillingRequestDTO request) {
 
-        var body = objectMapper.writeValueAsString(request);
         return tokenService.generateToken(properties)
                 .flatMap(token ->
-                        new PdlDataOppdateringCommand(webClient, ident, body, token.getTokenValue()).call())
+                        new PdlDataOpprettingCommand(webClient, request, token.getTokenValue()).call())
+                .block();
+    }
+
+    public String oppdaterPdl(String ident, PersonUpdateRequestDTO request) {
+
+        return tokenService.generateToken(properties)
+                .flatMap(token ->
+                        new PdlDataOppdateringCommand(webClient, ident, request, token.getTokenValue()).call())
                 .block();
     }
 }

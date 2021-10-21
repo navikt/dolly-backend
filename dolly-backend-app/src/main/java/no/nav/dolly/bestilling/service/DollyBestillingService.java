@@ -296,7 +296,6 @@ public class DollyBestillingService {
 
         counterCustomRegistry.invoke(bestKriterier);
         clientRegisters.stream()
-                .filter(clientRegister -> clientRegister.isTestnorgeRelevant() || dollyPerson.isTpsfMaster())
                 .forEach(clientRegister ->
                         clientRegister.gjenopprett(bestKriterier, dollyPerson, progress, isOpprettEndre));
     }
