@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-      - feature/nybestilling_via_pdl_forvalter
+      - feature/opprette_ny_PDL-person
   workflow_dispatch:
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/dolly-backend:${{ github.sha }}
