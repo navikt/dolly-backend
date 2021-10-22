@@ -1,5 +1,6 @@
 package no.nav.dolly.bestilling.organisasjonforvalter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.BestillingRequest;
 import no.nav.dolly.bestilling.organisasjonforvalter.domain.BestillingResponse;
@@ -23,6 +24,7 @@ import static java.lang.String.format;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
+import static no.nav.dolly.util.JacksonExchangeStrategyUtil.getJacksonStrategy;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Slf4j
@@ -37,11 +39,12 @@ public class OrganisasjonConsumer {
     private final WebClient webClient;
     private final OrganisasjonForvalterProperties serviceProperties;
 
-    public OrganisasjonConsumer(TokenService tokenService, OrganisasjonForvalterProperties serviceProperties) {
+    public OrganisasjonConsumer(TokenService tokenService, OrganisasjonForvalterProperties serviceProperties, ObjectMapper objectMapper) {
         this.tokenService = tokenService;
         this.serviceProperties = serviceProperties;
         this.webClient = WebClient.builder()
                 .baseUrl(serviceProperties.getUrl())
+                .exchangeStrategies(getJacksonStrategy(objectMapper))
                 .build();
     }
 
@@ -50,7 +53,7 @@ public class OrganisasjonConsumer {
         var navCallId = getNavCallId();
         log.info("Organisasjon hent request sendt, callId: {}, consumerId: {}", navCallId, CONSUMER);
 
-        return tokenService.generateToken(serviceProperties).flatMap(accessToken -> webClient
+        return webClient
                 .get()
                 .uri(uriBuilder ->
                         uriBuilder.path(ORGANISASJON_FORVALTER_URL)
@@ -61,7 +64,7 @@ public class OrganisasjonConsumer {
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .retrieve()
                 .bodyToMono(OrganisasjonDetaljer.class)
-        ).block();
+                .block();
     }
 
     @Timed(name = "providers", tags = { "operation", "organisasjon-hent" })
@@ -69,7 +72,7 @@ public class OrganisasjonConsumer {
         var navCallId = getNavCallId();
         log.info("Organisasjon hent request sendt, callId: {}, consumerId: {}", navCallId, CONSUMER);
 
-        return tokenService.generateToken(serviceProperties).flatMap(accessToken -> webClient
+        return webClient
                 .get()
                 .uri(uriBuilder ->
                         uriBuilder.path(ORGANISASJON_STATUS_URL)
@@ -80,14 +83,14 @@ public class OrganisasjonConsumer {
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .retrieve()
                 .bodyToMono(OrganisasjonDeployStatus.class)
-        ).block();
+                .block();
     }
 
     @Timed(name = "providers", tags = { "operation", "organisasjon-opprett" })
     public ResponseEntity<BestillingResponse> postOrganisasjon(BestillingRequest bestillingRequest) {
         var navCallId = getNavCallId();
         log.info("Organisasjon oppretting sendt, callId: {}, consumerId: {}", navCallId, CONSUMER);
-        return tokenService.generateToken(serviceProperties).flatMap(accessToken -> webClient
+        return webClient
                 .post()
                 .uri(uriBuilder -> uriBuilder.path(ORGANISASJON_FORVALTER_URL).build())
                 .header(AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
@@ -96,7 +99,7 @@ public class OrganisasjonConsumer {
                 .bodyValue(bestillingRequest)
                 .retrieve()
                 .toEntity(BestillingResponse.class)
-        ).block();
+                .block();
     }
 
     @Timed(name = "providers", tags = { "operation", "organisasjon-deploy" })

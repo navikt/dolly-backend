@@ -1,7 +1,5 @@
 package no.nav.dolly.bestilling.personservice;
 
-import io.swagger.v3.core.util.Json;
-import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.personservice.command.HentAktoerIdCommand;
 import no.nav.dolly.bestilling.personservice.domain.AktoerIdent;
 import no.nav.dolly.config.credentials.PersonServiceProperties;
@@ -21,7 +19,6 @@ import static java.util.Objects.isNull;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 
 @Service
-@Slf4j
 public class PersonServiceConsumer {
 
     private final TokenService tokenService;
@@ -45,7 +42,6 @@ public class PersonServiceConsumer {
         if (isNull(response) || !response.hasBody()) {
             return new AktoerIdent();
         }
-        log.info("Response fra PersonService: {}", Json.pretty(response.getBody()));
         return response.getBody();
     }
 

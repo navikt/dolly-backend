@@ -1,5 +1,6 @@
 package no.nav.dolly.bestilling.sigrunstub;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.sigrunstub.dto.SigrunResponse;
 import no.nav.dolly.config.credentials.SigrunstubProxyProperties;
@@ -21,6 +22,7 @@ import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
+import static no.nav.dolly.util.JacksonExchangeStrategyUtil.getJacksonStrategy;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -38,11 +40,12 @@ public class SigrunStubConsumer {
     private final WebClient webClient;
     private final NaisServerProperties serviceProperties;
 
-    public SigrunStubConsumer(TokenService tokenService, SigrunstubProxyProperties serverProperties) {
+    public SigrunStubConsumer(TokenService tokenService, SigrunstubProxyProperties serverProperties, ObjectMapper objectMapper) {
         this.tokenService = tokenService;
         this.serviceProperties = serverProperties;
         this.webClient = WebClient.builder()
                 .baseUrl(serverProperties.getUrl())
+                .exchangeStrategies(getJacksonStrategy(objectMapper))
                 .build();
     }
 
@@ -85,11 +88,11 @@ public class SigrunStubConsumer {
                 .block();
     }
 
-    private static String getNavCallId() {
-        return format("%s %s", CONSUMER, UUID.randomUUID());
-    }
-
     public Map<String, String> checkAlive() {
         return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
+    }
+
+    private static String getNavCallId() {
+        return format("%s %s", CONSUMER, UUID.randomUUID());
     }
 }

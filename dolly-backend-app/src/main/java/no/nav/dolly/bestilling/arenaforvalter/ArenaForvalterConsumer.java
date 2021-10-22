@@ -1,6 +1,7 @@
 package no.nav.dolly.bestilling.arenaforvalter;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.util.Json;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.config.credentials.ArenaforvalterProxyProperties;
@@ -27,6 +28,7 @@ import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
 import static no.nav.dolly.util.CallIdUtil.generateCallId;
+import static no.nav.dolly.util.JacksonExchangeStrategyUtil.getJacksonStrategy;
 
 @Component
 @Slf4j
@@ -40,11 +42,12 @@ public class ArenaForvalterConsumer {
     private final NaisServerProperties serviceProperties;
     private final TokenService tokenService;
 
-    public ArenaForvalterConsumer(ArenaforvalterProxyProperties serverProperties, TokenService tokenService) {
+    public ArenaForvalterConsumer(ArenaforvalterProxyProperties serverProperties, TokenService tokenService, ObjectMapper objectMapper) {
         this.serviceProperties = serverProperties;
         this.tokenService = tokenService;
         this.webClient = WebClient.builder()
                 .baseUrl(serverProperties.getUrl())
+                .exchangeStrategies(getJacksonStrategy(objectMapper))
                 .build();
     }
 

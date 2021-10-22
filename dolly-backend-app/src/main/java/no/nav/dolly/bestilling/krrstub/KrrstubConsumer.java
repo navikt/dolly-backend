@@ -1,5 +1,6 @@
 package no.nav.dolly.bestilling.krrstub;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.config.credentials.KrrstubProxyProperties;
 import no.nav.dolly.domain.resultset.krrstub.DigitalKontaktdata;
@@ -22,6 +23,7 @@ import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_PERSON_IDENT;
+import static no.nav.dolly.util.JacksonExchangeStrategyUtil.getJacksonStrategy;
 
 @Slf4j
 @Service
@@ -34,11 +36,12 @@ public class KrrstubConsumer {
     private final TokenService tokenService;
     private final NaisServerProperties serviceProperties;
 
-    public KrrstubConsumer(TokenService tokenService, KrrstubProxyProperties serverProperties) {
+    public KrrstubConsumer(TokenService tokenService, KrrstubProxyProperties serverProperties, ObjectMapper objectMapper) {
         this.tokenService = tokenService;
         this.serviceProperties = serverProperties;
         this.webClient = WebClient.builder()
                 .baseUrl(serverProperties.getUrl())
+                .exchangeStrategies(getJacksonStrategy(objectMapper))
                 .build();
     }
 

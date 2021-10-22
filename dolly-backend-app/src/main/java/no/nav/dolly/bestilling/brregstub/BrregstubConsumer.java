@@ -1,5 +1,6 @@
 package no.nav.dolly.bestilling.brregstub;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.brregstub.domain.RolleoversiktTo;
 import no.nav.dolly.config.credentials.BrregstubProxyProperties;
@@ -16,6 +17,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import java.util.Map;
 
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_PERSON_IDENT;
+import static no.nav.dolly.util.JacksonExchangeStrategyUtil.getJacksonStrategy;
 
 @Slf4j
 @Service
@@ -27,10 +29,12 @@ public class BrregstubConsumer {
     private final WebClient webClient;
     private final NaisServerProperties serviceProperties;
 
-    public BrregstubConsumer(TokenService tokenService, BrregstubProxyProperties serverProperties) {
+    public BrregstubConsumer(TokenService tokenService, BrregstubProxyProperties serverProperties, ObjectMapper objectMapper) {
         this.tokenService = tokenService;
         this.serviceProperties = serverProperties;
-        this.webClient = WebClient.builder()
+        this.webClient = WebClient
+                .builder()
+                .exchangeStrategies(getJacksonStrategy(objectMapper))
                 .baseUrl(serverProperties.getUrl())
                 .build();
     }
@@ -77,7 +81,6 @@ public class BrregstubConsumer {
                     .block();
 
         } catch (RuntimeException e) {
-
             log.error("BRREGSTUB: Feilet å slette rolledata for ident {}", ident, e);
         }
     }

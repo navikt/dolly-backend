@@ -1,6 +1,6 @@
 package no.nav.dolly.bestilling.aareg;
 
-import io.swagger.v3.core.util.Json;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.aareg.domain.AaregOpprettRequest;
 import no.nav.dolly.bestilling.aareg.domain.AaregResponse;
@@ -29,6 +29,7 @@ import static java.util.Objects.nonNull;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
+import static no.nav.dolly.util.JacksonExchangeStrategyUtil.getJacksonStrategy;
 
 @Slf4j
 @Component
@@ -42,13 +43,16 @@ public class AaregConsumer {
     private final NaisServerProperties serviceProperties;
     private final TokenService tokenService;
 
-    public AaregConsumer(TestnorgeAaregProxyProperties serverProperties, TokenService tokenService) {
+    public AaregConsumer(TestnorgeAaregProxyProperties serverProperties, TokenService tokenService, ObjectMapper objectMapper) {
         this.serviceProperties = serverProperties;
         this.tokenService = tokenService;
-        this.webClient = WebClient.builder()
+        this.webClient = WebClient
+                .builder()
+                .exchangeStrategies(getJacksonStrategy(objectMapper))
                 .baseUrl(serverProperties.getUrl())
                 .build();
     }
+
 
     @Timed(name = "providers", tags = { "operation", "aareg_opprettArbeidforhold" })
     public AaregResponse opprettArbeidsforhold(AaregOpprettRequest request) {
@@ -61,7 +65,7 @@ public class AaregConsumer {
                 .header(HEADER_NAV_CALL_ID, getNavCallId())
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
-                .bodyValue(Json.pretty(request))
+                .bodyValue(request)
                 .retrieve().toEntity(AaregResponse.class)
                 .block();
 

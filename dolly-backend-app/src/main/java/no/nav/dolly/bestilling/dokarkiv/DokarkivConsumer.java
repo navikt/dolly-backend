@@ -1,5 +1,6 @@
 package no.nav.dolly.bestilling.dokarkiv;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.dokarkiv.domain.DokarkivRequest;
 import no.nav.dolly.bestilling.dokarkiv.domain.DokarkivResponse;
@@ -20,6 +21,7 @@ import static java.lang.String.format;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
+import static no.nav.dolly.util.JacksonExchangeStrategyUtil.getJacksonStrategy;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Slf4j
@@ -30,11 +32,12 @@ public class DokarkivConsumer {
     private final TokenService tokenService;
     private final NaisServerProperties serviceProperties;
 
-    public DokarkivConsumer(DokarkivProxyServiceProperties properties, TokenService tokenService) {
+    public DokarkivConsumer(DokarkivProxyServiceProperties properties, TokenService tokenService, ObjectMapper objectMapper) {
         this.serviceProperties = properties;
         this.tokenService = tokenService;
         this.webClient = WebClient.builder()
                 .baseUrl(properties.getUrl())
+                .exchangeStrategies(getJacksonStrategy(objectMapper))
                 .build();
     }
 

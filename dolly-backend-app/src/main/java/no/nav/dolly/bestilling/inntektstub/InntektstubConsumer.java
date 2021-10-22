@@ -1,5 +1,6 @@
 package no.nav.dolly.bestilling.inntektstub;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.inntektstub.domain.Inntektsinformasjon;
 import no.nav.dolly.bestilling.inntektstub.domain.ValiderInntekt;
@@ -16,6 +17,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.List;
 import java.util.Map;
 
+import static no.nav.dolly.util.JacksonExchangeStrategyUtil.getJacksonStrategy;
+
 @Service
 @Slf4j
 public class InntektstubConsumer {
@@ -29,11 +32,12 @@ public class InntektstubConsumer {
     private final TokenService tokenService;
     private final NaisServerProperties serviceProperties;
 
-    public InntektstubConsumer(TokenService tokenService, InntektstubProxyProperties serverProperties) {
+    public InntektstubConsumer(TokenService tokenService, InntektstubProxyProperties serverProperties, ObjectMapper objectMapper) {
         this.tokenService = tokenService;
         this.serviceProperties = serverProperties;
         this.webClient = WebClient.builder()
                 .baseUrl(serverProperties.getUrl())
+                .exchangeStrategies(getJacksonStrategy(objectMapper))
                 .build();
     }
 

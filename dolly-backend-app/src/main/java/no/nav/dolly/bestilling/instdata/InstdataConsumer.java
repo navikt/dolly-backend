@@ -1,5 +1,6 @@
 package no.nav.dolly.bestilling.instdata;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.instdata.domain.InstdataResponse;
 import no.nav.dolly.config.credentials.InstProxyProperties;
@@ -22,6 +23,7 @@ import static java.util.Objects.nonNull;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
+import static no.nav.dolly.util.JacksonExchangeStrategyUtil.getJacksonStrategy;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -44,11 +46,12 @@ public class InstdataConsumer {
     private final TokenService tokenService;
     private final NaisServerProperties serviceProperties;
 
-    public InstdataConsumer(TokenService tokenService, InstProxyProperties serverProperties) {
+    public InstdataConsumer(TokenService tokenService, InstProxyProperties serverProperties, ObjectMapper objectMapper) {
         this.tokenService = tokenService;
         this.serviceProperties = serverProperties;
         this.webClient = WebClient.builder()
                 .baseUrl(serverProperties.getUrl())
+                .exchangeStrategies(getJacksonStrategy(objectMapper))
                 .build();
     }
 

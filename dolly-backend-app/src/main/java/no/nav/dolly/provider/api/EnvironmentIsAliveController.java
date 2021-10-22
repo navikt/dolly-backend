@@ -27,8 +27,6 @@ import no.nav.dolly.consumer.fastedatasett.FasteDatasettConsumer;
 import no.nav.dolly.consumer.generernavn.GenererNavnConsumer;
 import no.nav.dolly.consumer.kodeverk.KodeverkConsumer;
 import no.nav.dolly.consumer.pdlperson.PdlPersonConsumer;
-import no.nav.dolly.domain.resultset.RsDollyProps;
-import no.nav.dolly.properties.ProvidersProps;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,7 +43,7 @@ import static java.util.stream.Collectors.toMap;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/config", produces = MediaType.APPLICATION_JSON_VALUE)
-public class EnvironmentPropsController {
+public class EnvironmentIsAliveController {
 
     private final ArenaForvalterConsumer arenaForvalterConsumer;
     private final AaregConsumer aaregConsumer;
@@ -72,24 +70,6 @@ public class EnvironmentPropsController {
     private final SkjermingsRegisterConsumer skjermingsRegisterConsumer;
     private final SigrunStubConsumer sigrunStubConsumer;
     private final UdiStubConsumer udiStubConsumer;
-
-    private final ProvidersProps providersProps;
-
-    @GetMapping
-    @Operation(description = "Hent URL til applikasjonene er integrert mot")
-    public RsDollyProps getEnvironmentProps() {
-        return RsDollyProps.builder()
-                .tpsfUrl(providersProps.getTpsf().getUrl())
-                .sigrunStubUrl(providersProps.getSigrunStub().getUrl())
-                .krrStubUrl(providersProps.getKrrStub().getUrl())
-                .udiStubUrl(providersProps.getUdiStub().getUrl())
-                .kodeverkUrl(providersProps.getKodeverk().getUrl())
-                .arenaForvalterUrl(providersProps.getArenaForvalter().getUrl())
-                .instdataUrl(providersProps.getInstdata().getUrl())
-                .aaregdataUrl(providersProps.getAaregdata().getUrl())
-                .inntektstub(providersProps.getInntektstub().getUrl())
-                .build();
-    }
 
     @GetMapping("/isAlive")
     @Operation(description = "Sjekk om applikasjonene er i live")

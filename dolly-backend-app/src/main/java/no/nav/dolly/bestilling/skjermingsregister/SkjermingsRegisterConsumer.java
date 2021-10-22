@@ -1,5 +1,6 @@
 package no.nav.dolly.bestilling.skjermingsregister;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.skjermingsregister.domain.SkjermingsDataRequest;
 import no.nav.dolly.bestilling.skjermingsregister.domain.SkjermingsDataResponse;
@@ -20,6 +21,7 @@ import static java.lang.String.format;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CONSUMER_ID;
+import static no.nav.dolly.util.JacksonExchangeStrategyUtil.getJacksonStrategy;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Slf4j
@@ -33,11 +35,12 @@ public class SkjermingsRegisterConsumer {
     private final WebClient webClient;
     private final NaisServerProperties serviceProperties;
 
-    public SkjermingsRegisterConsumer(TokenService tokenService, SkjermingsregisterProxyProperties serverProperties) {
+    public SkjermingsRegisterConsumer(TokenService tokenService, SkjermingsregisterProxyProperties serverProperties, ObjectMapper objectMapper) {
         this.tokenService = tokenService;
         this.serviceProperties = serverProperties;
         this.webClient = WebClient.builder()
                 .baseUrl(serverProperties.getUrl())
+                .exchangeStrategies(getJacksonStrategy(objectMapper))
                 .build();
     }
 

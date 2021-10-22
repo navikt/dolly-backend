@@ -171,7 +171,6 @@ public class ArenaForvalterClient implements ClientRegister {
                 return;
             }
 
-            log.info("Sender Arenadata: \n" + Json.pretty(arenaNyeBrukere));
             ResponseEntity<ArenaNyeBrukereResponse> response = arenaForvalterConsumer.postArenadata(arenaNyeBrukere);
             if (response.hasBody()) {
                 if (nonNull((response.getBody().getArbeidsokerList()))) {

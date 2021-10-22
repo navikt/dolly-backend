@@ -1,6 +1,7 @@
 package no.nav.dolly.bestilling.pdlforvalter;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlAdressebeskyttelse;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlBostedadresse;
@@ -42,6 +43,7 @@ import java.util.Map;
 
 import static java.lang.String.format;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_PERSON_IDENT;
+import static no.nav.dolly.util.JacksonExchangeStrategyUtil.getJacksonStrategy;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
@@ -88,13 +90,14 @@ public class PdlForvalterConsumer {
     private final WebClient webClient;
     private final ErrorStatusDecoder errorStatusDecoder;
 
-    public PdlForvalterConsumer(TokenService tokenService, PdlProxyProperties serverProperties, ErrorStatusDecoder errorStatusDecoder) {
+    public PdlForvalterConsumer(TokenService tokenService, PdlProxyProperties serverProperties, ErrorStatusDecoder errorStatusDecoder, ObjectMapper objectMapper) {
 
         this.serviceProperties = serverProperties;
         this.tokenService = tokenService;
         this.errorStatusDecoder = errorStatusDecoder;
         webClient = WebClient.builder()
                 .baseUrl(serverProperties.getUrl())
+                .exchangeStrategies(getJacksonStrategy(objectMapper))
                 .build();
     }
 

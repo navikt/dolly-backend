@@ -1,5 +1,6 @@
 package no.nav.dolly.bestilling.sykemelding;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.sykemelding.domain.DetaljertSykemeldingRequest;
 import no.nav.dolly.bestilling.sykemelding.domain.SyntSykemeldingRequest;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 import static java.lang.String.format;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
+import static no.nav.dolly.util.JacksonExchangeStrategyUtil.getJacksonStrategy;
 
 @Slf4j
 @Service
@@ -32,11 +34,13 @@ public class SykemeldingConsumer {
 
     public SykemeldingConsumer(
             TokenService accessTokenService,
-            SykemeldingApiProxyProperties serverProperties
+            SykemeldingApiProxyProperties serverProperties,
+            ObjectMapper objectMapper
     ) {
         this.tokenService = accessTokenService;
         this.serviceProperties = serverProperties;
         this.webClient = WebClient.builder()
+                .exchangeStrategies(getJacksonStrategy(objectMapper))
                 .baseUrl(serverProperties.getUrl()).build();
     }
 
