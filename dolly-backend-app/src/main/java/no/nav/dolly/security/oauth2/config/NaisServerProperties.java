@@ -38,7 +38,8 @@ public class NaisServerProperties implements Scopeable {
     public String checkIsAlive(WebClient webClient, String accessToken) {
         try {
             ResponseEntity<Void> response = webClient.get().uri(uriBuilder -> uriBuilder
-                            .path("/internal/isReady")
+                            .pathSegment(name.contains("proxy") ? "proxy" : null)
+                            .pathSegment("internal", "isAlive")
                             .build())
                     .header(HttpHeaders.AUTHORIZATION, accessToken)
                     .retrieve().toBodilessEntity()
