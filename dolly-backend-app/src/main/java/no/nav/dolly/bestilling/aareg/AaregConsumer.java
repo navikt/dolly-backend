@@ -14,8 +14,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
@@ -58,7 +60,7 @@ public class AaregConsumer {
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .header(HEADER_NAV_CALL_ID, getNavCallId())
                 .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
-                .bodyValue(request)
+                .body(BodyInserters.fromPublisher(Mono.just(request), AaregOpprettRequest.class))
                 .retrieve().toEntity(AaregResponse.class)
                 .block();
 
