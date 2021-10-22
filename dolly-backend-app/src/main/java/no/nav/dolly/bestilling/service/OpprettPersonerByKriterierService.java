@@ -103,7 +103,7 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
                                     identService.saveIdentBeskrivelse(dollyPerson.getHovedperson(), bestKriterier.getBeskrivelse());
                                 }
 
-                                gjenopprettNonTpsf(dollyPerson, bestKriterier, progress, false);
+                                gjenopprettNonTpsf(dollyPerson, bestKriterier, progress, true);
 
                             } catch (RuntimeException e) {
                                 progress = BestillingProgress.builder()

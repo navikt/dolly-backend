@@ -30,7 +30,7 @@ public class PdlDataClient implements ClientRegister {
     public void gjenopprett(RsDollyUtvidetBestilling bestilling, DollyPerson dollyPerson, BestillingProgress progress, boolean isOpprettEndre) {
 
         try {
-            if (progress.isTpsf() && nonNull(bestilling.getPdldata())) {
+            if (progress.isTpsf() && nonNull(bestilling.getPdldata()) && isOpprettEndre) {
                     pdlDataConsumer.oppdaterPdl(dollyPerson.getHovedperson(),
                             PersonUpdateRequestDTO.builder()
                                     .person(bestilling.getPdldata().getPerson())
