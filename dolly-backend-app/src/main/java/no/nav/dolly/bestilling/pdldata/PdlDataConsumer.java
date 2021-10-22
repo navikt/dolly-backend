@@ -1,5 +1,7 @@
 package no.nav.dolly.bestilling.pdldata;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.pdldata.command.PdlDataOppdateringCommand;
 import no.nav.dolly.bestilling.pdldata.command.PdlDataOpprettingCommand;
@@ -23,13 +25,15 @@ public class PdlDataConsumer {
     private final TokenService tokenService;
     private final WebClient webClient;
     private final PdlDataForvalterProperties properties;
+    private final ObjectMapper objectMapper;
 
-    public PdlDataConsumer(TokenService tokenService, PdlDataForvalterProperties serviceProperties) {
+    public PdlDataConsumer(TokenService tokenService, PdlDataForvalterProperties serviceProperties, ObjectMapper objectMapper) {
         this.tokenService = tokenService;
         this.properties = serviceProperties;
         this.webClient = WebClient.builder()
                 .baseUrl(serviceProperties.getUrl())
                 .build();
+        this.objectMapper = objectMapper;
     }
 
     @Timed(name = "providers", tags = {"operation", "pdl_sendOrdre"})
@@ -51,19 +55,21 @@ public class PdlDataConsumer {
                 .block();
     }
 
-    public String opprettPdl(BestillingRequestDTO request) {
+    public String opprettPdl(BestillingRequestDTO request) throws JsonProcessingException {
 
+        var body = objectMapper.writeValueAsString(request);
         return tokenService.generateToken(properties)
                 .flatMap(token ->
-                        new PdlDataOpprettingCommand(webClient, request, token.getTokenValue()).call())
+                        new PdlDataOpprettingCommand(webClient, body, token.getTokenValue()).call())
                 .block();
     }
 
-    public String oppdaterPdl(String ident, PersonUpdateRequestDTO request) {
+    public String oppdaterPdl(String ident, PersonUpdateRequestDTO request) throws JsonProcessingException {
 
+        var body = objectMapper.writeValueAsString(request);
         return tokenService.generateToken(properties)
                 .flatMap(token ->
-                        new PdlDataOppdateringCommand(webClient, ident, request, token.getTokenValue()).call())
+                        new PdlDataOppdateringCommand(webClient, ident, body, token.getTokenValue()).call())
                 .block();
     }
 }

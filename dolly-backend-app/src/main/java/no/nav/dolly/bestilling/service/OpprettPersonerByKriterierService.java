@@ -1,5 +1,6 @@
 package no.nav.dolly.bestilling.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
@@ -29,7 +30,6 @@ import java.util.concurrent.ExecutorService;
 
 import static java.util.Objects.nonNull;
 import static no.nav.dolly.domain.jpa.Testident.Master.PDL;
-import static no.nav.dolly.domain.jpa.Testident.Master.TPSF;
 import static org.apache.logging.log4j.util.Strings.isNotBlank;
 
 @Slf4j
@@ -110,7 +110,14 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
                                         .bestilling(bestilling)
                                         .ident("?")
                                         .feil("NA:" + errorStatusDecoder.decodeRuntimeException(e))
-                                        .master(TPSF)
+                                        .master(originator.getMaster())
+                                        .build();
+                            } catch (JsonProcessingException e) {
+                                progress = BestillingProgress.builder()
+                                        .bestilling(bestilling)
+                                        .ident("?")
+                                        .feil("NA:" + errorStatusDecoder.decodeException(e))
+                                        .master(originator.getMaster())
                                         .build();
                             } finally {
                                 oppdaterProgress(bestilling, progress);

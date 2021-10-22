@@ -2,7 +2,6 @@ package no.nav.dolly.bestilling.pdldata.command;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.testnav.libs.dto.pdlforvalter.v1.PersonUpdateRequestDTO;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -19,7 +18,7 @@ public class PdlDataOppdateringCommand implements Callable<Mono<String>> {
 
     private final WebClient webClient;
     private final String ident;
-    private final PersonUpdateRequestDTO body;
+    private final String body;
     private final String token;
 
     public Mono<String> call() {
