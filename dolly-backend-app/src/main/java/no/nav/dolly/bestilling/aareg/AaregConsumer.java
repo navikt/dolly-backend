@@ -1,5 +1,6 @@
 package no.nav.dolly.bestilling.aareg;
 
+import io.swagger.v3.core.util.Json;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.aareg.domain.AaregOpprettRequest;
 import no.nav.dolly.bestilling.aareg.domain.AaregResponse;
@@ -12,8 +13,10 @@ import no.nav.dolly.security.oauth2.service.TokenService;
 import no.nav.dolly.util.CheckAliveUtil;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ReactiveHttpOutputMessage;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -53,6 +56,8 @@ public class AaregConsumer {
     @Timed(name = "providers", tags = { "operation", "aareg_opprettArbeidforhold" })
     public AaregResponse opprettArbeidsforhold(AaregOpprettRequest request) {
 
+        BodyInserter<Mono<AaregOpprettRequest>, ReactiveHttpOutputMessage> body = BodyInserters.fromPublisher(Mono.just(request), AaregOpprettRequest.class);
+        log.info("Body: {}", Json.pretty(body));
         ResponseEntity<AaregResponse> response = webClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .path(AAREGDATA_URL)
@@ -60,7 +65,7 @@ public class AaregConsumer {
                 .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
                 .header(HEADER_NAV_CALL_ID, getNavCallId())
                 .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
-                .body(BodyInserters.fromPublisher(Mono.just(request), AaregOpprettRequest.class))
+                .body(body)
                 .retrieve().toEntity(AaregResponse.class)
                 .block();
 
