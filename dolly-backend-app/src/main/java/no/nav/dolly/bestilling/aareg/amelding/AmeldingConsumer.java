@@ -6,7 +6,6 @@ import no.nav.dolly.config.credentials.AmeldingServiceProperties;
 import no.nav.dolly.exceptions.DollyFunctionalException;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.security.oauth2.config.NaisServerProperties;
-import no.nav.dolly.security.oauth2.domain.AccessToken;
 import no.nav.dolly.security.oauth2.service.TokenService;
 import no.nav.testnav.libs.dto.ameldingservice.v1.AMeldingDTO;
 import org.springframework.http.HttpHeaders;
@@ -41,7 +40,7 @@ public class AmeldingConsumer {
 
     public Map<String, ResponseEntity<Void>> putAmeldingList(Map<String, AMeldingDTO> ameldingList, String miljoe) {
 
-        AccessToken accessToken = tokenService.generateToken(serviceProperties).block();
+        String accessToken = serviceProperties.getAccessToken(tokenService);
         Map<String, ResponseEntity<Void>> ameldingMap = new HashMap<>();
 
         log.info("Sender liste med Ameldinger: " + Json.pretty(ameldingList));
@@ -49,7 +48,7 @@ public class AmeldingConsumer {
         if (nonNull(accessToken)) {
             ameldingList.values().forEach(amelding ->
             {
-                ResponseEntity<Void> response = putAmeldingdata(amelding, miljoe, accessToken.getTokenValue());
+                ResponseEntity<Void> response = putAmeldingdata(amelding, miljoe, accessToken);
                 ameldingMap.put(amelding.getKalendermaaned().toString(), response);
             });
             return ameldingMap;
