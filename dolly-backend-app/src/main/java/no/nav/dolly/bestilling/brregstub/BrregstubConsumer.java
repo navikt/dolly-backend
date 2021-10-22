@@ -43,7 +43,8 @@ public class BrregstubConsumer {
 
         try {
             return
-                    webClient.get().uri(uriBuilder -> uriBuilder.path(ROLLEOVERSIKT_URL).build())
+                    webClient.get().uri(uriBuilder -> uriBuilder
+                                    .path(ROLLEOVERSIKT_URL).build())
                             .header(HEADER_NAV_PERSON_IDENT, ident)
                             .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                             .retrieve().toEntity(RolleoversiktTo.class)
