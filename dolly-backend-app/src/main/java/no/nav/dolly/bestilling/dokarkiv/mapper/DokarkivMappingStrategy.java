@@ -33,19 +33,16 @@ public class DokarkivMappingStrategy implements MappingStrategy {
     public void register(MapperFactory factory) {
 
         factory.classMap(RsDokarkiv.class, DokarkivRequest.class)
-                .customize(new CustomMapper<RsDokarkiv, DokarkivRequest>() {
+                .customize(new CustomMapper<>() {
                     @Override
                     public void mapAtoB(RsDokarkiv dokarkiv, DokarkivRequest dokarkivRequest, MappingContext context) {
 
                         dokarkivRequest.setKanal(isBlank(dokarkiv.getKanal()) ? KANAL : dokarkiv.getKanal());
                         dokarkivRequest.setJournalpostType(isNull(dokarkiv.getJournalpostType()) ? INNGAAENDE : dokarkiv.getJournalpostType());
                         dokarkivRequest.setBehandlingstema(isNull(dokarkiv.getBehandlingstema()) ? BEHANDLINGSTEMA : dokarkiv.getBehandlingstema());
-                        if (isNull(dokarkiv.getAvsenderMottaker())
-                                || Arrays.stream(RsDokarkiv.IdType.values())
+                        if (Arrays.stream(RsDokarkiv.IdType.values())
                                 .noneMatch(type -> type.equals(dokarkiv.getAvsenderMottaker().getIdType()))) {
-                            dokarkivRequest.setAvsenderMottaker(DokarkivRequest.AvsenderMottaker.builder()
-                                    .idType(FNR)
-                                    .build());
+                            dokarkivRequest.setAvsenderMottaker(null);
                         }
                         dokarkivRequest.setSak(DokarkivRequest.Sak.builder()
                                 .fagsakId(FAGSAK_ID)
