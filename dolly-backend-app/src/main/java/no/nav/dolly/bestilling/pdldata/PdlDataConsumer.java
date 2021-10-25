@@ -1,6 +1,5 @@
 package no.nav.dolly.bestilling.pdldata;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.pdldata.command.PdlDataOppdateringCommand;
@@ -64,7 +63,7 @@ public class PdlDataConsumer {
                 .block();
     }
 
-    public String opprettPdl(BestillingRequestDTO request) throws JsonProcessingException {
+    public String opprettPdl(BestillingRequestDTO request) {
 
         return tokenService.generateToken(properties)
                 .flatMap(token ->
@@ -72,7 +71,7 @@ public class PdlDataConsumer {
                 .block();
     }
 
-    public String oppdaterPdl(String ident, PersonUpdateRequestDTO request) throws JsonProcessingException {
+    public String oppdaterPdl(String ident, PersonUpdateRequestDTO request) {
 
         return tokenService.generateToken(properties)
                 .flatMap(token ->

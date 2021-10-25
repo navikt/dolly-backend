@@ -26,6 +26,8 @@ import static java.lang.String.format;
 @RequiredArgsConstructor
 public class IdentService {
 
+    private static final String IDENT_NOT_FOUND = "Testperson med ident %s ble ikke funnet";
+
     private final IdentRepository identRepository;
     private final TransaksjonMappingRepository transaksjonMappingRepository;
     private final MapperFacade mapperFacade;
@@ -70,7 +72,7 @@ public class IdentService {
     public Testident saveIdentIBruk(String ident, boolean iBruk) {
 
         Testident testident = identRepository.findByIdent(ident)
-                .orElseThrow(() -> new NotFoundException(format("Testperson med ident %s ble ikke funnet.", ident)));
+                .orElseThrow(() -> new NotFoundException(format(IDENT_NOT_FOUND, ident)));
 
         testident.setIBruk(iBruk);
         return identRepository.save(testident);
@@ -80,7 +82,7 @@ public class IdentService {
     public Testident saveIdentBeskrivelse(String ident, String beskrivelse) {
 
         Testident testident = identRepository.findByIdent(ident)
-                .orElseThrow(() -> new NotFoundException(format("Testperson med ident %s ble ikke funnet.", ident)));
+                .orElseThrow(() -> new NotFoundException(format(IDENT_NOT_FOUND, ident)));
 
         testident.setBeskrivelse(beskrivelse);
         return identRepository.save(testident);
@@ -109,6 +111,6 @@ public class IdentService {
     public Testident getTestIdent(String ident) {
 
         return identRepository.findByIdent(ident)
-                .orElseThrow(() -> new NotFoundException(format("Testperson med ident %s ble ikke funnet.", ident)));
+                .orElseThrow(() -> new NotFoundException(format(IDENT_NOT_FOUND, ident)));
     }
 }

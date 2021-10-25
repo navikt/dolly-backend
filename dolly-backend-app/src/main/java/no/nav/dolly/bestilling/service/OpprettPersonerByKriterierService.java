@@ -31,7 +31,6 @@ import java.util.concurrent.ExecutorService;
 
 import static java.util.Objects.nonNull;
 import static no.nav.dolly.domain.jpa.Testident.Master.PDL;
-import static org.apache.logging.log4j.util.Strings.isNotBlank;
 
 @Slf4j
 @Service
@@ -92,19 +91,18 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
 
                             BestillingProgress progress = null;
                             try {
-                                var leverteIdenter = originator.isTpsf() ?
-                                        tpsfService.opprettIdenterTpsf(originator.getTpsfBestilling()) :
-                                        List.of(pdlDataConsumer.opprettPdl(originator.getPdlBestilling()));
+                                var opprettedeIdenter = getOpprettedeIdenter(originator);
 
                                 var dollyPerson = DollyPerson.builder()
-                                        .hovedperson(leverteIdenter.get(0))
+                                        .hovedperson(opprettedeIdenter.get(0))
                                         .master(originator.getMaster())
                                         .build();
+
                                 progress = new BestillingProgress(bestilling, dollyPerson.getHovedperson(), originator.getMaster());
 
                                 if (originator.isTpsf()) {
                                     sendIdenterTilTPS(new ArrayList<>(List.of(bestilling.getMiljoer().split(","))),
-                                            leverteIdenter, bestilling.getGruppe(), progress, bestKriterier.getBeskrivelse());
+                                            opprettedeIdenter, bestilling.getGruppe(), progress, bestKriterier.getBeskrivelse());
 
                                 } else {
                                     identService.saveIdentTilGruppe(dollyPerson.getHovedperson(), bestilling.getGruppe(),
@@ -133,5 +131,12 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
             bestilling.setFeil("Feil: kunne ikke mappe JSON request, se logg!");
             oppdaterBestillingFerdig(bestilling);
         }
+    }
+
+    private List<String> getOpprettedeIdenter(OriginatorCommand.Originator originator) throws JsonProcessingException {
+
+        return originator.isTpsf() ?
+                tpsfService.opprettIdenterTpsf(originator.getTpsfBestilling()) :
+                List.of(pdlDataConsumer.opprettPdl(originator.getPdlBestilling()));
     }
 }
