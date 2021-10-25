@@ -1,8 +1,6 @@
 package no.nav.dolly.bestilling.sykemelding;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.netty.channel.ChannelOption;
-import io.netty.handler.timeout.ReadTimeoutHandler;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dolly.bestilling.sykemelding.domain.DetaljertSykemeldingRequest;
 import no.nav.dolly.bestilling.sykemelding.domain.SyntSykemeldingRequest;
@@ -13,10 +11,8 @@ import no.nav.dolly.security.oauth2.service.TokenService;
 import no.nav.dolly.util.CheckAliveUtil;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.netty.http.client.HttpClient;
 
 import java.util.Map;
 import java.util.UUID;
@@ -44,9 +40,6 @@ public class SykemeldingConsumer {
         this.tokenService = accessTokenService;
         this.serviceProperties = serverProperties;
         this.webClient = WebClient.builder()
-                .clientConnector(new ReactorClientHttpConnector(HttpClient.create()
-                        .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1200 * 1000)
-                        .doOnConnected(c -> c.addHandlerLast(new ReadTimeoutHandler(1200)))))
                 .exchangeStrategies(getJacksonStrategy(objectMapper))
                 .baseUrl(serverProperties.getUrl()).build();
     }
