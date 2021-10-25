@@ -12,7 +12,11 @@ import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.security.oauth2.service.TokenService;
 import no.nav.testnav.libs.dto.pdlforvalter.v1.BestillingRequestDTO;
 import no.nav.testnav.libs.dto.pdlforvalter.v1.PersonUpdateRequestDTO;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.json.Jackson2JsonDecoder;
+import org.springframework.http.codec.json.Jackson2JsonEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
@@ -25,15 +29,20 @@ public class PdlDataConsumer {
     private final TokenService tokenService;
     private final WebClient webClient;
     private final PdlDataForvalterProperties properties;
-    private final ObjectMapper objectMapper;
 
     public PdlDataConsumer(TokenService tokenService, PdlDataForvalterProperties serviceProperties, ObjectMapper objectMapper) {
         this.tokenService = tokenService;
         this.properties = serviceProperties;
         this.webClient = WebClient.builder()
+                .exchangeStrategies(ExchangeStrategies.builder()
+                        .codecs(config -> {
+                            config.defaultCodecs()
+                                    .jackson2JsonEncoder(new Jackson2JsonEncoder(objectMapper, MediaType.APPLICATION_JSON));
+                            config.defaultCodecs()
+                                    .jackson2JsonDecoder(new Jackson2JsonDecoder(objectMapper, MediaType.APPLICATION_JSON));
+                        }).build())
                 .baseUrl(serviceProperties.getUrl())
                 .build();
-        this.objectMapper = objectMapper;
     }
 
     @Timed(name = "providers", tags = {"operation", "pdl_sendOrdre"})
@@ -57,19 +66,17 @@ public class PdlDataConsumer {
 
     public String opprettPdl(BestillingRequestDTO request) throws JsonProcessingException {
 
-        var body = objectMapper.writeValueAsString(request);
         return tokenService.generateToken(properties)
                 .flatMap(token ->
-                        new PdlDataOpprettingCommand(webClient, body, token.getTokenValue()).call())
+                        new PdlDataOpprettingCommand(webClient, request, token.getTokenValue()).call())
                 .block();
     }
 
     public String oppdaterPdl(String ident, PersonUpdateRequestDTO request) throws JsonProcessingException {
 
-        var body = objectMapper.writeValueAsString(request);
         return tokenService.generateToken(properties)
                 .flatMap(token ->
-                        new PdlDataOppdateringCommand(webClient, ident, body, token.getTokenValue()).call())
+                        new PdlDataOppdateringCommand(webClient, ident, request, token.getTokenValue()).call())
                 .block();
     }
 }

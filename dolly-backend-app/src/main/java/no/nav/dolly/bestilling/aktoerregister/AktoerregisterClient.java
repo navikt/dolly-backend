@@ -56,6 +56,6 @@ public class AktoerregisterClient implements ClientRegister {
 
     @Override
     public void release(List<String> identer) {
-
+        // Ikke relevant
     }
 }

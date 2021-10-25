@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 @Service
 @RequiredArgsConstructor
@@ -44,15 +42,16 @@ public class IdentService {
     }
 
     @Transactional
-    public Testident saveIdentTilGruppe(String ident, Testgruppe testgruppe, Master master) {
+    public Testident saveIdentTilGruppe(String ident, Testgruppe testgruppe, Master master, String beskrivelse) {
 
-        Testident testident = identRepository.findByIdent(ident);
-        if (isNull(testident)) {
-            testident = new Testident();
-        }
+        Testident testident = identRepository.findByIdent(ident)
+                .orElse(new Testident());
+
         testident.setIdent(ident);
         testident.setTestgruppe(testgruppe);
         testident.setMaster(master);
+        testident.setBeskrivelse(beskrivelse);
+
         return identRepository.save(testident);
     }
 
@@ -70,25 +69,21 @@ public class IdentService {
     @Transactional
     public Testident saveIdentIBruk(String ident, boolean iBruk) {
 
-        Testident testident = identRepository.findByIdent(ident);
-        if (nonNull(testident)) {
-            testident.setIBruk(iBruk);
-            return identRepository.save(testident);
-        } else {
-            throw new NotFoundException(format("Testperson med ident %s ble ikke funnet.", ident));
-        }
+        Testident testident = identRepository.findByIdent(ident)
+                .orElseThrow(() -> new NotFoundException(format("Testperson med ident %s ble ikke funnet.", ident)));
+
+        testident.setIBruk(iBruk);
+        return identRepository.save(testident);
     }
 
     @Transactional
     public Testident saveIdentBeskrivelse(String ident, String beskrivelse) {
 
-        Testident testident = identRepository.findByIdent(ident);
-        if (nonNull(testident)) {
-            testident.setBeskrivelse(beskrivelse);
-            return identRepository.save(testident);
-        } else {
-            throw new NotFoundException(format("Testperson med ident %s ble ikke funnet.", ident));
-        }
+        Testident testident = identRepository.findByIdent(ident)
+                .orElseThrow(() -> new NotFoundException(format("Testperson med ident %s ble ikke funnet.", ident)));
+
+        testident.setBeskrivelse(beskrivelse);
+        return identRepository.save(testident);
     }
 
     @Transactional
@@ -113,6 +108,7 @@ public class IdentService {
 
     public Testident getTestIdent(String ident) {
 
-        return identRepository.findByIdent(ident);
+        return identRepository.findByIdent(ident)
+                .orElseThrow(() -> new NotFoundException(format("Testperson med ident %s ble ikke funnet.", ident)));
     }
 }

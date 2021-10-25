@@ -11,6 +11,7 @@ import no.nav.dolly.bestilling.tpsf.TpsfService;
 import no.nav.dolly.consumer.pdlperson.PdlPersonConsumer;
 import no.nav.dolly.domain.jpa.Bestilling;
 import no.nav.dolly.domain.jpa.BestillingProgress;
+import no.nav.dolly.domain.jpa.Testident;
 import no.nav.dolly.domain.resultset.RsDollyBestillingRequest;
 import no.nav.dolly.domain.resultset.tpsf.DollyPerson;
 import no.nav.dolly.errorhandling.ErrorStatusDecoder;
@@ -65,6 +66,16 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
         this.pdlDataConsumer = pdlDataConsumer;
     }
 
+    private static BestillingProgress buildProgress(Bestilling bestilling, Testident.Master master, String error) {
+
+        return BestillingProgress.builder()
+                .bestilling(bestilling)
+                .ident("?")
+                .feil("NA:" + error)
+                .master(master)
+                .build();
+    }
+
     @Async
     public void executeAsync(Bestilling bestilling) {
 
@@ -93,32 +104,23 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
 
                                 if (originator.isTpsf()) {
                                     sendIdenterTilTPS(new ArrayList<>(List.of(bestilling.getMiljoer().split(","))),
-                                            leverteIdenter, bestilling.getGruppe(), progress);
+                                            leverteIdenter, bestilling.getGruppe(), progress, bestKriterier.getBeskrivelse());
 
                                 } else {
-                                    identService.saveIdentTilGruppe(dollyPerson.getHovedperson(), bestilling.getGruppe(), PDL);
-                                }
-
-                                if (isNotBlank(bestKriterier.getBeskrivelse())) {
-                                    identService.saveIdentBeskrivelse(dollyPerson.getHovedperson(), bestKriterier.getBeskrivelse());
+                                    identService.saveIdentTilGruppe(dollyPerson.getHovedperson(), bestilling.getGruppe(),
+                                            PDL, bestKriterier.getBeskrivelse());
                                 }
 
                                 gjenopprettNonTpsf(dollyPerson, bestKriterier, progress, true);
 
                             } catch (RuntimeException e) {
-                                progress = BestillingProgress.builder()
-                                        .bestilling(bestilling)
-                                        .ident("?")
-                                        .feil("NA:" + errorStatusDecoder.decodeRuntimeException(e))
-                                        .master(originator.getMaster())
-                                        .build();
+                                progress = buildProgress(bestilling, originator.getMaster(),
+                                        errorStatusDecoder.decodeRuntimeException(e));
+
                             } catch (JsonProcessingException e) {
-                                progress = BestillingProgress.builder()
-                                        .bestilling(bestilling)
-                                        .ident("?")
-                                        .feil("NA:" + errorStatusDecoder.decodeException(e))
-                                        .master(originator.getMaster())
-                                        .build();
+                                progress = buildProgress(bestilling, originator.getMaster(),
+                                        errorStatusDecoder.decodeException(e));
+
                             } finally {
                                 oppdaterProgress(bestilling, progress);
                             }

@@ -82,7 +82,7 @@ public class OpprettPersonerFraIdenterMedKriterierService extends DollyBestillin
                                     List<String> leverteIdenter = tpsfService.opprettIdenterTpsf(tpsfBestilling);
 
                                     sendIdenterTilTPS(new ArrayList<>(List.of(bestilling.getMiljoer().split(","))),
-                                            leverteIdenter, bestilling.getGruppe(), progress);
+                                            leverteIdenter, bestilling.getGruppe(), progress, bestilling.getBeskrivelse());
 
                                     DollyPerson dollyPerson = DollyPerson.builder()
                                             .hovedperson(leverteIdenter.get(0))
