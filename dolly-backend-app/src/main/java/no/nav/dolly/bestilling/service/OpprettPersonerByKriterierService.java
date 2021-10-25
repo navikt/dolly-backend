@@ -1,6 +1,5 @@
 package no.nav.dolly.bestilling.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
@@ -115,10 +114,6 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
                                 progress = buildProgress(bestilling, originator.getMaster(),
                                         errorStatusDecoder.decodeRuntimeException(e));
 
-                            } catch (JsonProcessingException e) {
-                                progress = buildProgress(bestilling, originator.getMaster(),
-                                        errorStatusDecoder.decodeException(e));
-
                             } finally {
                                 oppdaterProgress(bestilling, progress);
                             }
@@ -133,7 +128,7 @@ public class OpprettPersonerByKriterierService extends DollyBestillingService {
         }
     }
 
-    private List<String> getOpprettedeIdenter(OriginatorCommand.Originator originator) throws JsonProcessingException {
+    private List<String> getOpprettedeIdenter(OriginatorCommand.Originator originator) {
 
         return originator.isTpsf() ?
                 tpsfService.opprettIdenterTpsf(originator.getTpsfBestilling()) :
