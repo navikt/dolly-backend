@@ -25,7 +25,7 @@ import static no.nav.dolly.util.JacksonExchangeStrategyUtil.getJacksonStrategy;
 @Service
 public class SykemeldingConsumer {
 
-    public static final String SYNT_SYKEMELDING_URL = "/synt-sykemelding/api/v1/synt-sykemelding";
+    public static final String SYNT_SYKEMELDING_URL = "/syntetisk/api/v1/synt-sykemelding";
     public static final String DETALJERT_SYKEMELDING_URL = "/sykemelding/api/v1/sykemeldinger";
 
     private final WebClient webClient;
