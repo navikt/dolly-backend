@@ -138,6 +138,9 @@ public class InstdataConsumer {
                         .queryParam(INST_MILJOE_QUERY, environment)
                         .build())
                 .bodyValue(instdata)
+                .header(HEADER_NAV_CALL_ID, getNavCallId())
+                .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
+                .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
                 .retrieve().toEntityList(InstdataResponse.class)
                 .block();
     }
