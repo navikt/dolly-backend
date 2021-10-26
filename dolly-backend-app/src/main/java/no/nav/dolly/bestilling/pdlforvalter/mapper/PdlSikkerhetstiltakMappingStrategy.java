@@ -16,6 +16,8 @@ import java.time.LocalDateTime;
 
 import static java.util.Objects.nonNull;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
+import static no.nav.dolly.util.NullcheckUtil.nullcheckSetDefaultValue;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Slf4j
 @Component
@@ -24,6 +26,22 @@ public class PdlSikkerhetstiltakMappingStrategy implements MappingStrategy {
 
     private static LocalDate getDate(LocalDateTime timestamp) {
         return nonNull(timestamp) ? timestamp.toLocalDate() : null;
+    }
+
+    private static String getBeskrivelse(String type) {
+
+        if (isBlank(type)) {
+            return null;
+        }
+
+        return switch (type) {
+            case "FYUS" -> "Fysisk utestengelse";
+            case "TFUS" -> "Telefonisk utestengelse";
+            case "FTUS" -> "Fysisk/telefonisk utestengelse";
+            case "DIUS" -> "Digital utestengelse";
+            case "TOAN" -> "To ansatte i samtale";
+            default -> null;
+        };
     }
 
     @Override
@@ -35,12 +53,13 @@ public class PdlSikkerhetstiltakMappingStrategy implements MappingStrategy {
                     public void mapAtoB(Person person, PdlSikkerhetstiltak sikkerhetstiltak, MappingContext context) {
 
                         sikkerhetstiltak.setTiltakstype(person.getTypeSikkerhetTiltak());
-                        sikkerhetstiltak.setBeskrivelse(person.getBeskrSikkerhetTiltak());
+                        sikkerhetstiltak.setBeskrivelse(nullcheckSetDefaultValue(person.getBeskrSikkerhetTiltak(),
+                                getBeskrivelse(person.getTypeSikkerhetTiltak())));
                         sikkerhetstiltak.setGyldigFraOgMed(getDate(person.getSikkerhetTiltakDatoFom()));
                         sikkerhetstiltak.setGyldigTilOgMed(getDate(person.getSikkerhetTiltakDatoFom()));
 
                         sikkerhetstiltak.setKilde(CONSUMER);
-                        sikkerhetstiltak.setMaster(Master.FREG);
+                        sikkerhetstiltak.setMaster(Master.PDL);
                     }
                 })
                 .register();
