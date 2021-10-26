@@ -1,6 +1,5 @@
 package no.nav.dolly.bestilling.instdata;
 
-import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
@@ -39,11 +38,9 @@ public class InstdataClient implements ClientRegister {
 
             StringBuilder status = new StringBuilder();
             List<String> availEnvironments = instdataConsumer.getMiljoer();
-            log.info("Tilgjengelige miljøer: {}", Json.pretty(availEnvironments));
 
             List<String> environments = new ArrayList<>(List.copyOf(availEnvironments));
             environments.retainAll(bestilling.getEnvironments());
-            log.info("Miljøer retained: {}", Json.pretty(environments));
 
             if (!environments.isEmpty()) {
 

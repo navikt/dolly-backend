@@ -14,11 +14,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static java.lang.String.format;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.nav.dolly.domain.CommonKeysAndUtils.CONSUMER;
 import static no.nav.dolly.domain.CommonKeysAndUtils.HEADER_NAV_CALL_ID;
@@ -59,16 +61,22 @@ public class InstdataConsumer {
     public List<String> getMiljoer() {
 
         try {
-            return
-                    webClient.get()
-                            .uri(uriBuilder -> uriBuilder
-                                    .path(INSTMILJO_URL)
-                                    .build())
-                            .header(HEADER_NAV_CALL_ID, getNavCallId())
-                            .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
-                            .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
-                            .retrieve().toEntityList(String.class)
-                            .block().getBody();
+            String[] response = webClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path(INSTMILJO_URL)
+                            .build())
+                    .header(HEADER_NAV_CALL_ID, getNavCallId())
+                    .header(HEADER_NAV_CONSUMER_ID, CONSUMER)
+                    .header(HttpHeaders.AUTHORIZATION, serviceProperties.getAccessToken(tokenService))
+                    .retrieve().bodyToMono(String[].class)
+                    .block();
+
+            if (isNull(response)) {
+                log.warn("Klarte ikke å hente miljøer fra testnorge-inst");
+                return DEFAULT_ENV;
+            }
+
+            return Arrays.asList(response);
 
         } catch (RuntimeException e) {
             log.error("Kunne ikke lese fra endepunkt for aa hente miljoer: {} ", e.getMessage(), e);
