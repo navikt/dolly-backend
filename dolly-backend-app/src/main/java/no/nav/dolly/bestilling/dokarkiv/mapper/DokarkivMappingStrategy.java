@@ -40,7 +40,8 @@ public class DokarkivMappingStrategy implements MappingStrategy {
                         dokarkivRequest.setKanal(isBlank(dokarkiv.getKanal()) ? KANAL : dokarkiv.getKanal());
                         dokarkivRequest.setJournalpostType(isNull(dokarkiv.getJournalpostType()) ? INNGAAENDE : dokarkiv.getJournalpostType());
                         dokarkivRequest.setBehandlingstema(isNull(dokarkiv.getBehandlingstema()) ? BEHANDLINGSTEMA : dokarkiv.getBehandlingstema());
-                        if (isBlank(dokarkiv.getAvsenderMottaker().getId())
+                        if (isNull(dokarkiv.getAvsenderMottaker())
+                                || isBlank(dokarkiv.getAvsenderMottaker().getId())
                                 || Arrays.stream(RsDokarkiv.IdType.values())
                                 .noneMatch(type -> type.equals(dokarkiv.getAvsenderMottaker().getIdType()))) {
                             dokarkivRequest.setAvsenderMottaker(DokarkivRequest.AvsenderMottaker.builder()
