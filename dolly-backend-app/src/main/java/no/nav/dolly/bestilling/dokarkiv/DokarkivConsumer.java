@@ -56,10 +56,10 @@ public class DokarkivConsumer {
                 .retrieve()
                 .bodyToMono(DokarkivResponse.class)
                 .doOnError(error -> {
-                    if (error instanceof WebClientResponseException) {
+                    if (error instanceof WebClientResponseException webClientResponseException) {
                         log.error(
                                 "Feil ved opprettelse av journalpost av med body: {}.",
-                                ((WebClientResponseException) error).getResponseBodyAsString(),
+                                webClientResponseException.getResponseBodyAsString(),
                                 error
                         );
                     } else {

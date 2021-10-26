@@ -1,5 +1,6 @@
 package no.nav.dolly.bestilling.instdata;
 
+import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
@@ -38,9 +39,11 @@ public class InstdataClient implements ClientRegister {
 
             StringBuilder status = new StringBuilder();
             List<String> availEnvironments = instdataConsumer.getMiljoer();
+            log.info("Tilgjengelige miljøer: {}", Json.pretty(availEnvironments));
 
             List<String> environments = new ArrayList<>(List.copyOf(availEnvironments));
             environments.retainAll(bestilling.getEnvironments());
+            log.info("Miljøer retained: {}", Json.pretty(environments));
 
             if (!environments.isEmpty()) {
 
@@ -77,6 +80,15 @@ public class InstdataClient implements ClientRegister {
         }
     }
 
+    @Override
+    public void release(List<String> identer) {
+
+        List<String> environments = instdataConsumer.getMiljoer();
+        environments.forEach(environment ->
+                identer.forEach(ident -> instdataConsumer.deleteInstdata(ident, environment))
+        );
+    }
+
     private List<Instdata> filterInstdata(List<Instdata> instdataRequest, String miljoe) {
 
         ResponseEntity<List<Instdata>> eksisterendeInstdata = instdataConsumer.getInstdata(instdataRequest.get(0).getNorskident(), miljoe);
@@ -90,15 +102,6 @@ public class InstdataClient implements ClientRegister {
 
             return instdataRequest;
         }
-    }
-
-    @Override
-    public void release(List<String> identer) {
-
-        List<String> environments = instdataConsumer.getMiljoer();
-        environments.forEach(environment ->
-                identer.forEach(ident -> instdataConsumer.deleteInstdata(ident, environment))
-        );
     }
 
     private String postInstdata(boolean isNewOpphold, List<Instdata> instdata, String environment) {
