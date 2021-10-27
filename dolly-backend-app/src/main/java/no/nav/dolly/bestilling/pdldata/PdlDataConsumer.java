@@ -2,6 +2,7 @@ package no.nav.dolly.bestilling.pdldata;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.dolly.bestilling.pdldata.command.PdlDataCheckIdentCommand;
 import no.nav.dolly.bestilling.pdldata.command.PdlDataOppdateringCommand;
 import no.nav.dolly.bestilling.pdldata.command.PdlDataOpprettingCommand;
 import no.nav.dolly.bestilling.pdldata.command.PdlDataOrdreCommand;
@@ -10,6 +11,7 @@ import no.nav.dolly.config.credentials.PdlDataForvalterProperties;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.security.oauth2.service.TokenService;
 import no.nav.dolly.util.CheckAliveUtil;
+import no.nav.testnav.libs.dto.pdlforvalter.v1.AvailibilityResponseDTO;
 import no.nav.testnav.libs.dto.pdlforvalter.v1.BestillingRequestDTO;
 import no.nav.testnav.libs.dto.pdlforvalter.v1.PersonUpdateRequestDTO;
 import org.springframework.http.MediaType;
@@ -79,6 +81,14 @@ public class PdlDataConsumer {
                 .flatMap(token ->
                         new PdlDataOppdateringCommand(webClient, ident, request, token.getTokenValue()).call())
                 .block();
+    }
+
+    public List<AvailibilityResponseDTO> identCheck(List<String> identer) {
+
+        return List.of(tokenService.generateToken(serviceProperties)
+                .flatMap(token ->
+                        new PdlDataCheckIdentCommand(webClient, identer, token.getTokenValue()).call())
+                .block());
     }
 
     @Timed(name = "providers", tags = { "operation", "pdl_dataforvalter_alive" })
