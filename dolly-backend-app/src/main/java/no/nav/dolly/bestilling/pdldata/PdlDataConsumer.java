@@ -9,6 +9,7 @@ import no.nav.dolly.bestilling.pdldata.command.PdlDataSlettCommand;
 import no.nav.dolly.config.credentials.PdlDataForvalterProperties;
 import no.nav.dolly.metrics.Timed;
 import no.nav.dolly.security.oauth2.service.TokenService;
+import no.nav.dolly.util.CheckAliveUtil;
 import no.nav.testnav.libs.dto.pdlforvalter.v1.BestillingRequestDTO;
 import no.nav.testnav.libs.dto.pdlforvalter.v1.PersonUpdateRequestDTO;
 import org.springframework.http.MediaType;
@@ -20,6 +21,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -27,11 +29,11 @@ public class PdlDataConsumer {
 
     private final TokenService tokenService;
     private final WebClient webClient;
-    private final PdlDataForvalterProperties properties;
+    private final PdlDataForvalterProperties serviceProperties;
 
     public PdlDataConsumer(TokenService tokenService, PdlDataForvalterProperties serviceProperties, ObjectMapper objectMapper) {
         this.tokenService = tokenService;
-        this.properties = serviceProperties;
+        this.serviceProperties = serviceProperties;
         this.webClient = WebClient.builder()
                 .exchangeStrategies(ExchangeStrategies.builder()
                         .codecs(config -> {
@@ -47,7 +49,7 @@ public class PdlDataConsumer {
     @Timed(name = "providers", tags = {"operation", "pdl_sendOrdre"})
     public String sendOrdre(String ident, boolean isTpsfMaster) {
 
-        return tokenService.generateToken(properties)
+        return tokenService.generateToken(serviceProperties)
                 .flatMap(token -> new PdlDataOrdreCommand(webClient, ident, isTpsfMaster, token.getTokenValue()).call())
                 .block();
     }
@@ -55,17 +57,17 @@ public class PdlDataConsumer {
     @Timed(name = "providers", tags = {"operation", "pdl_delete"})
     public void slettPdl(List<String> identer) {
 
-        tokenService.generateToken(properties)
-                .flatMapMany(token -> identer.stream()
-                        .map(ident -> Flux.from(new PdlDataSlettCommand(webClient, ident, token.getTokenValue()).call()))
-                        .reduce(Flux.empty(), Flux::concat))
+        String accessToken = serviceProperties.getAccessToken(tokenService);
+        identer.stream()
+                .map(ident -> Flux.from(new PdlDataSlettCommand(webClient, ident, accessToken).call()))
+                .reduce(Flux.empty(), Flux::concat)
                 .collectList()
                 .block();
     }
 
     public String opprettPdl(BestillingRequestDTO request) {
 
-        return tokenService.generateToken(properties)
+        return tokenService.generateToken(serviceProperties)
                 .flatMap(token ->
                         new PdlDataOpprettingCommand(webClient, request, token.getTokenValue()).call())
                 .block();
@@ -73,9 +75,14 @@ public class PdlDataConsumer {
 
     public String oppdaterPdl(String ident, PersonUpdateRequestDTO request) {
 
-        return tokenService.generateToken(properties)
+        return tokenService.generateToken(serviceProperties)
                 .flatMap(token ->
                         new PdlDataOppdateringCommand(webClient, ident, request, token.getTokenValue()).call())
                 .block();
+    }
+
+    @Timed(name = "providers", tags = { "operation", "pdl_dataforvalter_alive" })
+    public Map<String, String> checkAlive() {
+        return CheckAliveUtil.checkConsumerAlive(serviceProperties, webClient, tokenService);
     }
 }

@@ -36,7 +36,7 @@ import no.nav.dolly.service.IdentService;
 import org.springframework.cache.CacheManager;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -101,7 +101,7 @@ public class DollyBestillingService {
     }
 
     private static void removeUnsuccessfulMessages(String hovedperson, RsSkdMeldingResponse response, Set<String> successMiljoer) {
-        for (SendSkdMeldingTilTpsResponse sendSkdMldResponse : response.getSendSkdMeldingTilTpsResponsene()) {
+        for (ServiceRoutineResponseStatus sendSkdMldResponse : response.getServiceRoutineStatusResponsene()) {
             if (hovedperson.equals(sendSkdMldResponse.getPersonId())) {
                 for (Map.Entry<String, String> entry : sendSkdMldResponse.getStatus().entrySet()) {
                     if (!entry.getValue().contains(SUCCESS)) {
@@ -250,7 +250,7 @@ public class DollyBestillingService {
 
             oppdaterProgress(bestilling, progress);
 
-        } catch (HttpClientErrorException e) {
+        } catch (WebClientResponseException e) {
             try {
                 String message = (String) objectMapper.readValue(e.getResponseBodyAsString(), Map.class).get("message");
                 log.warn("Bestilling med id={} på ident={} ble avsluttet med feil: {}", bestilling.getId(), ident, message);

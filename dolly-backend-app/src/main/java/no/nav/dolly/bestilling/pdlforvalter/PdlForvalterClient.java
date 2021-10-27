@@ -22,6 +22,7 @@ import no.nav.dolly.bestilling.pdlforvalter.domain.PdlNavn;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlOpphold;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlOppholdsadresseHistorikk;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlOpprettPerson;
+import no.nav.dolly.bestilling.pdlforvalter.domain.PdlSikkerhetstiltak;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlSivilstand;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlStatsborgerskap;
 import no.nav.dolly.bestilling.pdlforvalter.domain.PdlTelefonnummer;
@@ -45,7 +46,7 @@ import no.nav.dolly.util.IdentTypeUtil;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.List;
 
@@ -55,6 +56,7 @@ import static no.nav.dolly.domain.CommonKeysAndUtils.containsSynthEnv;
 import static no.nav.dolly.domain.CommonKeysAndUtils.getSynthEnv;
 import static no.nav.dolly.errorhandling.ErrorStatusDecoder.encodeStatus;
 import static no.nav.dolly.util.NullcheckUtil.nullcheckSetDefaultValue;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Slf4j
 @Order(1)
@@ -72,15 +74,6 @@ public class PdlForvalterClient implements ClientRegister {
     private final DollyPersonCache dollyPersonCache;
     private final MapperFacade mapperFacade;
     private final ErrorStatusDecoder errorStatusDecoder;
-
-    private static void appendName(String utenlandsIdentifikasjonsnummer, StringBuilder builder) {
-        builder.append('$')
-                .append(utenlandsIdentifikasjonsnummer);
-    }
-
-    private static void appendOkStatus(StringBuilder builder) {
-        builder.append("&OK");
-    }
 
     @Override
     public void gjenopprett(RsDollyUtvidetBestilling bestilling, DollyPerson dollyPerson, BestillingProgress progress, boolean isOpprettEndre) {
@@ -196,6 +189,7 @@ public class PdlForvalterClient implements ClientRegister {
             sendVergemaal(person);
             sendFullmakt(person);
             sendDoedfoedtBarn(person);
+            sendSikkerhetstiltak(person);
         }
     }
 
@@ -365,6 +359,13 @@ public class PdlForvalterClient implements ClientRegister {
                 .forEach(hendelse -> pdlForvalterConsumer.postDoedfoedtBarn(hendelse, person.getIdent()));
     }
 
+    private void sendSikkerhetstiltak(Person person) {
+
+        if (isNotBlank(person.getTypeSikkerhetTiltak())) {
+            pdlForvalterConsumer.postSikkerhetstiltak(mapperFacade.map(person, PdlSikkerhetstiltak.class), person.getIdent());
+        }
+    }
+
     private void sendUtenlandsid(Pdldata pdldata, String ident, StringBuilder status) {
 
         if (nonNull(pdldata) && nonNull(pdldata.getUtenlandskIdentifikasjonsnummer())) {
@@ -423,7 +424,7 @@ public class PdlForvalterClient implements ClientRegister {
         try {
             dollyPerson.getPersondetaljer().forEach(person -> pdlForvalterConsumer.deleteIdent(person.getIdent()));
 
-        } catch (HttpClientErrorException e) {
+        } catch (WebClientResponseException e) {
 
             if (!HttpStatus.NOT_FOUND.equals(e.getStatusCode())) {
                 log.error(e.getMessage(), e);
@@ -438,5 +439,14 @@ public class PdlForvalterClient implements ClientRegister {
 
         builder.append('&')
                 .append(errorStatusDecoder.decodeRuntimeException(exception));
+    }
+
+    private static void appendName(String utenlandsIdentifikasjonsnummer, StringBuilder builder) {
+        builder.append('$')
+                .append(utenlandsIdentifikasjonsnummer);
+    }
+
+    private static void appendOkStatus(StringBuilder builder) {
+        builder.append("&OK");
     }
 }
