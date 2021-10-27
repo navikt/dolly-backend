@@ -102,7 +102,7 @@ public class DollyBestillingService {
     }
 
     private static void removeUnsuccessfulMessages(String hovedperson, RsSkdMeldingResponse response, Set<String> successMiljoer) {
-        for (SendSkdMeldingTilTpsResponse sendSkdMldResponse : response.getSendSkdMeldingTilTpsResponsene()) {
+        for (ServiceRoutineResponseStatus sendSkdMldResponse : response.getServiceRoutineStatusResponsene()) {
             if (hovedperson.equals(sendSkdMldResponse.getPersonId())) {
                 for (Map.Entry<String, String> entry : sendSkdMldResponse.getStatus().entrySet()) {
                     if (!entry.getValue().contains(SUCCESS)) {
