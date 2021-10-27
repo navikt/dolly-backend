@@ -5,7 +5,7 @@ on:
     branches:
       - master
       - feature/pdl-testdata_breaking_changes
-      - bytte-til-proxy-endepunkt
+      - bugfix/pdl-forvalter-fix
   workflow_dispatch:
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/dolly-backend:${{ github.sha }}
