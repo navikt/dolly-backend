@@ -69,7 +69,7 @@
         <!--suppress UnresolvedMavenProperty Ligger som secret i github-->
         <sonar.login>${SONAR_LOGIN}</sonar.login>
         <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
-        <springdoc-openapi.version>1.5.10</springdoc-openapi.version>
+        <springdoc-openapi.version>1.5.12</springdoc-openapi.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -139,7 +139,7 @@
             <dependency>
                 <groupId>no.nav.testnav.libs</groupId>
                 <artifactId>data-transfer-objects</artifactId>
-                <version>2021.10.20-08.13-42b4dddd7e7c</version>
+                <version>2021.11.01-13.04-f9ad7aeb36ac</version>
             </dependency>
 
             <dependency>
