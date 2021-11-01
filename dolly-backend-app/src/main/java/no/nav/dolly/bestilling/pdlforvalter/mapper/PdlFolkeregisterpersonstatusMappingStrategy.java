@@ -43,7 +43,6 @@ public class PdlFolkeregisterpersonstatusMappingStrategy implements MappingStrat
             case "DØD", "DØDD" -> Folkeregisterpersonstatus.DOED;
             case "FØDR" -> Folkeregisterpersonstatus.FOEDSELSREGISTRERT;
             case "FOSV" -> Folkeregisterpersonstatus.FORSVUNNET;
-            case "ABNR", "ADNR" -> Folkeregisterpersonstatus.MIDLERTIDIG;
             case "UREG", "UTAN" -> Folkeregisterpersonstatus.IKKE_BOSATT;
             case "UTPE" -> Folkeregisterpersonstatus.OPPHOERT;
             case "UTVA" -> Folkeregisterpersonstatus.UTFLYTTET;

@@ -139,7 +139,7 @@
             <dependency>
                 <groupId>no.nav.testnav.libs</groupId>
                 <artifactId>data-transfer-objects</artifactId>
-                <version>2021.11.01-13.04-f9ad7aeb36ac</version>
+                <version>2021.10.20-08.13-42b4dddd7e7c</version>
             </dependency>
 
             <dependency>
