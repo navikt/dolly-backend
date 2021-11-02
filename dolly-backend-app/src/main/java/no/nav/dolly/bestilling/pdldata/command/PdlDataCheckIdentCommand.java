@@ -2,37 +2,36 @@ package no.nav.dolly.bestilling.pdldata.command;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.testnav.libs.dto.pdlforvalter.v1.AvailibilityResponseDTO;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 @Slf4j
 @RequiredArgsConstructor
-public class PdlDataOrdreCommand implements Callable<Mono<String>> {
+public class PdlDataCheckIdentCommand implements Callable<Mono<AvailibilityResponseDTO[]>> {
 
-    private static final String PDL_FORVALTER_ORDRE_URL = "/api/v1/personer/{ident}/ordre";
-    private static final String IS_TPS_MASTER = "isTpsMaster";
+    private static final String PDL_FORVALTER_ORDRE_URL = "/api/v1/identer";
+    private static final String IDENTER = "identer";
 
     private final WebClient webClient;
-    private final String ident;
-    private final boolean isTpsfMaster;
+    private final List<String> identer;
     private final String token;
 
-    public Mono<String> call() {
+    public Mono<AvailibilityResponseDTO[]> call() {
 
         return webClient
-                .post()
+                .get()
                 .uri(uriBuilder -> uriBuilder.path(PDL_FORVALTER_ORDRE_URL)
-                        .queryParam(IS_TPS_MASTER, isTpsfMaster)
-                        .build(ident))
+                        .queryParam(IDENTER, identer)
+                        .build())
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                .contentType(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(AvailibilityResponseDTO[].class)
                 .onErrorResume(throwable -> throwable instanceof WebClientResponseException.NotFound,
                         throwable -> Mono.empty());
     }

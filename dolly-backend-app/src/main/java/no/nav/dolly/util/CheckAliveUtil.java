@@ -9,9 +9,9 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import java.util.Map;
 
-@UtilityClass
 @Slf4j
-public final class CheckAliveUtil {
+@UtilityClass
+public class CheckAliveUtil {
 
     public static Map<String, String> checkConsumerAlive(NaisServerProperties serviceProperties, WebClient webClient, TokenService tokenService) {
         try {
